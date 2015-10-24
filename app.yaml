@@ -1,0 +1,24 @@
+application: aire-de-jeux
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /static
+  static_dir: static
+
+- url: /img
+  static_dir: img
+
+- url: /js
+  static_dir: js
+
+- url: .*
+  script: main.app
+
+libraries:
+- name: webapp2
+  version: "2.5.2"
+- name: jinja2
+  version: "2.6"
