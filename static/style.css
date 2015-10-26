@@ -1,0 +1,96 @@
+
+.highlight {
+    background-color:#4dd0e1;
+    padding:5px;
+    margin:5px;
+}
+
+#main {
+    width:80%;
+    margin-left: auto;
+    margin-right: auto;
+    }
+
+#header {
+    font-family: "";
+    width : 100%;
+    max-height: 15%;
+    text-align: center;
+    font-size: 3em;
+    margin-top : 20px;
+    margin-bottom : 20px;
+}
+
+#title {
+    display:flex;
+    justify-content:center;
+    font-size:2em;
+    margin-bottom: 10px;
+    flex-flow: row wrap;
+}
+
+#ville {
+    padding-right:5px;
+    width : inherit;
+    }
+
+#name {
+    padding-left:5px;
+    width:inherit;
+}
+
+#content {
+    display:flex;
+    flex-flow:row wrap;
+    justify-content:center;
+    flex-direction:row;
+    }
+#stars {
+    display:flex;
+    height:22px;
+    width:100%;
+    justify-content:center;
+    padding:5px;
+    }
+.stars {
+    padding:2px
+    }
+#box-activitees {
+    flex:1 1 300px;
+    }
+
+#title-activitee {
+    width : 100%;
+    padding-bottom: 10px;
+    }
+
+#list-activitees {
+    display:flex;
+    flex-flow:row wrap;
+    justify-content:flex-start;
+    flex-grow:1;
+    }
+
+.activitee {
+    width:90px;
+    flex-grow:1;
+    margin:1px 5px;
+    }
+
+.image{
+    padding:auto;
+    }
+
+
+#description{
+    width:100%;
+    max-width:500px;
+    }
+
+#comentaires{
+    padding:5px;
+    margin:5px;
+    width:100%;
+    max-width:500px
+    }
+
