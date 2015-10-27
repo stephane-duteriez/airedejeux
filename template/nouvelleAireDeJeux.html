@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+    <form action="/" enctype="multipart/form-data" method="post">
+        Nom de l'aire de jeux : <br>
+        <div><input type="text" name="nom_aire_de_jeux"></div>
+        Commune : <br>
+        <div><input type="text" name="commune"></div>
+        CP : <br>
+        <div><input type="number" name="CP"></div>
+        score : <br>
+        <div><input type="number" name="score"></div>
+        accé :
+        <div><input type="text" name="acce"></div>
+        horaire :
+        <div><input type="text" name="horaire"></div>
+        coordonnees :
+        <div><input type="text" name="coordonnees"></div>
+        activitees : <br>
+        <div><input type="text" name="activitees" class="box"></div>
+        description : <br>
+        <div><input type="text" name="description" class="box"></div>
+        commentaire : <br>
+        <div><input type="text" name="commentaire" class="box"></div>
+    </form>
+
+
+{% endblock %}
