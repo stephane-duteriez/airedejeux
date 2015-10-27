@@ -5,6 +5,10 @@
     margin:5px;
 }
 
+.bigger {
+    font-size:1.5em;
+    }
+
 #main {
     width:80%;
     margin-left: auto;
@@ -55,8 +59,13 @@
 .stars {
     padding:2px
     }
-#box-activitees {
+
+#detail{
     flex:1 1 300px;
+    }
+
+#box-activitees {
+    flex:1 1 100%;
     }
 
 #title-activitee {
@@ -84,13 +93,13 @@
 
 #description{
     width:100%;
-    max-width:500px;
+    flex:1 1 300px;
     }
 
 #comentaires{
-    padding:5px;
-    margin:5px;
-    width:100%;
-    max-width:500px
+    flex:1 1 100%;
     }
 
+.comentaire,.description,#list-activitees,#description-accesibilte{
+    padding-left: 10px;
+    }
