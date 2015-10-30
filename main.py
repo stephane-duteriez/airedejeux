@@ -33,7 +33,7 @@ class Commentaire(ndb.Model):
 
 class Commune(ndb.Model):
     nom = ndb.StringProperty()
-    CP = ndb.IntegerProperty()
+    CP = ndb.StringProperty()
     coordonees = ndb.GeoPtProperty()
 
 
