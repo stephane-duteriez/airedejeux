@@ -62,7 +62,7 @@ class process_csv(webapp2.RequestHandler):
                 next_cursor = cursor + max_data_access
                 taskqueue.add(url='/admin/process_csv', params={'blob_key': blob_info,
                                                                 'cursor': next_cursor},
-                              countdown=86400)
+                              countdown=21600)
                 break
             i += 1
 

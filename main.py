@@ -85,7 +85,8 @@ class AjouterHandler(webapp2.RequestHandler):
         results = villes.fetch(10)
         data = {"ville": []}
         for ville in results:
-            data["ville"].append({"name": ville.nom, "CP": ville.CP, "key": ville.key.urlsafe()})
+            data["ville"].append({"name": ville.nom, "CP": ville.CP, "key": ville.key.urlsafe(),
+                                  "lat": ville.coordonnees.lat, "lon": ville.coordonnees.lon})
         self.response.write(json.dumps(data))
 
 

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block head %}
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+{% endblock %}
 {% block content %}
     <form action="/ajouterAireDeJeux" enctype="multipart/form-data" method="post">
         Nom de l'aire de jeux : <br>
@@ -9,14 +12,18 @@
         <div><input type="hidden" name="key_ville" id="key_ville" value="" ></div>
         CP : <br>
         <div><input type="text" name="CP" id="CP" value="" disabled></div>
+        coordonnees :
+        <div>
+            latitude: <input type="text" name="lat" id="lat" disabled>
+            longitude: <input type="text" name="lon" id="lng" disabled>
+        </div>
+        <div id="map"></div>
         score : <br>
         <div><input type="number" name="score"></div>
         accéssibilité :
         <div><input type="text" name="acces" id="acces"></div>
         horaire :
         <div><input type="text" name="horaire"></div>
-        coordonnees :
-        <div><input type="text" name="coordonnees"></div>
         activitees : Entrez une liste des activitées séparées par une virgule<br>
         <div><input type="text" name="activitees" class="box"></div>
         description : <br>
@@ -37,11 +44,13 @@
                     data = JSON.parse(json);
                     var out = "";
                     var i;
-                    template = "<p id=\"demo\" onclick=\"hint('%nom%', '%CP%', '%key%')\" class=\"hint\">%nom% %CP%</p>"
+                    template = "<p id=\"demo\" onclick=\"hint('%nom%', '%CP%', '%key%', %lat%, %lon% )\" class=\"hint\">%nom% %CP%</p>"
                     for(i = 0; i < data["ville"].length; i++) {
                         new_button = template.replace(/%nom%/g, data["ville"][i].name);
                         new_button = new_button.replace(/%CP%/g, data["ville"][i].CP);
                         new_button = new_button.replace("%key%", data["ville"][i].key);
+                        new_button = new_button.replace("%lat%", data["ville"][i].lat);
+                        new_button = new_button.replace("%lon%", data["ville"][i].lon);
                         out += new_button;
                     }
                     document.getElementById("hints").innerHTML = out;
@@ -51,10 +60,41 @@
             xmlhttp.send();
         }
     }
-    function hint(nom_ville, CP, key_ville) {
+    function hint(nom_ville, CP, key_ville, lat, lon) {
         document.getElementById("ville").value = nom_ville;
         document.getElementById("CP").value = CP;
         document.getElementById("key_ville").value = key_ville;
+        initialize(lat, lon);
+        document.getElementById("hints").innerHTML = "";
+    }
+    function initialize(lat, lon) {
+        var mapCanvas = document.getElementById("map");
+        var myLatLng = {lat: lat, lng: lon};
+        var mapOption = {
+            center: myLatLng,
+            zoom: 12,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(mapCanvas, mapOption);
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            title: 'Hello World!',
+            draggable: true,
+        })
+        marker.addListener('dragend', function() {
+            map.setCenter(marker.getPosition());
+            document.getElementById("lat").value = marker.getPosition().lat();
+            document.getElementById("lng").value = marker.getPosition().lng();
+        });
+        google.maps.event.addListener(map, 'dblclick', function(event) {
+            placeMarker(marker, event.latLng);
+        });
+    }
+    function placeMarker(marker, location) {
+        marker.setPosition(location);
+        document.getElementById("lat").value = marker.getPosition().lat();
+        document.getElementById("lng").value = marker.getPosition().lng();
     }
     </script>
 

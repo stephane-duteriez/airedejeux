@@ -143,6 +143,11 @@ li.menu {
     }
 
 .hint {
-    margin:2px;
-    font-size:0.8em;
+    margin: 2px;
+    font-size: 0.8em;
+    }
+
+#map {
+    width: 300px;
+    height: 200px;
     }
