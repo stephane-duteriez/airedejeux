@@ -4,32 +4,38 @@
 {% endblock %}
 {% block content %}
     <form action="/ajouterAireDeJeux" enctype="multipart/form-data" method="post">
-        Nom de l'aire de jeux : <br>
-        <div><input type="text" name="nom_aire_de_jeux"></div>
-        Commune : <br>
-        <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
-        <div id="hints"></div>
-        <div><input type="hidden" name="key_ville" id="key_ville" value="" ></div>
-        CP : <br>
-        <div><input type="text" name="CP" id="CP" value="" disabled></div>
-        coordonnees :
-        <div>
-            latitude: <input type="text" name="lat" id="lat" disabled>
-            longitude: <input type="text" name="lon" id="lng" disabled>
+        <div class="contenant">
+            <div class="contenue">
+                Nom de l'aire de jeux : <br>
+                <div><input type="text" name="nom_aire_de_jeux" id="nom" value=""></div>
+                Commune : <br>
+                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
+                <div id="hints"></div>
+                <div><input type="hidden" name="key_ville" id="key_ville" value="" ></div>
+                CP : <br>
+                <div><input type="text" name="CP" id="CP" value="" disabled></div>
+                coordonnees :
+                <div>
+                    latitude: <input type="text" name="lat" id="lat" disabled><br>
+                    longitude: <input type="text" name="lon" id="lng" disabled>
+                </div>
+                score : <br>
+                <div><input type="number" name="score"></div>
+                horaire :
+                <div><input type="text" name="horaire"></div>
+            </div>
+            <div class="contenue">
+                <div id="map"></div>
+            </div>
         </div>
-        <div id="map"></div>
-        score : <br>
-        <div><input type="number" name="score"></div>
         accéssibilité :
-        <div><input type="text" name="acces" id="acces"></div>
-        horaire :
-        <div><input type="text" name="horaire"></div>
+        <div><textarea name="acces" id="acces"></textarea></div>
         activitees : Entrez une liste des activitées séparées par une virgule<br>
-        <div><input type="text" name="activitees" class="box"></div>
+        <div><textarea name="activitees" class="box"></textarea></div>
         description : <br>
-        <div><input type="text" name="description" class="box"></div>
+        <div><textarea name="description" class="box"></textarea></div>
         commentaire : <br>
-        <div><input type="text" name="commentaire" class="box"></div>
+        <div><textarea name="commentaire" class="box"></textarea></div>
     </form>
     <script>
     function showHint(str) {
@@ -44,13 +50,14 @@
                     data = JSON.parse(json);
                     var out = "";
                     var i;
-                    template = "<p id=\"demo\" onclick=\"hint('%nom%', '%CP%', '%key%', %lat%, %lon% )\" class=\"hint\">%nom% %CP%</p>"
+                    template = "<button type=\"button\" id=\"%ID%\" onclick=\"hint('%nom%', '%CP%', '%key%', %lat%, %lon% )\" class=\"hint\">%nom% %CP%</button>"
                     for(i = 0; i < data["ville"].length; i++) {
                         new_button = template.replace(/%nom%/g, data["ville"][i].name);
                         new_button = new_button.replace(/%CP%/g, data["ville"][i].CP);
                         new_button = new_button.replace("%key%", data["ville"][i].key);
                         new_button = new_button.replace("%lat%", data["ville"][i].lat);
                         new_button = new_button.replace("%lon%", data["ville"][i].lon);
+                        new_button = new_button.replace("%ID%", "hint_" + i.toString());
                         out += new_button;
                     }
                     document.getElementById("hints").innerHTML = out;
@@ -96,6 +103,12 @@
         document.getElementById("lat").value = marker.getPosition().lat();
         document.getElementById("lng").value = marker.getPosition().lng();
     }
+    var inputVille = document.getElementById("ville");
+    inputVille.addEventListener("keydown", function(event) {
+        if (event.keyCode == "40") {
+            document.getElementById("hint_0").focus();
+        }
+    })
     </script>
 
 {% endblock %}

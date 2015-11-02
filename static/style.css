@@ -86,13 +86,17 @@ li.menu {
     justify-content:center;
     padding:5px;
     }
+
 .stars {
     padding:2px
     }
+
 #acces {
-    width : 300px;
+    width:100%;
+    max-width : 300px;
     height : 4em;
     }
+
 #detail{
     flex:1 1 300px;
     }
@@ -138,8 +142,14 @@ li.menu {
     }
 
 .box {
-    width:300px;
-    height:100px;
+    width : 100%;
+    max-width : 300px;
+    height : 100px;
+    }
+
+#hints {
+    display : flex;
+    flex-direction : column;
     }
 
 .hint {
@@ -150,4 +160,16 @@ li.menu {
 #map {
     width: 300px;
     height: 200px;
+    }
+
+.contenant {
+    display : flex;
+    width : 100%;
+    flex-flow : row wrap;
+    }
+
+.contenue {
+    flex : 1 1 250px;
+    padding : 5px;
+    margin : 5px;
     }
