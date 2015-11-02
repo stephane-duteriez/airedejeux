@@ -33,6 +33,35 @@
     flex-flow: row wrap;
 }
 
+div.menu{
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 20px;
+    max-width:42em;
+    font-size:1.3em;
+}
+
+ul.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li.menu {
+    border-radius: 10px;
+    float:left;
+    display: inline;
+    text-align: center;
+    background-color: #A7C942;
+    color: #ffffff;
+    padding-top: 5px;
+    padding-bottom: 4px;
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+    width:19%;
+    box-shadow: 5px 5px 2px grey;
+    }
+
 #ville {
     padding-right:5px;
     width : inherit;
@@ -49,6 +78,7 @@
     justify-content:center;
     flex-direction:row;
     }
+
 #stars {
     display:flex;
     height:22px;
@@ -59,7 +89,10 @@
 .stars {
     padding:2px
     }
-
+#acces {
+    width : 300px;
+    height : 4em;
+    }
 #detail{
     flex:1 1 300px;
     }
@@ -107,4 +140,9 @@
 .box {
     width:300px;
     height:100px;
+    }
+
+.hint {
+    margin:2px;
+    font-size:0.8em;
     }

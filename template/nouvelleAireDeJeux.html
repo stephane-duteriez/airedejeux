@@ -1,27 +1,61 @@
 {% extends "base.html" %}
 {% block content %}
-    <form action="/" enctype="multipart/form-data" method="post">
+    <form action="/ajouterAireDeJeux" enctype="multipart/form-data" method="post">
         Nom de l'aire de jeux : <br>
         <div><input type="text" name="nom_aire_de_jeux"></div>
         Commune : <br>
-        <div><input type="text" name="commune"></div>
+        <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
+        <div id="hints"></div>
+        <div><input type="hidden" name="key_ville" id="key_ville" value="" ></div>
         CP : <br>
-        <div><input type="number" name="CP"></div>
+        <div><input type="text" name="CP" id="CP" value="" disabled></div>
         score : <br>
         <div><input type="number" name="score"></div>
-        accé :
-        <div><input type="text" name="acce"></div>
+        accéssibilité :
+        <div><input type="text" name="acces" id="acces"></div>
         horaire :
         <div><input type="text" name="horaire"></div>
         coordonnees :
         <div><input type="text" name="coordonnees"></div>
-        activitees : <br>
+        activitees : Entrez une liste des activitées séparées par une virgule<br>
         <div><input type="text" name="activitees" class="box"></div>
         description : <br>
         <div><input type="text" name="description" class="box"></div>
         commentaire : <br>
         <div><input type="text" name="commentaire" class="box"></div>
     </form>
-
+    <script>
+    function showHint(str) {
+        if (str.length < 3) {
+            document.getElementById("hints").innerHTML = "";
+            return;
+        } else {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    json = xmlhttp.responseText;
+                    data = JSON.parse(json);
+                    var out = "";
+                    var i;
+                    template = "<p id=\"demo\" onclick=\"hint('%nom%', '%CP%', '%key%')\" class=\"hint\">%nom% %CP%</p>"
+                    for(i = 0; i < data["ville"].length; i++) {
+                        new_button = template.replace(/%nom%/g, data["ville"][i].name);
+                        new_button = new_button.replace(/%CP%/g, data["ville"][i].CP);
+                        new_button = new_button.replace("%key%", data["ville"][i].key);
+                        out += new_button;
+                    }
+                    document.getElementById("hints").innerHTML = out;
+                }
+            }
+            xmlhttp.open("GET", "/ajouterAireDeJeux?q=" + str, true);
+            xmlhttp.send();
+        }
+    }
+    function hint(nom_ville, CP, key_ville) {
+        document.getElementById("ville").value = nom_ville;
+        document.getElementById("CP").value = CP;
+        document.getElementById("key_ville").value = key_ville;
+    }
+    </script>
 
 {% endblock %}

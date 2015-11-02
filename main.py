@@ -3,6 +3,7 @@ import webapp2
 import jinja2
 import os
 from google.appengine.ext import ndb
+import json
 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'template')
@@ -34,7 +35,9 @@ class Commentaire(ndb.Model):
 class Commune(ndb.Model):
     nom = ndb.StringProperty()
     CP = ndb.StringProperty()
-    coordonees = ndb.GeoPtProperty()
+    departement = ndb.StringProperty()
+    pays = ndb.StringProperty()
+    coordonnees = ndb.GeoPtProperty()
 
 
 class Handler(webapp2.RequestHandler):
@@ -74,13 +77,21 @@ class CreerAireDeJeuxHandler(Handler):
         self.render_main()
 
 
-class AjouterHandler(Handler):
-    def post(self):
-        pass
+class AjouterHandler(webapp2.RequestHandler):
+    def get(self):
+        q = (self.request.GET['q']).title()
+        villes = Commune.query(ndb.AND(Commune.nom >= q, Commune.nom <= q + "z"))
+        self.response.headers['Content-Type'] = 'text/json'
+        results = villes.fetch(10)
+        data = {"ville": []}
+        for ville in results:
+            data["ville"].append({"name": ville.nom, "CP": ville.CP, "key": ville.key.urlsafe()})
+        self.response.write(json.dumps(data))
+
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/Commune', LocationHandler),
     ('/creerAireDeJeux', CreerAireDeJeuxHandler),
-    ('/ajouter', AjouterHandler)
+    ('/ajouterAireDeJeux', AjouterHandler)
 ], debug=True)
