@@ -4,20 +4,21 @@
 {% endblock %}
 {% block content %}
     <form action="/ajouterAireDeJeux" enctype="multipart/form-data" method="post">
+        <input type="submit" value="Submit">
         <div class="contenant">
             <div class="contenue">
                 Nom de l'aire de jeux : <br>
-                <div><input type="text" name="nom_aire_de_jeux" id="nom" value=""></div>
+                <div><input type="text" name="nom_aire_de_jeux" id="nom" value="" required></div>
                 Commune : <br>
                 <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
                 <div id="hints"></div>
-                <div><input type="hidden" name="key_ville" id="key_ville" value="" ></div>
+                <div><input type="hidden" name="key_ville" id="key_ville" value="" required></div>
                 CP : <br>
-                <div><input type="text" name="CP" id="CP" value="" disabled></div>
+                <div><input type="text" name="CP" id="CP" value="" readonly></div>
                 coordonnees :
                 <div>
-                    latitude: <input type="text" name="lat" id="lat" disabled><br>
-                    longitude: <input type="text" name="lon" id="lng" disabled>
+                    latitude: <input type="text" name="lat" id="lat" readonly ><br>
+                    longitude: <input type="text" name="lng" id="lng" readonly>
                 </div>
                 score : <br>
                 <div><input type="number" name="score"></div>
@@ -30,12 +31,13 @@
         </div>
         accéssibilité :
         <div><textarea name="acces" id="acces"></textarea></div>
-        activitees : Entrez une liste des activitées séparées par une virgule<br>
-        <div><textarea name="activitees" class="box"></textarea></div>
+        activités : Entrez une liste des activités séparées par une virgule<br>
+        <div><textarea name="activites" class="box"></textarea></div>
         description : <br>
         <div><textarea name="description" class="box"></textarea></div>
         commentaire : <br>
         <div><textarea name="commentaire" class="box"></textarea></div>
+        <input type="submit" value="Submit">
     </form>
     <script>
     function showHint(str) {

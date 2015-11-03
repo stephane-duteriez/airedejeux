@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block head %}
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+{% endblock %}
+{% block content %}
+<div id="title">
+    Commune : <br>
+    <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
+    <div id="hints"></div>
+    <div><input type="hidden" name="key_ville" id="key_ville" value="" required></div>
+    <div id="map"></div>
+</div>
+
+<div id="list-aire-de-jeux">
+</div>
+<script>
+    function showHint(str) {
+        if (str.length < 3) {
+            document.getElementById("hints").innerHTML = "";
+            return;
+        } else {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    json = xmlhttp.responseText;
+                    data = JSON.parse(json);
+                    var out = "";
+                    var i;
+                    template = "<button type=\"button\" id=\"%ID%\"" +
+                        "onclick=\"hint('%nom%', '%CP%', '%key%', %lat%, %lon% )\"" +
+                        "class=\"hint\">%nom% %CP%</button>"
+                    for(i = 0; i < data["ville"].length; i++) {
+                        new_button = template.replace(/%nom%/g, data["ville"][i].name);
+                        new_button = new_button.replace(/%CP%/g, data["ville"][i].CP);
+                        new_button = new_button.replace("%key%", data["ville"][i].key);
+                        new_button = new_button.replace("%lat%", data["ville"][i].lat);
+                        new_button = new_button.replace("%lon%", data["ville"][i].lon);
+                        new_button = new_button.replace("%ID%", "hint_" + i.toString());
+                        out += new_button;
+                    }
+                    document.getElementById("hints").innerHTML = out;
+                }
+            }
+            xmlhttp.open("GET", "/ajouterAireDeJeux?q=" + str, true);
+            xmlhttp.send();
+        }
+    }
+    function hint(nom_ville, CP, key_ville, lat, lon) {
+        var xmlhttp = new XMLHttpRequest();
+        var data;
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var json = xmlhttp.responseText;
+                data = JSON.parse(json);
+                var out = "";
+                var i;
+                template = "<div class=\"aire-de-jeux\"><div class=\"nom-aire-de-jeux\">" +
+                    "%nom%</div></div>";
+                console.log(data);
+                for(i = 0;i < data.length; i++) {
+                    newAireDeJeux = template.replace("%nom%", data[i].nom);
+                    out += newAireDeJeux;
+                }
+                document.getElementById("list-aire-de-jeux").innerHTML = out;
+            }
+        }
+        xmlhttp.open("GET", "/listAireDeJeux?keyVille=" + key_ville, true);
+        xmlhttp.send();
+        document.getElementById("ville").value = nom_ville;
+        initialize(lat, lon);
+        document.getElementById("hints").innerHTML = "";
+    }
+    function initialize(lat, lon) {
+        var mapCanvas = document.getElementById("map");
+        var myLatLng = {lat: lat, lng: lon};
+        var mapOption = {
+            center: myLatLng,
+            zoom: 12,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        var map = new google.maps.Map(mapCanvas, mapOption);
+    }
+    function placeMarker(marker, location) {
+        marker.setPosition(location);
+        document.getElementById("lat").value = marker.getPosition().lat();
+        document.getElementById("lng").value = marker.getPosition().lng();
+    }
+
+</script>
+{% endblock %}

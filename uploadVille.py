@@ -40,7 +40,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         self.redirect("/")
 
 
-class process_csv(webapp2.RequestHandler):
+class processCsv(webapp2.RequestHandler):
     def post(self):
         max_data_access = 1000
         blob_info = self.request.get('blob_key')
@@ -69,5 +69,5 @@ class process_csv(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/admin/uploadform', MainHandler),
     ('/admin/upload', UploadHandler),
-    ('/admin/process_csv', process_csv)
+    ('/admin/process_csv', processCsv)
 ], debug=True)
