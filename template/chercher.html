@@ -4,13 +4,12 @@
 {% endblock %}
 {% block content %}
 <div id="title">
-    Commune : <br>
+    Commune :
     <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
     <div id="hints"></div>
     <div><input type="hidden" name="key_ville" id="key_ville" value="" required></div>
-    <div id="map"></div>
 </div>
-
+<div id="map" class="center"></div>
 <div id="list-aire-de-jeux">
 </div>
 <script>
@@ -46,20 +45,30 @@
         }
     }
     function hint(nom_ville, CP, key_ville, lat, lon) {
+
         var xmlhttp = new XMLHttpRequest();
         var data;
+        var markers = new Array();
+        var map = initialize(lat, lon);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var json = xmlhttp.responseText;
                 data = JSON.parse(json);
                 var out = "";
                 var i;
-                template = "<div class=\"aire-de-jeux\"><div class=\"nom-aire-de-jeux\">" +
+                template = "<div class=\"aire-de-jeux\" onclick=\"location.href='\airedejeux/%keyAireDeJeux%';\" style=\"cursor: pointer;\">" +
+                    "<div class=\"nom-aire-de-jeux\">" + "%indice% " +
                     "%nom%</div></div>";
-                console.log(data);
                 for(i = 0;i < data.length; i++) {
                     newAireDeJeux = template.replace("%nom%", data[i].nom);
+                    newAireDeJeux = newAireDeJeux.replace("%keyAireDeJeux%", data[i].indiceAireDeJeux);
+                    newAireDeJeux = newAireDeJeux.replace("%indice%", (i+1).toString());
                     out += newAireDeJeux;
+                    markers.push({ lat: data[i].lat, lng: data[i].lng});
+                }
+                console.log(markers)
+                for(i = 0; i<markers.length; i++) {
+                    addMarker(markers[i], map, i+1);
                 }
                 document.getElementById("list-aire-de-jeux").innerHTML = out;
             }
@@ -67,7 +76,6 @@
         xmlhttp.open("GET", "/listAireDeJeux?keyVille=" + key_ville, true);
         xmlhttp.send();
         document.getElementById("ville").value = nom_ville;
-        initialize(lat, lon);
         document.getElementById("hints").innerHTML = "";
     }
     function initialize(lat, lon) {
@@ -79,11 +87,16 @@
             mapTypeId: google.maps.MapTypeId.ROADMAP
         }
         var map = new google.maps.Map(mapCanvas, mapOption);
+        return map;
     }
-    function placeMarker(marker, location) {
-        marker.setPosition(location);
-        document.getElementById("lat").value = marker.getPosition().lat();
-        document.getElementById("lng").value = marker.getPosition().lng();
+    function addMarker(location, map, i) {
+        if (location.lat && location.lng) {
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                label: i.toString()
+            });
+        }
     }
 
 </script>

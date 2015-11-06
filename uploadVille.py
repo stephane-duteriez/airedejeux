@@ -1,20 +1,14 @@
 __author__ = 'Rachel&Stephane'
 
 import webapp2
-import logging
 
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
+from dbClass import Commune
 
 
-class Commune(ndb.Model):
-    nom = ndb.StringProperty()
-    CP = ndb.StringProperty()
-    departement = ndb.StringProperty()
-    pays = ndb.StringProperty()
-    coordonnees = ndb.GeoPtProperty()
 
 
 class MainHandler(webapp2.RequestHandler):

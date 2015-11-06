@@ -1,18 +1,18 @@
 
 .highlight {
-    background-color:#4dd0e1;
-    padding:5px;
-    margin:5px;
+    background-color:  #2196f3;
 }
 
 .bigger {
-    font-size:1.5em;
+    font-size: 1.5em;
+    padding: 6px;
     }
 
 #main {
     width:80%;
     margin-left: auto;
     margin-right: auto;
+    background-color: #90caf9;
     }
 
 #header {
@@ -52,7 +52,7 @@ li.menu {
     float:left;
     display: inline;
     text-align: center;
-    background-color: #A7C942;
+    background-color: #0d47a1;
     color: #ffffff;
     padding-top: 5px;
     padding-bottom: 4px;
@@ -124,7 +124,7 @@ li.menu {
     }
 
 .image{
-    padding:auto;
+    margin:auto;
     }
 
 
@@ -139,6 +139,9 @@ li.menu {
 
 .comentaire,.description,#list-activitees,#description-accesibilte{
     padding-left: 10px;
+    border-style: solid;
+    border-width: thin;
+    min-height: 50px;
     }
 
 .box {
@@ -172,4 +175,34 @@ li.menu {
     flex : 1 1 250px;
     padding : 5px;
     margin : 5px;
+    }
+
+.aire-de-jeux {
+    height : 50px;
+    border-style: solid;
+    padding: 5px;
+    margin : 5px;
+    flex: 1 1 100px;
+    }
+
+.aire-de-jeux:hover {
+    background-color: grey;
+    }
+
+#list-aire-de-jeux {
+    display:flex;
+    width:100%;
+    margin-top: 10px;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    }
+.horizontal {
+    display: flex;
+    width: 100%;
+    }
+.inside {
+    flex: 1 1 50px;
     }

@@ -4,43 +4,17 @@
 import webapp2
 import jinja2
 import os
-from google.appengine.ext import ndb
 import json
 import logging
+import hashlib
+
+from dbClass import *
 
 template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
 
-
-class AireDeJeux(ndb.Model):
-    nom = ndb.StringProperty(required=True)
-    ville = ndb.KeyProperty(required=True)
-    activites = ndb.StringProperty(repeated=True)
-    score = ndb.IntegerProperty()
-    horaires = ndb.StringProperty()
-    accesibilite = ndb.StringProperty()
-    description = ndb.StringProperty()
-    coordonnees = ndb.GeoPtProperty()
-
-
-class User(ndb.Model):
-    User = ndb.UserProperty()
-
-
-class Commentaire(ndb.Model):
-    userId = ndb.KeyProperty()
-    aireDeJeux = ndb.KeyProperty()
-    commentaire = ndb.StringProperty()
-    valide = ndb.BooleanProperty()
-
-
-class Commune(ndb.Model):
-    nom = ndb.StringProperty()
-    CP = ndb.StringProperty()
-    departement = ndb.StringProperty()
-    pays = ndb.StringProperty()
-    coordonnees = ndb.GeoPtProperty()
-
+def hash_str(s):
+        return hashlib.md5(s.encode('utf-8')).hexdigest()
 
 class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
@@ -55,12 +29,19 @@ class Handler(webapp2.RequestHandler):
         self.write(self.render_str(template, **kw).decode(encoding="utf-8"))
 
 
-class MainHandler(Handler):
-    def render_main(self):
-        self.render("detail.html")
+class AireDeJeuxHandler(Handler):
+    #TODO inserer la carte dans le modele
+    #TODO ajouter les commentaires
+    def render_main(self, aire_de_jeux, ville, listCommentaires):
+        self.render("detail.html", aireDeJeux=aire_de_jeux, ville=ville, listCommentaires=listCommentaires)
 
-    def get(self):
-        self.render_main()
+    def get(self, indice):
+        dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
+        ville = dbAireDeJeux.ville.get()
+        queryCommentaire = Commentaire.query(Commentaire.aireDeJeux == dbAireDeJeux.indice)
+        listCommentaires = queryCommentaire.fetch(10)
+        logging.info(listCommentaires)
+        self.render_main(dbAireDeJeux, ville.nom, listCommentaires)
 
 
 class CreerAireDeJeuxHandler(Handler):
@@ -96,8 +77,18 @@ class AjouterHandler(webapp2.RequestHandler):
         accessibilite = self.request.get('acces')
         textActivites = self.request.get('activites')
         description = self.request.get('description')
+        age = self.request.get('age')
         commentaire = self.request.get('commentaire')
-        nouvelleAireDeJeux = AireDeJeux(nom=nomAireDeJeux, ville=ndb.Key(urlsafe=keyVille))
+
+        existe = True
+        indice = hash_str(keyVille + nomAireDeJeux)
+        while existe:
+            alreadyExist = AireDeJeux.query(AireDeJeux.indice == indice)
+            if alreadyExist.count() == 0:
+                existe = False
+            indice = hash_str(indice)
+
+        nouvelleAireDeJeux = AireDeJeux(nom=nomAireDeJeux, ville=ndb.Key(urlsafe=keyVille), indice=indice)
 
         if latitude and longitude:
             nouvelleAireDeJeux.coordonnees = ndb.GeoPt(float(latitude), float(longitude))
@@ -112,7 +103,13 @@ class AjouterHandler(webapp2.RequestHandler):
             nouvelleAireDeJeux.activites = listActivites
         if description:
             nouvelleAireDeJeux.description = description
-        nouvelleAireDeJeux.put()
+        if age:
+            nouvelleAireDeJeux.age = age
+        keyAireDeJeux = nouvelleAireDeJeux.put()
+        if commentaire:
+            nouveauCommentaire = Commentaire(aireDeJeux=indice, commentaire=commentaire)
+            nouveauCommentaire.put()
+
         self.redirect("/creerAireDeJeux")
 
 
@@ -136,7 +133,7 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
         listAireDeJeux = queryAireDeJeux.fetch(10)
         data = []
         for aireDeJeux in listAireDeJeux:
-            nextADJ = {"nom": aireDeJeux.nom, "keyAireDeJeux": aireDeJeux.key.urlsafe(), "lat": "", "lng": ""}
+            nextADJ = {"nom": aireDeJeux.nom, "indiceAireDeJeux": aireDeJeux.indice, "lat": "", "lng": ""}
             if aireDeJeux.coordonnees:
                 nextADJ["lat"] = aireDeJeux.coordonnees.lat
                 nextADJ["lng"] = aireDeJeux.coordonnees.lon
@@ -144,10 +141,12 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(data))
 
 
+
 app = webapp2.WSGIApplication([
-    ('/', MainHandler),
+    ('/', ChercherHandler),
     ('/creerAireDeJeux', CreerAireDeJeuxHandler),
     ('/ajouterAireDeJeux', AjouterHandler),
     ('/chercher', ChercherHandler),
-    ('/listAireDeJeux', ListAireDeJeuxHandler)
+    ('/listAireDeJeux', ListAireDeJeuxHandler),
+    ('/airedejeux/([^/]+)?', AireDeJeuxHandler)
 ], debug=True)

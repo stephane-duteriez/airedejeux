@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<div id="title">
-    <div id="ville">Carvin</div>
+<div id="title" class="highlight">
+    <div id="ville">{{ ville }}</div>
     <div>     -    </div>
-    <div id="name">Ecole Epinoy</div>
+    <div id="name">{{ aireDeJeux.nom }}</div>
 </div>
 <div id="content">
     <div id="stars">
@@ -24,46 +24,44 @@
         </svg>
     </div>
     <div id="detail">
-        <div id="box-activitees" class="highlight">
-            <div id="title-activitee" class="bigger">Comoditées:</div>
+        <div id="box-activitees">
+            <div id="title-activitee" class="bigger highlight">Comoditées:</div>
             <div id="list-activitees">
-                <div class="activitee">tobogan</div>
-                <div class="activitee">balançoire</div>
-                <div class="activitee">table pick-nique</div>
-                <div class="activitee">cabane</div>
-                <div class="activitee">bac à sable</div>
-                <div class="activitee"> </div>
-                <div class="activitee"> </div>
-                <div class="activitee"> </div>
+                {% for activite in aireDeJeux.activites %}
+                    <div class="activitee">{{ activite }}</div>
+                {% endfor %}
             </div>
         </div>
-        <div id="box-acces" class="highlight">
-            <div id="title-accesibilite" class="bigger">Accesibilté:</div>
-            <div id="description-accesibilte">Parking à proximité, mais pas d'éclairage la nuit.</div>
+        <div id="box-acces">
+            <div id="title-accesibilite" class="bigger highlight">Accesibilite</div>
+            <div id="description-accesibilte">{{ aireDeJeux.accesibilite }}</div>
         </div>
-        <div id="horraire" class="highlight">
-            Horaire:24h/24h
+        <div id="horraire" class="bigger horizontal">
+            <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horraires }}</div>
         </div>
-        <div id="age" class="highlight">
-            Age:4-10ans
+        <div id="age" class="bigger horizontal">
+            <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age }}</div>
         </div>
     </div>
     <img src="/img/Arbre01.jpg" width="250px" height="250px" class="image">
-    <div id="description" class="highlight">
-        <div class="bigger">
+    <div id="description">
+        <div class="bigger highlight">
             Déscription:
         </div>
         <p class="description">
-            Formidable espace, très propre et surveillé.
+            {{ aireDeJeux.description }}
         </p>
     </div>
-    <div id="comentaires" class="highlight">
-        <div class="bigger">
+    <div id="comentaires">
+        <div class="bigger highlight">
             Comentaire(s):
         </div>
+        {% for commentaire in listCommentaires %}
         <p class="comentaire">
-            Formidable espace, très propre et surveillé.
+            {{ commentaire.commentaire }}
         </p>
+        {% endfor %}
+
     </div>
 </div>
 {% endblock %}

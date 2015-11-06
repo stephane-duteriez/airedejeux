@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <link href="static/style.css" rel="stylesheet" type="text/css">
+    <link href="/static/style.css" rel="stylesheet" type="text/css">
     <meta name="viewport" content="width=device-width">
     <title></title>
     {% block head %}
@@ -11,12 +11,11 @@
 
 <body >
     <div id="main">
-        <div id="header">Aire De Jeux</div>
+        <div id="header" class="highlight">Aire De Jeux</div>
         <div class="menu">
             <ul style="width:100%" class="menu">
-                <li class="menu"><a href="/" class="menu">Home</a></li>
-                <li class="menu"><a href="/creerAireDeJeux" class="menu">Ajouter</a></li>
-                <li class="menu"><a href="/chercher" class="menu">Chercher</a></li>
+                <li class="menu" onclick="location.href='/'" style="cursor: pointer">Home</li>
+                <li class="menu" onclick="location.href='/creerAireDeJeux'" style="cursor: pointer">Ajouter</li>
             </ul><br>
         </div>
         {% block content %}
