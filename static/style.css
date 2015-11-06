@@ -25,14 +25,6 @@
     margin-bottom : 20px;
 }
 
-#title {
-    display:flex;
-    justify-content:center;
-    font-size:2em;
-    margin-bottom: 10px;
-    flex-flow: row wrap;
-}
-
 div.menu{
     margin-left: auto;
     margin-right: auto;
@@ -62,9 +54,39 @@ li.menu {
     box-shadow: 5px 5px 2px grey;
     }
 
+li.menu:hover {
+    background-color: #1565c0;
+    }
+
+#title {
+    display:flex;
+    text-align:center;
+    font-size:2em;
+    margin-bottom: 10px;
+    flex-direction: column;
+}
+
 #ville {
     padding-right:5px;
-    width : inherit;
+    font-size: 0.8em;
+    justify-content:center;
+    max-width: 80%;
+    }
+
+#hints {
+    display : flex;
+    flex-flow: row wrap
+    }
+
+.hint {
+    margin: 2px;
+    font-size: 0.8em;
+    background-color: #42a5f5;
+    flex: 1 1 100px;
+    }
+
+.hint:hover {
+    background-color: #64b5f6;
     }
 
 #name {
@@ -150,16 +172,6 @@ li.menu {
     height : 100px;
     }
 
-#hints {
-    display : flex;
-    flex-direction : column;
-    }
-
-.hint {
-    margin: 2px;
-    font-size: 0.8em;
-    }
-
 #map {
     width: 300px;
     height: 200px;
@@ -186,7 +198,7 @@ li.menu {
     }
 
 .aire-de-jeux:hover {
-    background-color: grey;
+    background-color: #1565c0;
     }
 
 #list-aire-de-jeux {
