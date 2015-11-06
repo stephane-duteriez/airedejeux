@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block head %}
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+{% endblock %}
+{% block content %}
+    <form action="/modifier/{{ aireDeJeux.indice|e }}" enctype="multipart/form-data" method="post">
+        <input type="submit" value="Submit">
+        <div class="contenant">
+            <div class="contenue">
+                Nom de l'aire de jeux : <br>
+                <div><input type="text" name="nom_aire_de_jeux" id="nom" value="{{aireDeJeux.nom|e}}" required></div>
+                Commune : <br>
+                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville_input" value="{{ville.nom|e}}"></div>
+                CP : <br>
+                <div><input type="text" name="CP" id="CP" value="{{ville.CP|e}}" readonly></div>
+                coordonnees :
+                <div>
+                    latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat }}"><br>
+                    longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon }}">
+                </div>
+                score : <br>
+                <div><input type="number" name="score" value="{{ aireDeJeux.score|e }}"></div>
+                horaire :
+                <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e}}"></div>
+                tranche d'age:
+                <div><input type="text" name="age" value="{{aireDeJeux.age|e}}"></div>
+            </div>
+            <div class="contenue">
+                <div id="map"></div>
+            </div>
+        </div>
+        accéssibilité :
+        <div><textarea name="acces" id="acces" >"{{ aireDeJeux.accesibilite|e }}"</textarea></div>
+        activités : Entrez une liste des activités séparées par une virgule<br>
+        <div><textarea name="activites" class="box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
+        description : <br>
+        <div><textarea name="description" class="box">"{{ aireDeJeux.description|e }}"</textarea></div>
+        commentaire : <br>
+        <div><textarea name="commentaire" class="box"></textarea></div>
+        <input type="submit" value="Submit">
+    </form>
+    <script>
+    initialize( {{aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }} );
+    function initialize(lat, lon) {
+        var mapCanvas = document.getElementById("map");
+        var myLatLng = {lat: lat, lng: lon};
+        var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
+        { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+        var styledMap = new google.maps.StyledMapType(styles,
+    {name: "Styled Map"});
+
+        var mapOption = {
+            center: myLatLng,
+            zoom: 12,
+            mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
+        }
+        var map = new google.maps.Map(mapCanvas, mapOption);
+        map.mapTypes.set('map_style', styledMap);
+        map.setMapTypeId('map_style');
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            title: 'Hello World!',
+            draggable: true,
+        });
+        marker.addListener('dragend', function() {
+            map.setCenter(marker.getPosition());
+            document.getElementById("lat").value = marker.getPosition().lat();
+            document.getElementById("lng").value = marker.getPosition().lng();
+        });
+        google.maps.event.addListener(map, 'dblclick', function(event) {
+            placeMarker(marker, event.latLng);
+        });
+    }
+    function placeMarker(marker, location) {
+        marker.setPosition(location);
+        document.getElementById("lat").value = marker.getPosition().lat();
+        document.getElementById("lng").value = marker.getPosition().lng();
+    }
+    </script>
+
+{% endblock %}

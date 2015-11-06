@@ -2,10 +2,11 @@
 {% block head %}
     <script src="https://maps.googleapis.com/maps/api/js"></script>
 {% endblock %}
+
 {% block content %}
 <div id="title">
     <div>Commune :</div>
-    <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
+    <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville_input" value=""></div>
     <div id="hints"></div>
     <div><input type="hidden" name="key_ville" id="key_ville" value="" required></div>
 </div>
@@ -81,12 +82,19 @@
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
+         var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
+        { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+        var styledMap = new google.maps.StyledMapType(styles,
+    {name: "Styled Map"});
+
         var mapOption = {
             center: myLatLng,
             zoom: 12,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
         }
         var map = new google.maps.Map(mapCanvas, mapOption);
+        map.mapTypes.set('map_style', styledMap);
+        map.setMapTypeId('map_style');
         return map;
     }
     function addMarker(location, map, i) {

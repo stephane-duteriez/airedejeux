@@ -1,9 +1,15 @@
 {% extends "base.html" %}
+{% block head %}
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+{% endblock %}
+{% block menu %}
+    <li class="menu" onclick="location.href='/modifier/{{ aireDeJeux.indice|e }}'" style="cursor: pointer">Modifier</li>
+{% endblock %}
 {% block content %}
 <div id="title" class="highlight">
-    <div id="ville">{{ ville }}</div>
+    <div id="ville">{{ ville|e }}</div>
     <div>     -    </div>
-    <div id="name">{{ aireDeJeux.nom }}</div>
+    <div id="name">{{ aireDeJeux.nom|e }}</div>
 </div>
 <div id="content">
     <div id="stars">
@@ -23,45 +29,75 @@
             <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="grey" />
         </svg>
     </div>
-    <div id="detail">
-        <div id="box-activitees">
-            <div id="title-activitee" class="bigger highlight">Comoditées:</div>
-            <div id="list-activitees">
-                {% for activite in aireDeJeux.activites %}
-                    <div class="activitee">{{ activite }}</div>
-                {% endfor %}
+    <div class="contenant">
+        <div class="contenue">
+            <div id="box-activitees">
+                <div id="title-activitee" class="bigger highlight">Comoditées:</div>
+                <div id="list-activitees">
+                    {% for activite in aireDeJeux.activites %}
+                        <div class="activitee">{{ activite|e }}</div>
+                    {% endfor %}
+                </div>
             </div>
+            <div id="box-acces">
+                <div id="title-accesibilite" class="bigger highlight">Accesibilite</div>
+                <div id="description-accesibilte">{{ aireDeJeux.accesibilite|e }}</div>
+            </div>
+            <div id="horraire" class="bigger horizontal">
+                <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e }}</div>
+            </div>
+            <div id="age" class="bigger horizontal">
+                <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e }}</div>
+            </div>
+            <div id="description">
+            <div class="bigger highlight">
+                Déscription:
+            </div>
+            <p class="description">
+                {{ aireDeJeux.description|e }}
+            </p>
+    </div>
         </div>
-        <div id="box-acces">
-            <div id="title-accesibilite" class="bigger highlight">Accesibilite</div>
-            <div id="description-accesibilte">{{ aireDeJeux.accesibilite }}</div>
-        </div>
-        <div id="horraire" class="bigger horizontal">
-            <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horraires }}</div>
-        </div>
-        <div id="age" class="bigger horizontal">
-            <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age }}</div>
+        <div class="contenue">
+            <div id="map"></div>
+            <div><img src="/img/Arbre01.jpg" width="300px" height="300px" class="image"></div>
         </div>
     </div>
-    <img src="/img/Arbre01.jpg" width="250px" height="250px" class="image">
-    <div id="description">
-        <div class="bigger highlight">
-            Déscription:
-        </div>
-        <p class="description">
-            {{ aireDeJeux.description }}
-        </p>
-    </div>
+
+
     <div id="comentaires">
         <div class="bigger highlight">
             Comentaire(s):
         </div>
         {% for commentaire in listCommentaires %}
         <p class="comentaire">
-            {{ commentaire.commentaire }}
+            {{ commentaire.commentaire|e }}
         </p>
         {% endfor %}
-
     </div>
 </div>
+<script>
+    function initialize(lat, lon) {
+        var mapCanvas = document.getElementById("map");
+        var myLatLng = {lat: lat, lng: lon};
+        var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
+        { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+        var styledMap = new google.maps.StyledMapType(styles,
+    {name: "Styled Map"});
+
+        var mapOption = {
+            center: myLatLng,
+            zoom: 15,
+            mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
+        }
+        var map = new google.maps.Map(mapCanvas, mapOption);
+        map.mapTypes.set('map_style', styledMap);
+        map.setMapTypeId('map_style');
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+        });
+        }
+    initialize({{ aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }})
+</script>
 {% endblock %}

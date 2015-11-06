@@ -66,7 +66,9 @@ li.menu:hover {
     flex-direction: column;
 }
 
-#ville {
+
+
+#ville_input {
     padding-right:5px;
     font-size: 0.8em;
     justify-content:center;
@@ -119,10 +121,6 @@ li.menu:hover {
     height : 4em;
     }
 
-#detail{
-    flex:1 1 300px;
-    }
-
 #box-activitees {
     flex:1 1 100%;
     }
@@ -146,7 +144,8 @@ li.menu:hover {
     }
 
 .image{
-    margin:auto;
+    margin-left:auto;
+    margin-right:auto;
     }
 
 
@@ -211,6 +210,7 @@ li.menu:hover {
     margin-left: auto;
     margin-right: auto;
     }
+
 .horizontal {
     display: flex;
     width: 100%;

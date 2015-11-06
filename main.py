@@ -1,4 +1,3 @@
-#TODO filtrer les donnee pour eviter les injections HTML
 #TODO permettre la modification depuis la page Detail
 #TODO avoir l'option de s'enregistrer avec un compt gmail
 import webapp2
@@ -13,8 +12,10 @@ from dbClass import *
 template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
 
+
 def hash_str(s):
         return hashlib.md5(s.encode('utf-8')).hexdigest()
+
 
 class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
@@ -30,8 +31,6 @@ class Handler(webapp2.RequestHandler):
 
 
 class AireDeJeuxHandler(Handler):
-    #TODO inserer la carte dans le modele
-    #TODO ajouter les commentaires
     def render_main(self, aire_de_jeux, ville, listCommentaires):
         self.render("detail.html", aireDeJeux=aire_de_jeux, ville=ville, listCommentaires=listCommentaires)
 
@@ -45,7 +44,6 @@ class AireDeJeuxHandler(Handler):
 
 
 class CreerAireDeJeuxHandler(Handler):
-    #TODO cacher longitude et latitude
     #TODO mettre de filtre pour valider les donnee avant de les envoyer vers la base de donnee
     #TODO permettre l'ajout de photos
     def render_main(self):
@@ -105,19 +103,15 @@ class AjouterHandler(webapp2.RequestHandler):
             nouvelleAireDeJeux.description = description
         if age:
             nouvelleAireDeJeux.age = age
-        keyAireDeJeux = nouvelleAireDeJeux.put()
         if commentaire:
             nouveauCommentaire = Commentaire(aireDeJeux=indice, commentaire=commentaire)
             nouveauCommentaire.put()
-
+        nouvelleAireDeJeux.put()
         self.redirect("/creerAireDeJeux")
 
 
 class ChercherHandler(Handler):
-    #TODO afficher un marker pour chaque aire de jeux sur la carte
-    #TODO numeroter les markers sur la cartes
     #TODO mettre un lien sur chaque marqueur pour selecitioner l'aire de jeux en question
-    #TODO cliquer sur une aire de jeux pour ouvrire la fenetre detaile
     def render_main(self):
         self.render("chercher.html")
 
@@ -129,7 +123,7 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
     def get(self):
         urlsafeKeyVille = self.request.get("keyVille")
         keyVille = ndb.Key(urlsafe=urlsafeKeyVille)
-        queryAireDeJeux = AireDeJeux.query(AireDeJeux.ville == keyVille)
+        queryAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.ville == keyVille, AireDeJeux.archive == False))
         listAireDeJeux = queryAireDeJeux.fetch(10)
         data = []
         for aireDeJeux in listAireDeJeux:
@@ -141,6 +135,53 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(data))
 
 
+class ModifierHandler(Handler):
+    def render_main(self, aireDeJeux, ville):
+        self.render("modifier.html", aireDeJeux=aireDeJeux, ville=ville)
+
+    def get(self, indice):
+        dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
+        ville = dbAireDeJeux.ville.get()
+        self.render_main(dbAireDeJeux, ville)
+
+    def post(self, indice):
+        dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
+        ville = dbAireDeJeux.ville.get()
+        nomAireDeJeux = self.request.get('nom_aire_de_jeux')
+        keyVille = self.request.get('key_ville')
+        latitude = self.request.get('lat')
+        longitude = self.request.get('lng')
+        score = self.request.get('score')
+        horaire = self.request.get('horaire')
+        accessibilite = self.request.get('acces')
+        textActivites = self.request.get('activites')
+        description = self.request.get('description')
+        age = self.request.get('age')
+        commentaire = self.request.get('commentaire')
+        nouvelleAireDeJeux = AireDeJeux(nom=nomAireDeJeux, ville=ville.key, indice=indice)
+
+        if latitude and longitude:
+            nouvelleAireDeJeux.coordonnees = ndb.GeoPt(float(latitude), float(longitude))
+        if score and score != '"None"':
+            nouvelleAireDeJeux.score = int(score)
+        if accessibilite and accessibilite != '"None"':
+            nouvelleAireDeJeux.accesibilite = accessibilite
+        if horaire and horaire != '"None"':
+            nouvelleAireDeJeux.horaires = horaire
+        if textActivites and textActivites != '"None"':
+            listActivites = [activite.strip() for activite in textActivites.split(",")]
+            nouvelleAireDeJeux.activites = listActivites
+        if description and description != '"None"':
+            nouvelleAireDeJeux.description = description
+        if age and age != '"None"':
+            nouvelleAireDeJeux.age = age
+        if commentaire:
+            nouveauCommentaire = Commentaire(aireDeJeux=indice, commentaire=commentaire)
+            nouveauCommentaire.put()
+        nouvelleAireDeJeux.put()
+        dbAireDeJeux.archive = True
+        dbAireDeJeux.put()
+        self.redirect("/")
 
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
@@ -148,5 +189,6 @@ app = webapp2.WSGIApplication([
     ('/ajouterAireDeJeux', AjouterHandler),
     ('/chercher', ChercherHandler),
     ('/listAireDeJeux', ListAireDeJeuxHandler),
-    ('/airedejeux/([^/]+)?', AireDeJeuxHandler)
+    ('/airedejeux/([^/]+)?', AireDeJeuxHandler),
+    ('/modifier/([^/]+)?', ModifierHandler)
 ], debug=True)

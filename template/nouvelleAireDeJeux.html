@@ -10,15 +10,14 @@
                 Nom de l'aire de jeux : <br>
                 <div><input type="text" name="nom_aire_de_jeux" id="nom" value="" required></div>
                 Commune : <br>
-                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville" value=""></div>
+                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville_input" value=""></div>
                 <div id="hints"></div>
                 <div><input type="hidden" name="key_ville" id="key_ville" value="" required></div>
                 CP : <br>
                 <div><input type="text" name="CP" id="CP" value="" readonly></div>
-                coordonnees :
-                <div>
-                    latitude: <input type="text" name="lat" id="lat" readonly ><br>
-                    longitude: <input type="text" name="lng" id="lng" readonly>
+                <div hidden>
+                    latitude: <input type="hidden" name="lat" id="lat" readonly ><br>
+                    longitude: <input type="hidden" name="lng" id="lng" readonly>
                 </div>
                 score : <br>
                 <div><input type="number" name="score"></div>
@@ -72,7 +71,7 @@
         }
     }
     function hint(nom_ville, CP, key_ville, lat, lon) {
-        document.getElementById("ville").value = nom_ville;
+        document.getElementById("ville_input").value = nom_ville;
         document.getElementById("CP").value = CP;
         document.getElementById("key_ville").value = key_ville;
         initialize(lat, lon);
@@ -81,18 +80,25 @@
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
+        var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
+        { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+        var styledMap = new google.maps.StyledMapType(styles,
+    {name: "Styled Map"});
+
         var mapOption = {
             center: myLatLng,
             zoom: 12,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
         }
         var map = new google.maps.Map(mapCanvas, mapOption);
+        map.mapTypes.set('map_style', styledMap);
+        map.setMapTypeId('map_style');
         var marker = new google.maps.Marker({
             position: myLatLng,
             map: map,
             title: 'Hello World!',
             draggable: true,
-        })
+        });
         marker.addListener('dragend', function() {
             map.setCenter(marker.getPosition());
             document.getElementById("lat").value = marker.getPosition().lat();
@@ -107,7 +113,7 @@
         document.getElementById("lat").value = marker.getPosition().lat();
         document.getElementById("lng").value = marker.getPosition().lng();
     }
-    var inputVille = document.getElementById("ville");
+    var inputVille = document.getElementById("ville_input");
     inputVille.addEventListener("keydown", function(event) {
         if (event.keyCode == "40") {
             document.getElementById("hint_0").focus();
