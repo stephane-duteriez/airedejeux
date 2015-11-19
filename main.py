@@ -1,11 +1,21 @@
-#TODO permettre la modification depuis la page Detail
-#TODO avoir l'option de s'enregistrer avec un compt gmail
+# -*- coding: utf-8 -*-
+# TODO permettre la modification depuis la page Detail
+# TODO avoir l'option de s'enregistrer avec un compt gmail
+# TODO nettoyer les codes postales avec une seule entre par ville
+# TODO ajout d'un commentaire directement depuis la page detail
+# TODO changer l'affichage des ville "CARVIN (62)" est abandonner le CP
+# TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
+# TODO recherche de place de jeux à proximité en dehors de la ville
 import webapp2
 import jinja2
 import os
 import json
 import logging
-import hashlib
+
+
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
+from google.appengine.api.images import get_serving_url
 
 from dbClass import *
 
@@ -13,11 +23,13 @@ template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
 
 
-def hash_str(s):
-        return hashlib.md5(s.encode('utf-8')).hexdigest()
+# utilisé pour créer un indice aléatoire pour chaque indice
+def random_str():
+    return os.urandom(16).encode('hex')
 
 
 class Handler(webapp2.RequestHandler):
+    # Handler modifier pour intégrer la prise ne charge de jinja
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
@@ -31,26 +43,41 @@ class Handler(webapp2.RequestHandler):
 
 
 class AireDeJeuxHandler(Handler):
-    def render_main(self, aire_de_jeux, ville, listCommentaires):
-        self.render("detail.html", aireDeJeux=aire_de_jeux, ville=ville, listCommentaires=listCommentaires)
+    def render_main(self, aire_de_jeux, ville, listCommentaires, listImage):
+        self.render("detail.html", aireDeJeux=aire_de_jeux, ville=ville, listCommentaires=listCommentaires, listImage=listImage)
 
     def get(self, indice):
         dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
         ville = dbAireDeJeux.ville.get()
         queryCommentaire = Commentaire.query(Commentaire.aireDeJeux == dbAireDeJeux.indice)
         listCommentaires = queryCommentaire.fetch(10)
-        logging.info(listCommentaires)
-        self.render_main(dbAireDeJeux, ville.nom, listCommentaires)
+        queryPhotos = Photo.query(Photo.indice_aireDeJeux == dbAireDeJeux.indice)
+        listImage = queryPhotos.fetch(10)
+        self.render_main(dbAireDeJeux, ville, listCommentaires, listImage)
 
 
 class CreerAireDeJeuxHandler(Handler):
-    #TODO mettre de filtre pour valider les donnee avant de les envoyer vers la base de donnee
-    #TODO permettre l'ajout de photos
-    def render_main(self):
-        self.render("nouvelleAireDeJeux.html")
+    # TODO mettre de filtre pour valider les donnee avant de les envoyer vers la base de donnee
+    # TODO changer le fonctionement du bouton Ajouter pour vérifier que l'utilisateur à submit avant de quiter la page
+    def render_main(self, indice="",  dataVille=""):
+        self.render("nouvelleAireDeJeux.html", new_indice=indice, ville=dataVille)
 
     def get(self):
-        self.render_main()
+        urlsafeKeyVille = self.request.get("keyVille")
+
+        existe = True
+        while existe:
+            indice = random_str()
+            alreadyExist = AireDeJeux.query(AireDeJeux.indice == indice)
+            if alreadyExist.count() == 0:
+                existe = False
+
+        if urlsafeKeyVille:
+            keyVille = ndb.Key(urlsafe=urlsafeKeyVille)
+            ville = keyVille.get()
+            self.render_main(indice, ville.urlsafe())
+        else:
+            self.render_main(indice)
 
 
 class AjouterHandler(webapp2.RequestHandler):
@@ -77,15 +104,7 @@ class AjouterHandler(webapp2.RequestHandler):
         description = self.request.get('description')
         age = self.request.get('age')
         commentaire = self.request.get('commentaire')
-
-        existe = True
-        indice = hash_str(keyVille + nomAireDeJeux)
-        while existe:
-            alreadyExist = AireDeJeux.query(AireDeJeux.indice == indice)
-            if alreadyExist.count() == 0:
-                existe = False
-            indice = hash_str(indice)
-
+        indice = self.request.get('indice')
         nouvelleAireDeJeux = AireDeJeux(nom=nomAireDeJeux, ville=ndb.Key(urlsafe=keyVille), indice=indice)
 
         if latitude and longitude:
@@ -183,6 +202,44 @@ class ModifierHandler(Handler):
         dbAireDeJeux.put()
         self.redirect("/")
 
+
+class PhotoUploadFormHandler(webapp2.RequestHandler):
+    def get(self):
+        indice = self.request.get('indice')
+        upload_url = blobstore.create_upload_url('/upload_photo')
+        logging.info('PhotoUploadForm, upload_url:' + upload_url)
+        # To upload files to the blobstore, the request method must be "POST"
+        # and enctype must be set to "multipart/form-data".
+        self.response.out.write("""
+            <html><body>
+            <form action="{0}" method="POST" enctype="multipart/form-data">
+              Upload File: <input type="file" name="file"><br>
+              <input type="submit" name="submit" value="Submit">
+              <input type="text" name="indice" value="{1}" hidden>
+            </form>
+            </body></html>""".format(upload_url, indice))
+
+
+class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self):
+        indice = self.request.get('indice')
+        try:
+            upload = self.get_uploads()[0]
+            photo = Photo(indice_aireDeJeux=indice, blobKey=upload.key(), photo_url=get_serving_url(upload.key()))
+            photo.put()
+            self.redirect('/add_photo?indice=' + indice)
+        except:
+            self.error(500)
+
+
+class ViewPhotoHandler(blobstore_handlers.BlobstoreDownloadHandler):
+    def get(self, photo_key):
+        if not blobstore.get(photo_key):
+            self.error(404)
+        else:
+            self.send_blob(photo_key)
+
+
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
     ('/creerAireDeJeux', CreerAireDeJeuxHandler),
@@ -190,5 +247,8 @@ app = webapp2.WSGIApplication([
     ('/chercher', ChercherHandler),
     ('/listAireDeJeux', ListAireDeJeuxHandler),
     ('/airedejeux/([^/]+)?', AireDeJeuxHandler),
-    ('/modifier/([^/]+)?', ModifierHandler)
+    ('/modifier/([^/]+)?', ModifierHandler),
+    ('/add_photo', PhotoUploadFormHandler),
+    ('/view_photo/([^/]+)?', ViewPhotoHandler),
+    ('/upload_photo', PhotoUploadHandler)
 ], debug=True)

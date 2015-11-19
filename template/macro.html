@@ -1,0 +1,39 @@
+{% macro photo_slide(listImage) -%}
+    <div class="image">
+        <svg height="22" width="18" class="right" onclick="previousPhoto()" id="previous_photo"
+             style="visibility: hidden">
+            <polygon points="17,1 1,11 17,21" style="fill:white;stroke:black;stroke-width:1" />
+        </svg>
+        <img src="{{ listImage[0].photo_url if listImage }}" width="300px" height="200px" class="image" id="photo">
+        <svg height="22" width="18" class="right" onclick="nextPhoto()" id="next_photo"
+            style="visibility: hidden">
+            <polygon points="1,1 17,11 1,21" style="fill:white;stroke:black;stroke-width:1" />
+        </svg>
+    </div>
+    <script>
+    var index_photo = 0;
+    var listUrlImage = [];
+    {% for image in listImage %}
+        listUrlImage.push("{{ image.photo_url }}");
+    {% endfor %}
+    {% if listImage|length > 1 %}
+        document.getElementById("next_photo").style.visibility = "visible";
+    {% endif %}
+    function nextPhoto() {
+        index_photo += 1;
+        document.getElementById("photo").src=listUrlImage[index_photo];
+        if (index_photo == listUrlImage.length - 1 ) {
+            document.getElementById("next_photo").style.visibility = "hidden";
+        }
+        document.getElementById("previous_photo").style.visibility = "visible";
+    }
+    function previousPhoto() {
+        index_photo -= 1;
+        document.getElementById("photo").src=listUrlImage[index_photo];
+        if (index_photo == 0) {
+            document.getElementById("previous_photo").style.visibility = "hidden";
+        }
+        document.getElementById("next_photo").style.visibility = "visible";
+    }
+    </script>
+{%- endmacro  %}

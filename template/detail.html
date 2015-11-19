@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macro.html" as macros %}
 {% block head %}
     <script src="https://maps.googleapis.com/maps/api/js"></script>
 {% endblock %}
@@ -7,27 +8,20 @@
 {% endblock %}
 {% block content %}
 <div id="title" class="highlight">
-    <div id="ville">{{ ville|e }}</div>
-    <div>     -    </div>
+    <div id="ville">{{ ville.nom|e }}</div>
     <div id="name">{{ aireDeJeux.nom|e }}</div>
 </div>
 <div id="content">
     <div id="stars">
+        {% for i in range(5) %}
         <svg width="22" height="22" class="stars">
-            <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />
+            {% if aireDeJeux.score and aireDeJeux.score > i %}
+                <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />{{i}}
+            {% else %}
+                <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="grey" />{{i}}
+            {% endif %}
         </svg>
-        <svg width="22" height="22" class="stars">
-            <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />
-        </svg>
-        <svg width="22" height="22" class="stars">
-            <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />
-        </svg>
-        <svg width="22" height="22" class="stars">
-            <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="grey" />
-        </svg>
-        <svg width="22" height="22" class="stars">
-            <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="grey" />
-        </svg>
+        {% endfor %}
     </div>
     <div class="contenant">
         <div class="contenue">
@@ -60,23 +54,27 @@
         </div>
         <div class="contenue">
             <div id="map"></div>
-            <div><img src="/img/Arbre01.jpg" width="300px" height="300px" class="image"></div>
+            {% if listImage %}
+                {{ macros.photo_slide(listImage) }}
+            {% endif %}
         </div>
     </div>
 
-
+    {% if listCommentaire %}
     <div id="comentaires">
         <div class="bigger highlight">
-            Comentaire(s):
+            Commentaire(s):
         </div>
         {% for commentaire in listCommentaires %}
-        <p class="comentaire">
+        <p class="commentaire">
             {{ commentaire.commentaire|e }}
         </p>
         {% endfor %}
     </div>
+    {% endif %}
 </div>
 <script>
+
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
@@ -97,7 +95,9 @@
             position: myLatLng,
             map: map,
         });
-        }
-    initialize({{ aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }})
+    }
+    initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else ville.coordonnees.lat}},
+        {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else ville.coordonnees.lon}});
+
 </script>
 {% endblock %}

@@ -19,28 +19,43 @@
                     longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon }}">
                 </div>
                 score : <br>
-                <div><input type="number" name="score" value="{{ aireDeJeux.score|e }}"></div>
+                <div id="stars">
+                {% for i in range(5) %}
+                    <svg width="22" height="22" class="stars" onclick="newScore({{ i }})">
+                        {% if aireDeJeux.score and aireDeJeux.score > i %}
+                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />{{i}}
+                        {% else %}
+                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="grey" />{{i}}
+                        {% endif %}
+                    </svg>
+                {% endfor %}
+                </div>
+                <div><input type="number" name="score" id="score" value=0 hidden></div>
                 horaire :
-                <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e}}"></div>
+                <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
                 tranche d'age:
-                <div><input type="text" name="age" value="{{aireDeJeux.age|e}}"></div>
+                <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age != 'None' }}"></div>
             </div>
             <div class="contenue">
                 <div id="map"></div>
             </div>
         </div>
         accéssibilité :
-        <div><textarea name="acces" id="acces" >"{{ aireDeJeux.accesibilite|e }}"</textarea></div>
+        <div><textarea name="acces" id="acces" >{{ aireDeJeux.accesibilite|e if aireDeJeux.accesibilite|e != "None" }}</textarea></div>
         activités : Entrez une liste des activités séparées par une virgule<br>
         <div><textarea name="activites" class="box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
         description : <br>
-        <div><textarea name="description" class="box">"{{ aireDeJeux.description|e }}"</textarea></div>
+        <div><textarea name="description" class="box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
         commentaire : <br>
         <div><textarea name="commentaire" class="box"></textarea></div>
         <input type="submit" value="Submit">
     </form>
     <script>
-    initialize( {{aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }} );
+    {% if aireDeJeux.coordonnees.lat %}
+        initialize( {{aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }} );
+    {% else %}
+        initialize( {{ville.coordonnees.lat }}, {{ ville.coordonnees.lon }} );
+    {% endif %}
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
@@ -76,6 +91,18 @@
         marker.setPosition(location);
         document.getElementById("lat").value = marker.getPosition().lat();
         document.getElementById("lng").value = marker.getPosition().lng();
+    }
+    function newScore(score) {
+        document.getElementById("score").value=score+1;
+        for(i=0; i<5 ; i++ ){
+
+            if(i<=score) {
+                document.getElementById("star_" + i.toString()).setAttribute("fill","yellow");
+
+            } else {
+                document.getElementById("star_" + i.toString()).setAttribute("fill","grey");
+            }
+        }
     }
     </script>
 

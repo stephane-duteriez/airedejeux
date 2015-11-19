@@ -1,5 +1,4 @@
-__author__ = 'Rachel&Stephane'
-
+# -*- coding: utf-8 -*-
 import webapp2
 
 from google.appengine.ext import blobstore
@@ -7,6 +6,7 @@ from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
 from dbClass import Commune
+from google.appengine.datastore.datastore_query import Cursor
 
 
 
@@ -19,6 +19,7 @@ class MainHandler(webapp2.RequestHandler):
         Upload File:
         <input type="file" name="file"> <br>
         <input type="submit" name="submit" value="Submit">
+        <a href='/admin/netoyerDoublon'>Netoyer es ville en doubles</a>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -33,6 +34,11 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         #blobstore.delete(blob_info.key())  # optional: delete file after import
         self.redirect("/")
 
+
+class netoyerDoublonHandler(webapp2.RequestHandler):
+    def get(self):
+        taskqueue.add(url='/admin/process_doublon')
+        self.redirect("/admin/uploadform")
 
 class processCsv(webapp2.RequestHandler):
     def post(self):
@@ -60,8 +66,31 @@ class processCsv(webapp2.RequestHandler):
                 break
             i += 1
 
+
+class suprimeDoubleVille(webapp2.RequestHandler):
+    def post(self):
+        max_data_access = 10000
+        curs = Cursor(urlsafe=self.request.get('cursor'))
+        if curs :
+            queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access, start_cursor=curs)
+        else:
+            queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access)
+
+        for ville in queryVille:
+            query_same = Commune.query(ndb.AND(ndb.AND(Commune.nom == ville.nom, Commune.departement == ville.departement),
+                                               Commune.CP != ville.CP))
+            for doublon in query_same:
+                doublon.key.delete()
+
+        if more:
+            taskqueue.add(url='/admin/process_doublon', params={'cursor': next_cursor.urlsafe()},
+                              countdown=86400)
+
+
 app = webapp2.WSGIApplication([
     ('/admin/uploadform', MainHandler),
     ('/admin/upload', UploadHandler),
-    ('/admin/process_csv', processCsv)
+    ('/admin/process_csv', processCsv),
+    ('/admin/process_doublon', suprimeDoubleVille),
+    ('/admin/netoyerDoublon', netoyerDoublonHandler)
 ], debug=True)
