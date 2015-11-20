@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form id="uploadPhoto" action="{{ upload_url}}" method="POST" enctype="multipart/form-data">
+    Upload File: <input type="file" name="file" onchange="mySubmit()"><br>
+    <input type="text" name="indice" value="{{ indice }}" hidden>
+</form>
+</body>
+<script>
+function mySubmit() {
+    document.getElementById("uploadPhoto").submit();
+}
+</script>
+</html>

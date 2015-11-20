@@ -137,11 +137,6 @@ li.menu:hover {
     margin:1px 5px;
     }
 
-.image{
-    margin-left:auto;
-    margin-right:auto;
-    }
-
 
 #description{
     width:100%;
@@ -212,7 +207,18 @@ li.menu:hover {
 .inside {
     flex: 1 1 50px;
     }
-.image {
+.slide {
     display:flex;
     align-items:center;
+    max-width:100%;
+    }
+.image{
+    margin-left:auto;
+    margin-right:auto;
+    width:90%;
+    }
+#iframAddPhoto {
+    border: none;
+    width: 100%;
+    height: 40px;
     }

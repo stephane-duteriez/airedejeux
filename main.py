@@ -6,6 +6,7 @@
 # TODO changer l'affichage des ville "CARVIN (62)" est abandonner le CP
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
+# TODO ajouter des photos depuis detail et modifier
 import webapp2
 import jinja2
 import os
@@ -80,7 +81,7 @@ class CreerAireDeJeuxHandler(Handler):
             self.render_main(indice)
 
 
-class AjouterHandler(webapp2.RequestHandler):
+class ListeVilleHandler(webapp2.RequestHandler):
     def get(self):
         q = (self.request.GET['q']).title()
         villes = Commune.query(ndb.AND(Commune.nom >= q, Commune.nom <= q + "z"))
@@ -92,6 +93,21 @@ class AjouterHandler(webapp2.RequestHandler):
                                   "lat": ville.coordonnees.lat, "lon": ville.coordonnees.lon})
         self.response.write(json.dumps(data))
 
+
+class ListeImageHandler(webapp2.RequestHandler):
+    def get(self):
+        indice = self.request.GET['q']
+        logging.info(indice)
+        queryPhotos = Photo.query(Photo.indice_aireDeJeux == indice)
+        listImage = queryPhotos.fetch(10)
+        logging.info(listImage)
+        data = []
+        for image in listImage:
+            data.append(image.photo_url)
+        self.response.write(json.dumps(data))
+
+
+class AjouterHandler(webapp2.RequestHandler):
     def post(self):
         nomAireDeJeux = self.request.get('nom_aire_de_jeux')
         keyVille = self.request.get('key_ville')
@@ -155,13 +171,15 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
 
 
 class ModifierHandler(Handler):
-    def render_main(self, aireDeJeux, ville):
-        self.render("modifier.html", aireDeJeux=aireDeJeux, ville=ville)
+    def render_main(self, aireDeJeux, ville, listImage):
+        self.render("modifier.html", aireDeJeux=aireDeJeux, ville=ville, listImage=listImage)
 
     def get(self, indice):
         dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
         ville = dbAireDeJeux.ville.get()
-        self.render_main(dbAireDeJeux, ville)
+        queryPhotos = Photo.query(Photo.indice_aireDeJeux == dbAireDeJeux.indice)
+        listImage = queryPhotos.fetch(10)
+        self.render_main(dbAireDeJeux, ville, listImage)
 
     def post(self, indice):
         dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
@@ -203,21 +221,17 @@ class ModifierHandler(Handler):
         self.redirect("/")
 
 
-class PhotoUploadFormHandler(webapp2.RequestHandler):
+class PhotoUploadFormHandler(Handler):
+    def render_main(self, upload_url, indice):
+        self.render("uploadPhoto.html", upload_url=upload_url, indice=indice)
+
     def get(self):
         indice = self.request.get('indice')
         upload_url = blobstore.create_upload_url('/upload_photo')
         logging.info('PhotoUploadForm, upload_url:' + upload_url)
         # To upload files to the blobstore, the request method must be "POST"
         # and enctype must be set to "multipart/form-data".
-        self.response.out.write("""
-            <html><body>
-            <form action="{0}" method="POST" enctype="multipart/form-data">
-              Upload File: <input type="file" name="file"><br>
-              <input type="submit" name="submit" value="Submit">
-              <input type="text" name="indice" value="{1}" hidden>
-            </form>
-            </body></html>""".format(upload_url, indice))
+        self.render_main(upload_url, indice)
 
 
 class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
@@ -245,10 +259,12 @@ app = webapp2.WSGIApplication([
     ('/creerAireDeJeux', CreerAireDeJeuxHandler),
     ('/ajouterAireDeJeux', AjouterHandler),
     ('/chercher', ChercherHandler),
+    ('/listeVille', ListeVilleHandler),
     ('/listAireDeJeux', ListAireDeJeuxHandler),
     ('/airedejeux/([^/]+)?', AireDeJeuxHandler),
     ('/modifier/([^/]+)?', ModifierHandler),
     ('/add_photo', PhotoUploadFormHandler),
     ('/view_photo/([^/]+)?', ViewPhotoHandler),
-    ('/upload_photo', PhotoUploadHandler)
+    ('/upload_photo', PhotoUploadHandler),
+    ('/listeImage', ListeImageHandler)
 ], debug=True)

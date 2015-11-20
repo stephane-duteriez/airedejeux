@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macro.html" as macros %}
 {% block head %}
     <script src="https://maps.googleapis.com/maps/api/js"></script>
 {% endblock %}
@@ -10,7 +11,7 @@
                 Nom de l'aire de jeux : <br>
                 <div><input type="text" name="nom_aire_de_jeux" id="nom" value="{{aireDeJeux.nom|e}}" required></div>
                 Commune : <br>
-                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville_input" value="{{ville.nom|e}}"></div>
+                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville_input" value="{{ville.nom|e}}" readonly></div>
                 CP : <br>
                 <div><input type="text" name="CP" id="CP" value="{{ville.CP|e}}" readonly></div>
                 coordonnees :
@@ -38,6 +39,7 @@
             </div>
             <div class="contenue">
                 <div id="map"></div>
+                {{ macros.photos(listImage, aireDeJeux.indice) }}
             </div>
         </div>
         accéssibilité :

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macro.html" as macros %}
 {% block head %}
     <script src="https://maps.googleapis.com/maps/api/js"></script>
 {% endblock %}
@@ -33,21 +34,21 @@
                 <div><input type="text" name="horaire"></div>
                 tranche d'age:
                 <div><input type="text" name="age"></div>
+                 accéssibilité :
+                <div><textarea name="acces" id="acces"></textarea></div>
+                activités : Entrez une liste des activités séparées par une virgule<br>
+                <div><textarea name="activites" class="box"></textarea></div>
+                description : <br>
+                <div><textarea name="description" class="box"></textarea></div>
+                commentaire : <br>
+                <div><textarea name="commentaire" class="box"></textarea></div>
             </div>
             <div class="contenue">
                 <div id="map"></div>
-                <div id="ajouter_image" onclick="">+</div>
-                <iframe src="/add_photo?indice={{ new_indice }}"></iframe>
+                {{ macros.photos(listImage, new_indice) }}
             </div>
         </div>
-        accéssibilité :
-        <div><textarea name="acces" id="acces"></textarea></div>
-        activités : Entrez une liste des activités séparées par une virgule<br>
-        <div><textarea name="activites" class="box"></textarea></div>
-        description : <br>
-        <div><textarea name="description" class="box"></textarea></div>
-        commentaire : <br>
-        <div><textarea name="commentaire" class="box"></textarea></div>
+
         <input type="submit" value="Submit">
     </form>
     <script>
@@ -76,10 +77,11 @@
                     document.getElementById("hints").innerHTML = out;
                 }
             }
-            xmlhttp.open("GET", "/ajouterAireDeJeux?q=" + str, true);
+            xmlhttp.open("GET", "/listeVille?q=" + str, true);
             xmlhttp.send();
         }
     }
+
     function hint(nom_ville, CP, key_ville, lat, lon) {
         document.getElementById("ville_input").value = nom_ville;
         document.getElementById("CP").value = CP;
@@ -87,6 +89,7 @@
         initialize(lat, lon);
         document.getElementById("hints").innerHTML = "";
     }
+
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
@@ -94,7 +97,6 @@
         { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
         var styledMap = new google.maps.StyledMapType(styles,
     {name: "Styled Map"});
-
         var mapOption = {
             center: myLatLng,
             zoom: 12,
@@ -118,11 +120,13 @@
             placeMarker(marker, event.latLng);
         });
     }
+
     function placeMarker(marker, location) {
         marker.setPosition(location);
         document.getElementById("lat").value = marker.getPosition().lat();
         document.getElementById("lng").value = marker.getPosition().lng();
     }
+
     function newScore(score) {
         document.getElementById("score").value=score+1;
         for(i=0; i<5 ; i++ ){
@@ -135,9 +139,11 @@
             }
         }
     }
+
     {% if ville != "" %}
         hint("{{ville.nom}}", "{{ville.CP}}", "{{ville.urlsafeKey}}",{{ ville.coordonnees.lat}},{{ ville.coordonnees.lon}});
     {% endif %}
+
 
     </script>
 
