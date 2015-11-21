@@ -36,21 +36,22 @@
                 <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
                 tranche d'age:
                 <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age != 'None' }}"></div>
+                accéssibilité :
+                <div><textarea name="acces" id="acces" >{{ aireDeJeux.accesibilite|e if aireDeJeux.accesibilite|e != "None" }}</textarea></div>
+                activités : Entrez une liste des activités séparées par une virgule<br>
+                <div><textarea name="activites" class="box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
+                description : <br>
+                <div><textarea name="description" class="box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
+                commentaire : <br>
+                <div><textarea name="commentaire" class="box"></textarea></div>
+                <input type="submit" value="Submit">
             </div>
             <div class="contenue">
                 <div id="map"></div>
                 {{ macros.photos(listImage, aireDeJeux.indice) }}
             </div>
         </div>
-        accéssibilité :
-        <div><textarea name="acces" id="acces" >{{ aireDeJeux.accesibilite|e if aireDeJeux.accesibilite|e != "None" }}</textarea></div>
-        activités : Entrez une liste des activités séparées par une virgule<br>
-        <div><textarea name="activites" class="box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
-        description : <br>
-        <div><textarea name="description" class="box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
-        commentaire : <br>
-        <div><textarea name="commentaire" class="box"></textarea></div>
-        <input type="submit" value="Submit">
+
     </form>
     <script>
     {% if aireDeJeux.coordonnees.lat %}
