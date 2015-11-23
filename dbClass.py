@@ -1,4 +1,11 @@
+# -*- coding: utf-8 -*-
+import jinja2
+import os
+
 from google.appengine.ext import ndb
+
+template_dir = os.path.join(os.path.dirname(__file__), 'template')
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
 
 
 class AireDeJeux(ndb.Model):
@@ -13,6 +20,17 @@ class AireDeJeux(ndb.Model):
     age = ndb.StringProperty()
     indice = ndb.StringProperty(required=True)
     archive = ndb.BooleanProperty(default=False, required=True)
+
+    def str(self):
+        # TODO probleme d'encoding
+        text = jinja_env.get_template("email_body_detail.txt")
+        return text.render(nom=self.nom,
+                           activites=self.activites,
+                           score=self.score,
+                           horaires=self.horaires,
+                           age=self.age,
+                           accesibilite=self.accesibilite,
+                           description=self.description)
 
 
 class Commune(ndb.Model):
@@ -41,6 +59,8 @@ class Commentaire(ndb.Model):
     commentaire = ndb.StringProperty()
     valide = ndb.BooleanProperty()
 
+    def str(self):
+        return self.commentaire
 
 class Photo(ndb.Model):
     blobKey = ndb.BlobKeyProperty()

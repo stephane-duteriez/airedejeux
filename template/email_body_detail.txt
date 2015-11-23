@@ -1,0 +1,7 @@
+nom          : {{ nom }}
+activités    : {{ activites }}
+score        : {{ score }}
+horaires     : {{ horaires }}
+age          : {{ age }}
+accesibilité : {{ accesibilite }}
+description  : {{ description }}

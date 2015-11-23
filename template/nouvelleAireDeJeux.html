@@ -11,12 +11,8 @@
                 <div hidden><input type="hidden" name="indice" value="{{ new_indice }}"></div>
                 Nom de l'aire de jeux : <br>
                 <div><input type="text" name="nom_aire_de_jeux" id="nom" value="" required></div>
-                Commune : <br>
-                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville_input" value=""></div>
-                <div id="hints"></div>
+                {{ macros.select_ville() }}
                 <div><input type="hidden" name="key_ville" id="key_ville" value="" required></div>
-                CP : <br>
-                <div><input type="text" name="CP" id="CP" value="" readonly></div>
                 <div hidden>
                     latitude: <input type="hidden" name="lat" id="lat" readonly ><br>
                     longitude: <input type="hidden" name="lng" id="lng" readonly>
@@ -52,42 +48,10 @@
         <input type="submit" value="Submit">
     </form>
     <script>
-    function showHint(str) {
-        if (str.length < 3) {
-            document.getElementById("hints").innerHTML = "";
-            return;
-        } else {
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    json = xmlhttp.responseText;
-                    data = JSON.parse(json);
-                    var out = "";
-                    var i;
-                    template = "<button type=\"button\" id=\"%ID%\" onclick=\"hint('%nom%', '%CP%', '%key%', %lat%, %lon% )\" class=\"hint\">%nom% %CP%</button>"
-                    for(i = 0; i < data["ville"].length; i++) {
-                        new_button = template.replace(/%nom%/g, data["ville"][i].name);
-                        new_button = new_button.replace(/%CP%/g, data["ville"][i].CP);
-                        new_button = new_button.replace("%key%", data["ville"][i].key);
-                        new_button = new_button.replace("%lat%", data["ville"][i].lat);
-                        new_button = new_button.replace("%lon%", data["ville"][i].lon);
-                        new_button = new_button.replace("%ID%", "hint_" + i.toString());
-                        out += new_button;
-                    }
-                    document.getElementById("hints").innerHTML = out;
-                }
-            }
-            xmlhttp.open("GET", "/listeVille?q=" + str, true);
-            xmlhttp.send();
-        }
-    }
 
-    function hint(nom_ville, CP, key_ville, lat, lon) {
-        document.getElementById("ville_input").value = nom_ville;
-        document.getElementById("CP").value = CP;
-        document.getElementById("key_ville").value = key_ville;
-        initialize(lat, lon);
-        document.getElementById("hints").innerHTML = "";
+    function hint(nom_ville) {
+        document.getElementById("key_ville").value = liste_ville[nom_ville].key;
+        initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
     }
 
     function initialize(lat, lon) {
@@ -130,7 +94,6 @@
     function newScore(score) {
         document.getElementById("score").value=score+1;
         for(i=0; i<5 ; i++ ){
-
             if(i<=score) {
                 document.getElementById("star_" + i.toString()).setAttribute("fill","yellow");
 
@@ -141,7 +104,15 @@
     }
 
     {% if ville != "" %}
-        hint("{{ville.nom}}", "{{ville.CP}}", "{{ville.urlsafeKey}}",{{ ville.coordonnees.lat}},{{ ville.coordonnees.lon}});
+        var n_ville = "{{ ville.nom }}" + ", " + "{{ ville.departement }}";
+        document.getElementById("ville_input").value = n_ville;
+        json_liste_ville = '{ "' + n_ville + '": {'+
+                                    '"key": "{{ ville.urlsafeKey }}",' +
+                                    '"lat": {{ ville.coordonnees.lat }},' +
+                                    '"lon": {{ ville.coordonnees.lon }} ' +
+                        '} }';
+        liste_ville = JSON.parse(json_liste_ville)
+        hint(n_ville);
     {% endif %}
 
 

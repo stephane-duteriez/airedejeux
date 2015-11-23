@@ -17,11 +17,21 @@ import logging
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.api.images import get_serving_url
+from google.appengine.api import mail
 
 from dbClass import *
 
 template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
+
+
+def send_mail_notification(subject, body):
+    message = mail.EmailMessage(sender="aire-de-jeux notification <notification@aire-de-jeux.appspotmail.com>",
+                                to="stephane.duteriez@gmail.com")
+    message.body = body
+    message.subject = subject
+    logging.info(body)
+    message.send()
 
 
 # utilisé pour créer un indice aléatoire pour chaque indice
@@ -87,10 +97,12 @@ class ListeVilleHandler(webapp2.RequestHandler):
         villes = Commune.query(ndb.AND(Commune.nom >= q, Commune.nom <= q + "z"))
         self.response.headers['Content-Type'] = 'text/json'
         results = villes.fetch(10)
-        data = {"ville": []}
+        data = {}
         for ville in results:
-            data["ville"].append({"name": ville.nom, "CP": ville.CP, "key": ville.key.urlsafe(),
-                                  "lat": ville.coordonnees.lat, "lon": ville.coordonnees.lon})
+            data[ville.nom + ", " + ville.departement] = {
+                                "key": ville.key.urlsafe(),
+                                "lat": ville.coordonnees.lat,
+                                "lon": ville.coordonnees.lon}
         self.response.write(json.dumps(data))
 
 
@@ -140,8 +152,10 @@ class AjouterHandler(webapp2.RequestHandler):
             nouvelleAireDeJeux.age = age
         if commentaire:
             nouveauCommentaire = Commentaire(aireDeJeux=indice, commentaire=commentaire)
+            send_mail_notification("nouveaux commentaire", nouveauCommentaire.str())
             nouveauCommentaire.put()
         nouvelleAireDeJeux.put()
+        send_mail_notification("nouvelle aire-de-jeux", nouvelleAireDeJeux.str())
         self.redirect("/creerAireDeJeux")
 
 

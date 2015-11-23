@@ -72,3 +72,41 @@
     }
     </script>
 {%- endmacro  %}
+{% macro select_ville() -%}
+    <div>Commune :</div>
+    <div><input list="hints" name="commune" oninput="showHint(this.value)"
+                id="ville_input" value=""></div>
+    <datalist id="hints">
+    </datalist>
+    <script>
+        var liste_ville = {};
+        function showHint(str) {
+            if (str in liste_ville) {
+                hint(str);
+            }
+            else {
+                if (str.length < 3) {
+                    document.getElementById("hints").innerHTML = "";
+                    return;
+                } else {
+                    var xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function() {
+                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                            json = xmlhttp.responseText;
+                            liste_ville = JSON.parse(json);
+                            var out = "";
+                            template = "<option value=\"%ville%\">";
+                            for (nomVille in liste_ville) {
+                                new_data = template.replace(/%ville%/g, nomVille);
+                                out += new_data;
+                            }
+                            document.getElementById("hints").innerHTML = out;
+                        }
+                    }
+                    xmlhttp.open("GET", "/listeVille?q=" + str, true);
+                    xmlhttp.send();
+                }
+            }
+        }
+    </script>
+{%- endmacro %}

@@ -11,9 +11,8 @@
                 Nom de l'aire de jeux : <br>
                 <div><input type="text" name="nom_aire_de_jeux" id="nom" value="{{aireDeJeux.nom|e}}" required></div>
                 Commune : <br>
-                <div><input type="text" name="commune" onkeyup="showHint(this.value)" id="ville_input" value="{{ville.nom|e}}" readonly></div>
-                CP : <br>
-                <div><input type="text" name="CP" id="CP" value="{{ville.CP|e}}" readonly></div>
+                <div><input type="text" name="commune" id="ville_input"
+                            value="{{ville.nom|e}}, {{ville.departement|e}}" readonly></div>
                 coordonnees :
                 <div>
                     latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat }}"><br>
