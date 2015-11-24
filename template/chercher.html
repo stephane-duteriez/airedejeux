@@ -12,8 +12,16 @@
 <div id="title">
     {{ macros.select_ville() }}
 </div>
-<div id="map" class="center"></div>
+<div class="map_home">
+    <div id="map" class="center"></div>
+</div>
+<div id="template-liste-aire-de-jeux" hidden>
+    {% for i in range(5) %}
+        <div class="blanc-aire-de-jeux"></div>
+    {% endfor %}
+</div>
 <div id="list-aire-de-jeux">
+
 </div>
 <script>
     function hint(nom_ville) {
@@ -40,13 +48,14 @@
                     }
                 } else {
                     out = "<div class=\"message\">Désolé mais il n'y a pas encore d'aire de jeux" +
-                     "enregistré pour cette ville. Si vous en connaisez, vous pouvez les ajouter" +
+                     "enregistré pour cette ville. Si vous en connaissez, vous pouvez les ajouter" +
                      "en cliquant le lien suivant</div>" +
                      "<p class=\"menu\" onclick=\"location.href='/creerAireDeJeux?keyVille=" + key_ville +
                      "'\" style=\"cursor: pointer\">Ajouter</p>";
 
                 }
-                document.getElementById("list-aire-de-jeux").innerHTML = out;
+                document.getElementById("list-aire-de-jeux").innerHTML = out +
+                                                        document.getElementById("template-liste-aire-de-jeux").innerHTML;
                 document.getElementById("bt_creation").onclick = function() {
                      window.location.href= "/creerAireDeJeux?keyVille=" + liste_ville[nom_ville].key ;
                 }

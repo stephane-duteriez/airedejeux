@@ -9,7 +9,7 @@
     }
 
 #main {
-    width:80%;
+    width:100%;
     margin-left: auto;
     margin-right: auto;
     background-color: #90caf9;
@@ -159,10 +159,12 @@ li.menu:hover {
     max-width : 300px;
     height : 100px;
     }
-
+.map_home {
+    height:300px;
+    }
 #map {
     width: 100%;
-    height: 200px;
+    height: 100%;
     }
 
 .contenant {
@@ -177,21 +179,30 @@ li.menu:hover {
     margin : 5px;
     }
 
-.aire-de-jeux {
-    height : 50px;
-    border-style: solid;
+.aire-de-jeux, .blanc-aire-de-jeux {
     padding: 5px;
     margin : 5px;
     flex: 1 1 100px;
     }
 
+.blanc-aire-de-jeux{
+    border-style: solid;
+    border-color: #90caf9;
+    }
+
+.aire-de-jeux {
+    border-style: solid;
+    height : 50px;
+    }
+
 .aire-de-jeux:hover {
-    background-color: #1565c0;
+    background-color: #64b5f6;
     }
 
 #list-aire-de-jeux {
-    display:flex;
-    width:100%;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
     margin-top: 10px;
 }
 
@@ -208,19 +219,53 @@ li.menu:hover {
     flex: 1 1 50px;
     }
 .slide {
-    display:flex;
+    width:100%;
+    }
+.ratio23outside {
+    width:100%;
+    position:relative;
+    padding-top: 66%;
+    height:0px;
+    margin-bottom:1em;
+    }
+.ratio23inside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     align-items:center;
-    max-width:100%;
+    max-height:100%;
+    }
+.img_outside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    width:100%;
+    display:flex;
+    justify-content:center;
     }
 .image{
-    margin-left:auto;
-    margin-right:auto;
-    width:90%;
+    height: 100%;
+    z-index: 2;
+    }
+.right {
+    position:absolute;
+    right: 2px;
+    padding-top:30%;
+    z-index:3;
+    }
+.left {
+    position:absolute;
+    left: 0;
+    padding-top:30%;
+    z-index:3;
     }
 #iframAddPhoto {
     border: none;
     width: 100%;
-    height: 40px;
+    height: 4em;
     }
 #commentaire-title {
     display: flex;
