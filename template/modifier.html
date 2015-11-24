@@ -13,7 +13,7 @@
                 Commune : <br>
                 <div><input type="text" name="commune" id="ville_input"
                             value="{{ville.nom|e}}, {{ville.departement|e}}" readonly></div>
-                coordonnees :
+                coordonnées :
                 <div>
                     latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat }}"><br>
                     longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon }}">
@@ -35,7 +35,7 @@
                 <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
                 tranche d'age:
                 <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age != 'None' }}"></div>
-                accéssibilité :
+                accessibilité :
                 <div><textarea name="acces" id="acces" >{{ aireDeJeux.accesibilite|e if aireDeJeux.accesibilite|e != "None" }}</textarea></div>
                 activités : Entrez une liste des activités séparées par une virgule<br>
                 <div><textarea name="activites" class="box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>

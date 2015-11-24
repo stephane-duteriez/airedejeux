@@ -26,7 +26,7 @@
     <div class="contenant">
         <div class="contenue">
             <div id="box-activitees">
-                <div id="title-activitee" class="bigger highlight">Comoditées:</div>
+                <div id="title-activitee" class="bigger highlight">Activités:</div>
                 <div id="list-activitees">
                     {% for activite in aireDeJeux.activites %}
                         <div class="activitee">{{ activite|e }}</div>
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div id="box-acces">
-                <div id="title-accesibilite" class="bigger highlight">Accesibilite</div>
+                <div id="title-accesibilite" class="bigger highlight">Accessibilité</div>
                 <div id="description-accesibilte">{{ aireDeJeux.accesibilite|e }}</div>
             </div>
             <div id="horraire" class="bigger horizontal">
@@ -45,31 +45,31 @@
             </div>
             <div id="description">
             <div class="bigger highlight">
-                Déscription:
+                Description:
             </div>
             <p class="description">
                 {{ aireDeJeux.description|e }}
             </p>
-    </div>
+            </div>
+            <div id="comentaires">
+                <div class="bigger highlight commentaire-title horizontal">
+                    <div>Commentaire(s): </div><div class="center"> </div><div class="plus" onclick="new_commentaire()"> + </div>
+                </div>
+                {% if listCommentaires %}
+                    {% for commentaire in listCommentaires %}
+                    <p class="commentaire">
+                        {{ commentaire.commentaire|e }}
+                    </p>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
         </div>
         <div class="contenue">
             <div id="map"></div>
             {{ macros.photos(listImage, aireDeJeux.indice) }}
         </div>
     </div>
-
-    {% if listCommentaire %}
-    <div id="comentaires">
-        <div class="bigger highlight">
-            Commentaire(s):
-        </div>
-        {% for commentaire in listCommentaires %}
-        <p class="commentaire">
-            {{ commentaire.commentaire|e }}
-        </p>
-        {% endfor %}
-    </div>
-    {% endif %}
 </div>
 <script>
 

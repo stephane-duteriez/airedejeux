@@ -3,5 +3,5 @@ activités    : {{ activites }}
 score        : {{ score }}
 horaires     : {{ horaires }}
 age          : {{ age }}
-accesibilité : {{ accesibilite }}
+accessibilité : {{ accesibilite }}
 description  : {{ description }}

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # TODO permettre la modification depuis la page Detail
 # TODO avoir l'option de s'enregistrer avec un compt gmail
-# TODO nettoyer les codes postales avec une seule entre par ville
 # TODO ajout d'un commentaire directement depuis la page detail
-# TODO changer l'affichage des ville "CARVIN (62)" est abandonner le CP
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
 # TODO ajouter des photos depuis detail et modifier
+# TODO ajouter action sur le bouton "+" pour inserer un mouveau commentaire
+# TODO problème affichage sur téléphone, pas sufissament de place pour ifram téléchargement
+# TODO probleme affichage sur téléphone, sur la page de recherche, afficher les aire de jeux sur plusieurs lignes
 import webapp2
 import jinja2
 import os
@@ -62,6 +63,7 @@ class AireDeJeuxHandler(Handler):
         ville = dbAireDeJeux.ville.get()
         queryCommentaire = Commentaire.query(Commentaire.aireDeJeux == dbAireDeJeux.indice)
         listCommentaires = queryCommentaire.fetch(10)
+        logging.info(listCommentaires)
         queryPhotos = Photo.query(Photo.indice_aireDeJeux == dbAireDeJeux.indice)
         listImage = queryPhotos.fetch(10)
         self.render_main(dbAireDeJeux, ville, listCommentaires, listImage)
@@ -173,7 +175,7 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
         urlsafeKeyVille = self.request.get("keyVille")
         keyVille = ndb.Key(urlsafe=urlsafeKeyVille)
         queryAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.ville == keyVille, AireDeJeux.archive == False))
-        listAireDeJeux = queryAireDeJeux.fetch(10)
+        listAireDeJeux = queryAireDeJeux.fetch(30)
         data = []
         for aireDeJeux in listAireDeJeux:
             nextADJ = {"nom": aireDeJeux.nom, "indiceAireDeJeux": aireDeJeux.indice, "lat": "", "lng": ""}
@@ -228,8 +230,10 @@ class ModifierHandler(Handler):
             nouvelleAireDeJeux.age = age
         if commentaire:
             nouveauCommentaire = Commentaire(aireDeJeux=indice, commentaire=commentaire)
+            send_mail_notification("nouveaux commentaire", nouveauCommentaire.str())
             nouveauCommentaire.put()
         nouvelleAireDeJeux.put()
+        send_mail_notification("nouvelle aire-de-jeux", nouvelleAireDeJeux.str())
         dbAireDeJeux.archive = True
         dbAireDeJeux.put()
         self.redirect("/")

@@ -222,3 +222,18 @@ li.menu:hover {
     width: 100%;
     height: 40px;
     }
+#commentaire-title {
+    display: flex;
+    }
+.center {
+    flex: 1, 1;
+    }
+.plus {
+    border-style: solid;
+    padding: 0px 6px;
+    background-color: #90caf9;
+    font-weight: bold;
+    }
+.plus:hover {
+    background-color: #1565c0;
+    }
