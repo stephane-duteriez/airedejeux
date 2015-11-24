@@ -25,23 +25,32 @@
         {% for image in listImage %}
             listUrlImage.push("{{ image.photo_url }}");
         {% endfor %}
-        document.getElementById("photo").src=listUrlImage[index_photo] + "=s300";
-        document.getElementById("photo").style.visibility= "visible";
         {% if listImage|length > 1 %}
             document.getElementById("next_photo").style.visibility = "visible";
+            var img = new Image();
+            img.src = listUrlImage[index_photo] + "=s600"
+            img.onload = function(){
+                var img = new Image();
+                img.src = listUrlImage[index_photo + 1] + "=s600";
+            }
         {% endif %}
+        document.getElementById("photo").src=listUrlImage[index_photo] + "=s600";
+        document.getElementById("photo").style.visibility= "visible";
     {% endif %}
     function nextPhoto() {
         index_photo += 1;
-        document.getElementById("photo").src=listUrlImage[index_photo] + "=s300";
+        document.getElementById("photo").src=listUrlImage[index_photo] + "=s600";
         if (index_photo == listUrlImage.length - 1 ) {
             document.getElementById("next_photo").style.visibility = "hidden";
+        } else {
+            var img = new Image();
+            img.src = listUrlImage[index_photo + 1] + "=s600";
         }
         document.getElementById("previous_photo").style.visibility = "visible";
     }
     function previousPhoto() {
         index_photo -= 1;
-        document.getElementById("photo").src=listUrlImage[index_photo]+ "=s300";
+        document.getElementById("photo").src=listUrlImage[index_photo]+ "=s600";
         if (index_photo == 0) {
             document.getElementById("previous_photo").style.visibility = "hidden";
         }
@@ -63,7 +72,7 @@
                         listUrlImage.push(data[i]);
                     }
                     console.log(listUrlImage);
-                    document.getElementById("photo").src=listUrlImage[0] + "=s300";
+                    document.getElementById("photo").src=listUrlImage[0] + "=s600";
                     document.getElementById("photo").style.visibility= "visible";
                     if(listUrlImage.length > 1) {
                         document.getElementById("next_photo").style.visibility = "visible";

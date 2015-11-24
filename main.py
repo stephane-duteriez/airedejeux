@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-# TODO permettre la modification depuis la page Detail
 # TODO avoir l'option de s'enregistrer avec un compt gmail
 # TODO ajout d'un commentaire directement depuis la page detail
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
-# TODO ajouter des photos depuis detail et modifier
 # TODO ajouter action sur le bouton "+" pour inserer un mouveau commentaire
-# TODO problème affichage sur téléphone, pas sufissament de place pour ifram téléchargement
-# TODO probleme affichage sur téléphone, sur la page de recherche, afficher les aire de jeux sur plusieurs lignes
 import webapp2
 import jinja2
 import os
