@@ -5,11 +5,8 @@
 # TODO recherche de place de jeux à proximité en dehors de la ville
 # TODO ajouter action sur le bouton "+" pour inserer un mouveau commentaire
 import webapp2
-import jinja2
-import os
 import json
-import logging
-
+import time
 
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
@@ -51,18 +48,21 @@ class Handler(webapp2.RequestHandler):
 
 
 class AireDeJeuxHandler(Handler):
-    def render_main(self, aire_de_jeux, ville, listCommentaires, listImage):
-        self.render("detail.html", aireDeJeux=aire_de_jeux, ville=ville, listCommentaires=listCommentaires, listImage=listImage)
+    def render_main(self, aire_de_jeux, liste_commentaires, liste_images):
+        self.render("detail.html",
+                    aireDeJeux=aire_de_jeux,
+                    listCommentaires=liste_commentaires,
+                    listImage=liste_images)
 
-    def get(self, indice):
-        dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
-        ville = dbAireDeJeux.ville.get()
-        queryCommentaire = Commentaire.query(Commentaire.aireDeJeux == dbAireDeJeux.indice)
-        listCommentaires = queryCommentaire.fetch(10)
-        logging.info(listCommentaires)
-        queryPhotos = Photo.query(Photo.indice_aireDeJeux == dbAireDeJeux.indice)
-        listImage = queryPhotos.fetch(10)
-        self.render_main(dbAireDeJeux, ville, listCommentaires, listImage)
+    def get(self, url):
+        logging.info(url)
+        db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
+        query_commentaire = Commentaire.query(Commentaire.aireDeJeux == db_aire_de_jeux.key)
+        list_commentaires = query_commentaire.fetch(10)
+        query_photo = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
+        liste_images = query_photo.fetch(10)
+        logging.info(db_aire_de_jeux.export())
+        self.render_main(db_aire_de_jeux.export(), list_commentaires, liste_images)
 
 
 class CreerAireDeJeuxHandler(Handler):
@@ -119,46 +119,52 @@ class ListeImageHandler(webapp2.RequestHandler):
 
 class AjouterHandler(webapp2.RequestHandler):
     def post(self):
-        nomAireDeJeux = self.request.get('nom_aire_de_jeux')
-        keyVille = self.request.get('key_ville')
+        nom_aire_de_jeux = self.request.get('nom_aire_de_jeux')
+        key_ville = self.request.get('key_ville')
         latitude = self.request.get('lat')
         longitude = self.request.get('lng')
         score = self.request.get('score')
         horaire = self.request.get('horaire')
         accessibilite = self.request.get('acces')
-        textActivites = self.request.get('activites')
+        text_activites = self.request.get('activites')
         description = self.request.get('description')
         age = self.request.get('age')
         commentaire = self.request.get('commentaire')
         indice = self.request.get('indice')
-        nouvelleAireDeJeux = AireDeJeux(nom=nomAireDeJeux, ville=ndb.Key(urlsafe=keyVille), indice=indice)
-
+        ville = ndb.Key(urlsafe=key_ville).get()
+        url = ville.departement + "/" + ville.nom + "/" + nom_aire_de_jeux
+        nouvelle_aire_de_jeux = AireDeJeux(nom=nom_aire_de_jeux, ville=ville.key, indice=indice, url=url)
+        # TODO vérifier qu'il n'éxiste pas déjà une aire de jeux avec le meme nom
+        nouveau_detail = Detail(indice=indice)
         if latitude and longitude:
-            nouvelleAireDeJeux.coordonnees = ndb.GeoPt(float(latitude), float(longitude))
+            nouveau_detail.coordonnees = ndb.GeoPt(float(latitude), float(longitude))
         if score:
-            nouvelleAireDeJeux.score = int(score)
+            nouveau_detail.score = int(score)
         if accessibilite:
-            nouvelleAireDeJeux.accesibilite = accessibilite
+            nouveau_detail.accessibilite = accessibilite
         if horaire:
-            nouvelleAireDeJeux.horaires = horaire
-        if textActivites:
-            listActivites = [activite.strip() for activite in textActivites.split(",")]
-            nouvelleAireDeJeux.activites = listActivites
+            nouveau_detail.horaires = horaire
+        if text_activites:
+            liste_activites = [activite.strip() for activite in text_activites.split(",")]
+            nouveau_detail.activites = liste_activites
         if description:
-            nouvelleAireDeJeux.description = description
+            nouveau_detail.description = description
         if age:
-            nouvelleAireDeJeux.age = age
+            nouveau_detail.age = age
+        nouveau_detail.put()
+        nouvelle_aire_de_jeux.detail = nouveau_detail.key
+        key_aire_de_jeux = nouvelle_aire_de_jeux.put()
         if commentaire:
-            nouveauCommentaire = Commentaire(aireDeJeux=indice, commentaire=commentaire)
-            send_mail_notification("nouveaux commentaire", nouveauCommentaire.str())
-            nouveauCommentaire.put()
-        nouvelleAireDeJeux.put()
-        send_mail_notification("nouvelle aire-de-jeux", nouvelleAireDeJeux.str())
-        self.redirect("/creerAireDeJeux")
+            nouveau_commentaire = Commentaire(aireDeJeux=key_aire_de_jeux, commentaire=commentaire)
+            send_mail_notification("nouveaux commentaire", nouveau_commentaire.str())
+            nouveau_commentaire.put()
+        send_mail_notification("nouvelle aire-de-jeux", nouvelle_aire_de_jeux.str())
+        time.sleep(0.1)
+        self.redirect("/aireDeJeux/" + url)
 
 
 class ChercherHandler(Handler):
-    #TODO mettre un lien sur chaque marqueur pour selecitioner l'aire de jeux en question
+    # TODO mettre un lien sur chaque marqueur pour sélectionner l'aire de jeux en question
     def render_main(self):
         self.render("chercher.html")
 
@@ -170,34 +176,38 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
     def get(self):
         urlsafeKeyVille = self.request.get("keyVille")
         keyVille = ndb.Key(urlsafe=urlsafeKeyVille)
-        queryAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.ville == keyVille, AireDeJeux.archive == False))
+        queryAireDeJeux = AireDeJeux.query(AireDeJeux.ville == keyVille)
         listAireDeJeux = queryAireDeJeux.fetch(30)
         data = []
         for aireDeJeux in listAireDeJeux:
-            nextADJ = {"nom": aireDeJeux.nom, "indiceAireDeJeux": aireDeJeux.indice, "lat": "", "lng": ""}
-            if aireDeJeux.coordonnees:
-                nextADJ["lat"] = aireDeJeux.coordonnees.lat
-                nextADJ["lng"] = aireDeJeux.coordonnees.lon
+            nextADJ = {"nom": aireDeJeux.nom,
+                       "indiceAireDeJeux": aireDeJeux.indice,
+                       "url": aireDeJeux.url,
+                       "lat": "",
+                       "lng": ""}
+            detail = aireDeJeux.detail.get()
+            if detail.coordonnees:
+                nextADJ["lat"] = detail.coordonnees.lat
+                nextADJ["lng"] = detail.coordonnees.lon
             data.append(nextADJ)
         self.response.write(json.dumps(data))
 
 
 class ModifierHandler(Handler):
-    def render_main(self, aireDeJeux, ville, listImage):
-        self.render("modifier.html", aireDeJeux=aireDeJeux, ville=ville, listImage=listImage)
+    def render_main(self, aire_de_jeux, ville, list_image):
+        self.render("modifier.html", aireDeJeux=aire_de_jeux, ville=ville, listImage=list_image)
 
     def get(self, indice):
-        dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
-        ville = dbAireDeJeux.ville.get()
-        queryPhotos = Photo.query(Photo.indice_aireDeJeux == dbAireDeJeux.indice)
-        listImage = queryPhotos.fetch(10)
-        self.render_main(dbAireDeJeux, ville, listImage)
+        db_aire_de_jeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
+        ville = db_aire_de_jeux.ville.get()
+        db_detail = db_aire_de_jeux.detail.get()
+        query_photos = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
+        list_image = query_photos.fetch(10)
+        self.render_main(db_aire_de_jeux.export(), ville, list_image)
 
     def post(self, indice):
-        dbAireDeJeux = AireDeJeux.query(ndb.AND(AireDeJeux.indice == indice, AireDeJeux.archive == False)).get()
-        ville = dbAireDeJeux.ville.get()
-        nomAireDeJeux = self.request.get('nom_aire_de_jeux')
-        keyVille = self.request.get('key_ville')
+        dbAireDeJeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
+        db_detail = Detail(indice=indice)
         latitude = self.request.get('lat')
         longitude = self.request.get('lng')
         score = self.request.get('score')
@@ -207,32 +217,35 @@ class ModifierHandler(Handler):
         description = self.request.get('description')
         age = self.request.get('age')
         commentaire = self.request.get('commentaire')
-        nouvelleAireDeJeux = AireDeJeux(nom=nomAireDeJeux, ville=ville.key, indice=indice)
 
         if latitude and longitude:
-            nouvelleAireDeJeux.coordonnees = ndb.GeoPt(float(latitude), float(longitude))
+            db_detail.coordonnees = ndb.GeoPt(float(latitude), float(longitude))
         if score and score != '"None"':
-            nouvelleAireDeJeux.score = int(score)
+            db_detail.score = int(score)
         if accessibilite and accessibilite != '"None"':
-            nouvelleAireDeJeux.accesibilite = accessibilite
+            db_detail.accessibilite = accessibilite
         if horaire and horaire != '"None"':
-            nouvelleAireDeJeux.horaires = horaire
+            db_detail.horaires = horaire
         if textActivites and textActivites != '"None"':
-            listActivites = [activite.strip() for activite in textActivites.split(",")]
-            nouvelleAireDeJeux.activites = listActivites
+            list_activites = [activite.strip() for activite in textActivites.split(",")]
+            db_detail.activites = list_activites
         if description and description != '"None"':
-            nouvelleAireDeJeux.description = description
+            db_detail.description = description
         if age and age != '"None"':
-            nouvelleAireDeJeux.age = age
-        if commentaire:
-            nouveauCommentaire = Commentaire(aireDeJeux=indice, commentaire=commentaire)
-            send_mail_notification("nouveaux commentaire", nouveauCommentaire.str())
-            nouveauCommentaire.put()
-        nouvelleAireDeJeux.put()
-        send_mail_notification("nouvelle aire-de-jeux", nouvelleAireDeJeux.str())
-        dbAireDeJeux.archive = True
+            db_detail.age = age
+
+        key_detail = db_detail.put()
+        dbAireDeJeux.detail = key_detail
         dbAireDeJeux.put()
-        self.redirect("/")
+
+        if commentaire:
+            nouveau_commentaire = Commentaire(aireDeJeux=dbAireDeJeux.key, commentaire=commentaire)
+            send_mail_notification("nouveaux commentaire", nouveau_commentaire.str())
+            nouveau_commentaire.put()
+
+        time.sleep(0.1)
+        send_mail_notification("nouvelle aire-de-jeux", dbAireDeJeux.str())
+        self.redirect("/aireDeJeux/" + dbAireDeJeux.url)
 
 
 class PhotoUploadFormHandler(Handler):
@@ -255,6 +268,7 @@ class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             upload = self.get_uploads()[0]
             photo = Photo(indice_aireDeJeux=indice, blobKey=upload.key(), photo_url=get_serving_url(upload.key()))
             photo.put()
+            time.sleep(0.1)
             self.redirect('/add_photo?indice=' + indice)
         except:
             self.error(500)
@@ -268,17 +282,24 @@ class ViewPhotoHandler(blobstore_handlers.BlobstoreDownloadHandler):
             self.send_blob(photo_key)
 
 
+class GoogleVerificationHandler(Handler):
+    def render_main(self):
+        self.render("google21d16423d723f0d0.html")
+
+    def get(self):
+        self.render_main()
+
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
-    ('/creerAireDeJeux', CreerAireDeJeuxHandler),
+    ('/créerAireDeJeux', CreerAireDeJeuxHandler),
     ('/ajouterAireDeJeux', AjouterHandler),
-    ('/chercher', ChercherHandler),
     ('/listeVille', ListeVilleHandler),
     ('/listAireDeJeux', ListAireDeJeuxHandler),
-    ('/airedejeux/([^/]+)?', AireDeJeuxHandler),
+    ('/aireDeJeux/(.*)?', AireDeJeuxHandler),
     ('/modifier/([^/]+)?', ModifierHandler),
     ('/add_photo', PhotoUploadFormHandler),
     ('/view_photo/([^/]+)?', ViewPhotoHandler),
     ('/upload_photo', PhotoUploadHandler),
-    ('/listeImage', ListeImageHandler)
+    ('/listeImage', ListeImageHandler),
+    ('/google21d16423d723f0d0.html', GoogleVerificationHandler)
 ], debug=True)

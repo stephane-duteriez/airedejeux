@@ -147,7 +147,7 @@ li.menu:hover {
     flex:1 1 100%;
     }
 
-.commentaire,.description,#list-activitees,#description-accesibilte{
+.commentaire,.description,#list-activitees,#description-accessibilte{
     padding-left: 10px;
     border-style: solid;
     border-width: thin;
@@ -271,7 +271,7 @@ li.menu:hover {
     display: flex;
     }
 .center {
-    flex: 1, 1;
+    flex: 1 1;
     }
 .plus {
     border-style: solid;

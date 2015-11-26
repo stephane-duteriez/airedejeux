@@ -36,7 +36,7 @@
                 tranche d'age:
                 <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age != 'None' }}"></div>
                 accessibilité :
-                <div><textarea name="acces" id="acces" >{{ aireDeJeux.accesibilite|e if aireDeJeux.accesibilite|e != "None" }}</textarea></div>
+                <div><textarea name="acces" id="acces" >{{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}</textarea></div>
                 activités : Entrez une liste des activités séparées par une virgule<br>
                 <div><textarea name="activites" class="box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
                 description : <br>

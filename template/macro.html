@@ -66,14 +66,13 @@
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     json = xmlhttp.responseText;
                     data = JSON.parse(json);
-                    console.log(data);
                     listUrlImage = [];
                     for(i=0; i<data.length; i++) {
                         listUrlImage.push(data[i]);
                     }
-                    console.log(listUrlImage);
                     document.getElementById("photo").src=listUrlImage[0] + "=s600";
                     document.getElementById("photo").style.visibility= "visible";
+                    document.getElementById("slide").style.display='inline';
                     if(listUrlImage.length > 1) {
                         document.getElementById("next_photo").style.visibility = "visible";
                     }

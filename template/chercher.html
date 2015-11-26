@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block menu %}
-    <li class="menu" onclick="location.href='/creerAireDeJeux'" style="cursor: pointer" id="bt_creation">Ajouter</li>
+    <li class="menu" onclick="location.href='/créerAireDeJeux'" style="cursor: pointer" id="bt_creation">Ajouter</li>
 {% endblock %}
 
 {% block content %}
@@ -34,14 +34,15 @@
                 var json = xmlhttp.responseText;
                 data = JSON.parse(json);
                 var out = "";
+                console.log(data);
                 if (data.length > 0){
                     var i;
-                    template = "<div class=\"aire-de-jeux\" onclick=\"location.href='\airedejeux/%keyAireDeJeux%';\" style=\"cursor: pointer;\">" +
+                    template = "<div class=\"aire-de-jeux\" onclick=\"location.href='\aireDeJeux/%urlAireDeJeux%';\" style=\"cursor: pointer;\">" +
                         "<div class=\"nom-aire-de-jeux\">" + "%indice% " +
                         "%nom%</div></div>";
                     for(i = 0;i < data.length; i++) {
                         newAireDeJeux = template.replace("%nom%", data[i].nom);
-                        newAireDeJeux = newAireDeJeux.replace("%keyAireDeJeux%", data[i].indiceAireDeJeux);
+                        newAireDeJeux = newAireDeJeux.replace("%urlAireDeJeux%", data[i].url);
                         newAireDeJeux = newAireDeJeux.replace("%indice%", (i+1).toString());
                         out += newAireDeJeux;
                         addMarker({ lat: data[i].lat, lng: data[i].lng}, map, i+1)
@@ -50,14 +51,14 @@
                     out = "<div class=\"message\">Désolé mais il n'y a pas encore d'aire de jeux" +
                      "enregistré pour cette ville. Si vous en connaissez, vous pouvez les ajouter" +
                      "en cliquant le lien suivant</div>" +
-                     "<p class=\"menu\" onclick=\"location.href='/creerAireDeJeux?keyVille=" + key_ville +
+                     "<p class=\"menu\" onclick=\"location.href='/créerAireDeJeux?keyVille=" + liste_ville[nom_ville].key  +
                      "'\" style=\"cursor: pointer\">Ajouter</p>";
 
                 }
                 document.getElementById("list-aire-de-jeux").innerHTML = out +
                                                         document.getElementById("template-liste-aire-de-jeux").innerHTML;
                 document.getElementById("bt_creation").onclick = function() {
-                     window.location.href= "/creerAireDeJeux?keyVille=" + liste_ville[nom_ville].key ;
+                     window.location.href= "/créerAireDeJeux?keyVille=" + liste_ville[nom_ville].key ;
                 }
             }
         }

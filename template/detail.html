@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
 <div id="title" class="highlight">
-    <div id="ville">{{ ville.nom|e }}</div>
+    <div id="ville">{{ aireDeJeux.ville|e }}</div>
     <div id="name">{{ aireDeJeux.nom|e }}</div>
 </div>
 <div id="content">
@@ -34,8 +34,8 @@
                 </div>
             </div>
             <div id="box-acces">
-                <div id="title-accesibilite" class="bigger highlight">Accessibilité</div>
-                <div id="description-accesibilte">{{ aireDeJeux.accesibilite|e }}</div>
+                <div id="title-accessibilite" class="bigger highlight">Accessibilité</div>
+                <div id="description-accessibilte">{{ aireDeJeux.accessibilite|e }}</div>
             </div>
             <div id="horraire" class="bigger horizontal">
                 <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e }}</div>
@@ -74,7 +74,7 @@
     </div>
 </div>
 <script>
-
+    console.log("{{aireDeJeux.accessibilite}}")
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
@@ -96,8 +96,8 @@
             map: map,
         });
     }
-    initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else ville.coordonnees.lat}},
-        {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else ville.coordonnees.lon}});
+    initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else aireDeJeux.coordonnees_ville.lat}},
+        {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else aireDeJeux.coordonnees_ville.lon}});
 
 </script>
 {% endblock %}
