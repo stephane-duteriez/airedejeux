@@ -25,6 +25,9 @@ handlers:
   script: importe_villes.app
   login: admin
 
+- url: /(robots\.txt|humans\.txt|crossdomain\.xml)
+  static_files: static/\1
+  upload: static/(robots\.txt|humans\.txt|crossdomain\.xml)
 - url: .*
   script: main.app
 

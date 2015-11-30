@@ -1,0 +1,12 @@
+User-agent:*
+Disallow:/modifier/
+Disallow:/créerAireDeJeux/
+Disallow:/view_photo/
+Disallow:/upload_photo
+Disallow:/listAireDeJeux
+Disallow:/listeVille
+Disallow:/add_photo
+Disallow:/ajouterAireDeDeJeux
+Disallow:/modifier/
+Disallow:/listImage
+Allow:/aireDeJeux/

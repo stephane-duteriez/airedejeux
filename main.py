@@ -4,6 +4,7 @@
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
 # TODO ajouter action sur le bouton "+" pour inserer un mouveau commentaire
+# TODO indiquer  que lq photo est en téléchargement
 import webapp2
 import json
 import time
@@ -282,6 +283,18 @@ class ViewPhotoHandler(blobstore_handlers.BlobstoreDownloadHandler):
             self.send_blob(photo_key)
 
 
+class VerifierUniqueHandler(webapp2.RequestHandler):
+    def get(self):
+        key_ville = ndb.Key(urlsafe=self.request.get("keyVille"))
+        nom_aire_de_jeux = self.request.get("nom")
+        queryExiste = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom_aire_de_jeux, AireDeJeux.ville == key_ville))
+        resulta = True
+        if queryExiste.get():
+            resulta = False
+        logging.info(resulta)
+        self.response.write(json.dumps(resulta))
+
+
 class GoogleVerificationHandler(Handler):
     def render_main(self):
         self.render("google21d16423d723f0d0.html")
@@ -301,5 +314,6 @@ app = webapp2.WSGIApplication([
     ('/view_photo/([^/]+)?', ViewPhotoHandler),
     ('/upload_photo', PhotoUploadHandler),
     ('/listeImage', ListeImageHandler),
-    ('/google21d16423d723f0d0.html', GoogleVerificationHandler)
+    ('/google21d16423d723f0d0.html', GoogleVerificationHandler),
+    ('/verifierUnique', VerifierUniqueHandler)
 ], debug=True)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/static/robots.txt" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/template/chercher.html" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/template/detail.html" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/template/email_body_detail.txt" charset="UTF-8" />
