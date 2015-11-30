@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="html">
 <head>
     <meta charset="UTF-8">
     <link href="/static/style.css" rel="stylesheet" type="text/css">
@@ -8,18 +8,22 @@
     {% endblock %}
 </head>
 
-<body >
+<body class="body">
     <div id="main">
-        <div id="header" class="highlight">Aire De Jeux</div>
-        <div class="menu">
-            <ul style="width:100%" class="menu">
-                <li class="menu" onclick="location.href='/'" style="cursor: pointer">Home</li>
-                {% block menu %}
-                {% endblock %}
-            </ul>
+        <div id="header">
+            <div class="title">Aire De Jeux</div>
+            <div class="menu">
+                <ul class="menu">
+                    <li class="menu" onclick="location.href='/'" style="cursor: pointer">Home</li>
+                    {% block menu %}
+                    {% endblock %}
+                </ul>
+            </div>
         </div>
+        <div class="main_content">
         {% block content %}
         {% endblock %}
+        </div>
     </div>
 </body>
 

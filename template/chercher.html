@@ -12,11 +12,11 @@
 {% endblock %}
 
 {% block content %}
-<div id="title">
+<div id="cherche_ville">
     {{ macros.select_ville() }}
 </div>
-<div class="map_home">
-    <div id="map" class="center"></div>
+<div class="map_home" id="map_home" style="display:none">
+    <div id="map"></div>
 </div>
 <div id="template-liste-aire-de-jeux" hidden>
     {% for i in range(5) %}
@@ -28,7 +28,6 @@
 </div>
 <script>
     function hint(nom_ville) {
-        console.log(liste_ville[nom_ville]);
         var xmlhttp = new XMLHttpRequest();
         var data;
         var map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
@@ -37,7 +36,6 @@
                 var json = xmlhttp.responseText;
                 data = JSON.parse(json);
                 var out = "";
-                console.log(data);
                 if (data.length > 0){
                     var i;
                     template = "<div class=\"aire-de-jeux\" onclick=\"location.href='\aireDeJeux/%urlAireDeJeux%';\" style=\"cursor: pointer;\">" +
@@ -70,13 +68,17 @@
         document.getElementById("hints").innerHTML = "";
     }
     function initialize(lat, lon) {
+        document.getElementById("map_home").style.display= "block";
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
-         var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
-        { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+        var styles =  [ { "stylers": [
+            { "saturation": 5 },
+            { "lightness": -5 },
+            { "gamma": 1.16 },
+            { "hue": "#004cff" } ]
+        } ];
         var styledMap = new google.maps.StyledMapType(styles,
-    {name: "Styled Map"});
-
+            {name: "Styled Map"});
         var mapOption = {
             center: myLatLng,
             zoom: 12,

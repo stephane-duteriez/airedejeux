@@ -4,24 +4,39 @@
     <script src="https://maps.googleapis.com/maps/api/js"></script>
 {% endblock %}
 {% block content %}
-    <form action="/modifier/{{ aireDeJeux.indice|e }}" enctype="multipart/form-data" method="post">
+    <form
+            {% if nouveau == "true" %}
+             action="/ajouterAireDeJeux"
+            {% else %}
+            action="/modifier/{{ aireDeJeux.indice|e if aireDeJeux != '' }}"
+            {% endif %}
+            enctype="multipart/form-data" method="post">
         <input type="submit" value="Submit">
         <div class="contenant">
             <div class="contenue">
+                <div hidden><input type="hidden" name="indice" value="{{ new_indice }}"></div>
                 Nom de l'aire de jeux : <br>
-                <div><input type="text" name="nom_aire_de_jeux" id="nom" value="{{aireDeJeux.nom|e}}" required></div>
-                Commune : <br>
-                <div><input type="text" name="commune" id="ville_input"
-                            value="{{ville.nom|e}}, {{ville.departement|e}}" readonly></div>
-                coordonnées :
-                <div>
-                    latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat }}"><br>
-                    longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon }}">
+                <div><input type="text" name="nom_aire_de_jeux" id="nom" onchange="check_unique()"
+                            value="{{aireDeJeux.nom|e if aireDeJeux != '' }}" required
+                            ><span id="alert"></span></div>
+                <div class="select~_ville">
+                    {{ macros.select_ville() }}
                 </div>
+                <div>
+                    <input type="hidden" name="key_ville" id="key_ville" value=""
+                            onchange="check_unique()"
+                            required>
+                </div>
+                <div hidden>coordonnées :
+                <div>
+                    latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat if aireDeJeux != '' }}"><br>
+                    longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon if aireDeJeux != '' }}">
+                </div></div>
                 score : <br>
-                <div id="stars">
+                <div id="stars" onmouseleave="reset()">
                 {% for i in range(5) %}
-                    <svg width="22" height="22" class="stars" onclick="newScore({{ i }})">
+                    <svg width="22" height="22" class="stars" onclick="changeScore({{ i }}, 'new')"
+                         onmouseover="changeScore({{i}}, 'show')">
                         {% if aireDeJeux.score and aireDeJeux.score > i %}
                             <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />{{i}}
                         {% else %}
@@ -30,19 +45,21 @@
                     </svg>
                 {% endfor %}
                 </div>
-                <div><input type="number" name="score" id="score" value=0 hidden></div>
+                <div><input type="number" name="score" id="score"
+                            value={{ aireDeJeux.score if aireDeJeux else 0}} hidden></div>
                 horaire :
                 <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
                 tranche d'age:
                 <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age != 'None' }}"></div>
-                accessibilité :
-                <div><textarea name="acces" id="acces" >{{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}</textarea></div>
                 activités : Entrez une liste des activités séparées par une virgule<br>
-                <div><textarea name="activites" class="box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
+                <div><textarea name="activites" class="input_box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
                 description : <br>
-                <div><textarea name="description" class="box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
+                <div><textarea name="description" class="input_box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
+                accessibilité :
+                <div><textarea name="acces" id="acces" class="input_box">
+                    {{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}</textarea></div>
                 commentaire : <br>
-                <div><textarea name="commentaire" class="box"></textarea></div>
+                <div><textarea name="commentaire" class="input_box"></textarea></div>
                 <input type="submit" value="Submit">
             </div>
             <div class="contenue">
@@ -51,17 +68,87 @@
                         <div id="map"></div>
                     </div>
                 </div>
-                {{ macros.photos(listImage, aireDeJeux.indice) }}
+                {% if aireDeJeux == "" %}
+                    {{ macros.photos(listImage, new_indice) }}
+                {% else %}
+                    {{ macros.photos(listImage, aireDeJeux.indice) }}
+                {% endif %}
             </div>
         </div>
 
     </form>
     <script>
-    {% if aireDeJeux.coordonnees.lat %}
-        initialize( {{aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }} );
+    {% if nouveau != "true" %}
+        document.getElementById("nom").readOnly=true;
+        document.getElementById("ville_input").readOnly=true;
+        {% if aireDeJeux.coordonnees.lat %}
+            initialize( {{aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }} );
+        {% else %}
+            initialize( {{ville.coordonnees.lat }}, {{ ville.coordonnees.lon }} );
+        {% endif %}
+        function initialize(lat, lon) {
+            var mapCanvas = document.getElementById("map");
+            var myLatLng = {lat: lat, lng: lon};
+            var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
+            { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+            var styledMap = new google.maps.StyledMapType(styles,
+        {name: "Styled Map"});
+
+            var mapOption = {
+                center: myLatLng,
+                zoom: 12,
+                mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
+            }
+            var map = new google.maps.Map(mapCanvas, mapOption);
+            map.mapTypes.set('map_style', styledMap);
+            map.setMapTypeId('map_style');
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                title: 'Hello World!',
+                draggable: true,
+            });
+            marker.addListener('dragend', function() {
+                map.setCenter(marker.getPosition());
+                document.getElementById("lat").value = marker.getPosition().lat();
+                document.getElementById("lng").value = marker.getPosition().lng();
+            });
+            google.maps.event.addListener(map, 'dblclick', function(event) {
+                placeMarker(marker, event.latLng);
+            });
+        }
+
     {% else %}
-        initialize( {{ville.coordonnees.lat }}, {{ ville.coordonnees.lon }} );
-    {% endif %}
+    function check_unique() {
+        nom = document.getElementById("nom").value;
+        key_ville = document.getElementById("key_ville").value;
+        if (nom && key_ville) {
+            var xmlhttp = new XMLHttpRequest();
+            var valide = true;
+            console.log("test");
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    json = xmlhttp.responseText;
+                    data = JSON.parse(json);
+                    console.log(data);
+                    if (data == true) {
+                        document.getElementById("alert").innerHTML = "";
+                        valide = true;
+                    } else {
+                        document.getElementById("alert").innerHTML = "Il y a déjà une aire de jeux à ce nom dans" +
+                         " cette ville, choisissez un nouveau nom, svp.";
+                        valide = false;
+                    }
+                }
+            }
+            xmlhttp.open("GET", "/verifierUnique?nom=" + nom + "&keyVille=" + key_ville, true);
+            xmlhttp.send();
+        }
+    }
+
+
+
+
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
@@ -69,7 +156,6 @@
         { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
         var styledMap = new google.maps.StyledMapType(styles,
     {name: "Styled Map"});
-
         var mapOption = {
             center: myLatLng,
             zoom: 12,
@@ -93,22 +179,56 @@
             placeMarker(marker, event.latLng);
         });
     }
-    function placeMarker(marker, location) {
-        marker.setPosition(location);
-        document.getElementById("lat").value = marker.getPosition().lat();
-        document.getElementById("lng").value = marker.getPosition().lng();
+
+
+
+    {% endif %}
+    {% if ville != "" %}
+        var n_ville = "{{ ville.nom }}" + ", " + "{{ ville.departement }}";
+        document.getElementById("ville_input").value = n_ville;
+        json_liste_ville = '{ "' + n_ville + '": {'+
+                                    '"key": "{{ ville.urlsafeKey }}",' +
+                                    '"lat": {{ ville.coordonnees.lat }},' +
+                                    '"lon": {{ ville.coordonnees.lon }} ' +
+                        '} }';
+        liste_ville = JSON.parse(json_liste_ville)
+        hint(n_ville);
+    {% endif %}
+    function hint(nom_ville) {
+        document.getElementById("key_ville").value = liste_ville[nom_ville].key;
+        initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
     }
-    function newScore(score) {
-        document.getElementById("score").value=score+1;
+    function changeScore(score, action) {
+        var color="red";
+        if(action=="new"){
+            color="yellow";
+            document.getElementById("score").value=score+1;
+        }
+
         for(i=0; i<5 ; i++ ){
-
             if(i<=score) {
-                document.getElementById("star_" + i.toString()).setAttribute("fill","yellow");
-
+                document.getElementById("star_" + i.toString()).setAttribute("fill",color);
             } else {
                 document.getElementById("star_" + i.toString()).setAttribute("fill","grey");
             }
         }
+    }
+
+    function reset() {
+        var score = document.getElementById("score").value - 1;
+        for(i=0; i<5 ; i++ ){
+            if(i<=score) {
+                document.getElementById("star_" + i.toString()).setAttribute("fill","yellow");
+            } else {
+                document.getElementById("star_" + i.toString()).setAttribute("fill","grey");
+            }
+        }
+    }
+
+    function placeMarker(marker, location) {
+        marker.setPosition(location);
+        document.getElementById("lat").value = marker.getPosition().lat();
+        document.getElementById("lng").value = marker.getPosition().lng();
     }
     </script>
 

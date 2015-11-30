@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form id="uploadPhoto" action="{{ upload_url}}" method="POST" enctype="multipart/form-data">
+<form id="uploadPhoto" action="{{ upload_url}}" method="post" enctype="multipart/form-data">
     Photo: <input type="file" name="file" onchange="mySubmit()"><br>
     <input type="text" name="indice" value="{{ indice }}" hidden>
 </form>

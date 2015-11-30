@@ -70,7 +70,7 @@ class CreerAireDeJeuxHandler(Handler):
     # TODO mettre de filtre pour valider les donnee avant de les envoyer vers la base de donnee
     # TODO changer le fonctionement du bouton Ajouter pour vérifier que l'utilisateur à submit avant de quiter la page
     def render_main(self, indice="",  dataVille=""):
-        self.render("nouvelleAireDeJeux.html", new_indice=indice, ville=dataVille)
+        self.render("modifier.html", new_indice=indice, ville=dataVille, aireDeJeux="", nouveau="true")
 
     def get(self):
         urlsafeKeyVille = self.request.get("keyVille")
@@ -194,9 +194,28 @@ class ListAireDeJeuxHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(data))
 
 
+class ListeCommentaireHandler(webapp2.RequestHandler):
+    def get(self):
+        time.sleep(0.2)
+        urlsafeKeyAireDeJeux = self.request.get("q")
+        keyAireDeJeux = ndb.Key(urlsafe=urlsafeKeyAireDeJeux)
+        queryCommentaire = Commentaire.query(Commentaire.aireDeJeux == keyAireDeJeux)
+        listeCommentaire = queryCommentaire.fetch(30)
+        data = []
+        logging.info(listeCommentaire)
+        for commentaire in listeCommentaire:
+            data.append(commentaire.commentaire)
+        self.response.headers['Content-Type'] = 'text/json'
+        self.response.write(json.dumps(data))
+
+
 class ModifierHandler(Handler):
     def render_main(self, aire_de_jeux, ville, list_image):
-        self.render("modifier.html", aireDeJeux=aire_de_jeux, ville=ville, listImage=list_image)
+        self.render("modifier.html",
+                    aireDeJeux=aire_de_jeux,
+                    ville=ville,
+                    listImage=list_image,
+                    nouveau="false")
 
     def get(self, indice):
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
@@ -204,7 +223,7 @@ class ModifierHandler(Handler):
         db_detail = db_aire_de_jeux.detail.get()
         query_photos = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
         list_image = query_photos.fetch(10)
-        self.render_main(db_aire_de_jeux.export(), ville, list_image)
+        self.render_main(db_aire_de_jeux.export(), ville.urlsafe(), list_image)
 
     def post(self, indice):
         dbAireDeJeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
@@ -275,6 +294,25 @@ class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             self.error(500)
 
 
+class AddCommentHandler(Handler):
+    def render_main(self, key):
+        self.render("newComment.html", key=key)
+
+    def get(self):
+        key = self.request.get('key')
+        self.render_main(key)
+
+    def post(self):
+        key_aire_de_jeux = self.request.get("key")
+        comment = self.request.get("commentaire")
+        new_comment = Commentaire(
+            aireDeJeux=ndb.Key(urlsafe=key_aire_de_jeux),
+            commentaire=comment
+        )
+        new_comment.put()
+        send_mail_notification("new comment", new_comment.str())
+
+
 class ViewPhotoHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self, photo_key):
         if not blobstore.get(photo_key):
@@ -308,9 +346,11 @@ app = webapp2.WSGIApplication([
     ('/ajouterAireDeJeux', AjouterHandler),
     ('/listeVille', ListeVilleHandler),
     ('/listAireDeJeux', ListAireDeJeuxHandler),
+    ('/listeCommentaire', ListeCommentaireHandler),
     ('/aireDeJeux/(.*)?', AireDeJeuxHandler),
     ('/modifier/([^/]+)?', ModifierHandler),
     ('/add_photo', PhotoUploadFormHandler),
+    ('/add_comment', AddCommentHandler),
     ('/view_photo/([^/]+)?', ViewPhotoHandler),
     ('/upload_photo', PhotoUploadHandler),
     ('/listeImage', ListeImageHandler),

@@ -17,23 +17,23 @@ class AireDeJeux(ndb.Model):
     url = ndb.StringProperty()
 
     def export(self):
-        data = {}
-        data["nom"] = self.nom
-        data["indice"] = self.indice
-        data["url"] = self.url
         detail = self.detail.get()
-        data["activites"] = detail.activites
-        data["score"] = detail.score
-        data["horaires"] = detail.horaires
-        data["accessibilite"] = detail.accessibilite
-        data["description"] = detail.description
-        data["coordonnees"] = detail.coordonnees
-        data["age"] = detail.age
         ville = self.ville.get()
-        data["ville"] = ville.nom
-        data["departement"] = ville.departement
-        data["coordonnees_ville"] = ville.coordonnees
-        logging.info(data)
+        data = {"key": self.key.urlsafe(),
+                "nom" : self.nom,
+                "indice" : self.indice,
+                "url": self.url,
+                "activites": detail.activites,
+                "score": detail.score,
+                "horaires": detail.horaires,
+                "accessibilite": detail.accessibilite,
+                "description":detail.description,
+                "coordonnees":detail.coordonnees,
+                "age": detail.age,
+                "ville": ville.nom,
+                "departement": ville.departement,
+                "coordonnees_ville": ville.coordonnees
+                }
         return data
 
     def str(self):
@@ -57,7 +57,6 @@ class Detail(ndb.Model):
     description = ndb.StringProperty()
     coordonnees = ndb.GeoPtProperty()
     age = ndb.StringProperty()
-
 
 
 class Commune(ndb.Model):

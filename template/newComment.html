@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="/add_comment" method="post" enctype="multipart/form-data">
+        commentaire : <br>
+        <textarea name="commentaire"></textarea>
+        <input type="text" name="key" value="{{ key }}" hidden>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

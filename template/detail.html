@@ -7,7 +7,7 @@
     <li class="menu" onclick="location.href='/modifier/{{ aireDeJeux.indice|e }}'" style="cursor: pointer">Modifier</li>
 {% endblock %}
 {% block content %}
-<div id="title" class="highlight">
+<div id="title" class="highlight title_detail">
     <div id="ville">{{ aireDeJeux.ville|e }}</div>
     <div id="name">{{ aireDeJeux.nom|e }}</div>
 </div>
@@ -25,7 +25,13 @@
     </div>
     <div class="contenant">
         <div class="contenue">
-            <div id="box-activitees">
+            <div id="horraire" class="bigger horizontal">
+                <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e }}</div>
+            </div>
+            <div id="age" class="bigger horizontal">
+                <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e }}</div>
+            </div>
+            <div id="box-activitees" class="box">
                 <div id="title-activitee" class="bigger highlight">Activités:</div>
                 <div id="list-activitees">
                     {% for activite in aireDeJeux.activites %}
@@ -33,17 +39,11 @@
                     {% endfor %}
                 </div>
             </div>
-            <div id="box-acces">
+            <div id="box-acces" class="box">
                 <div id="title-accessibilite" class="bigger highlight">Accessibilité</div>
                 <div id="description-accessibilte">{{ aireDeJeux.accessibilite|e }}</div>
             </div>
-            <div id="horraire" class="bigger horizontal">
-                <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e }}</div>
-            </div>
-            <div id="age" class="bigger horizontal">
-                <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e }}</div>
-            </div>
-            <div id="description">
+            <div id="description" class="box">
             <div class="bigger highlight">
                 Description:
             </div>
@@ -51,10 +51,15 @@
                 {{ aireDeJeux.description|e }}
             </p>
             </div>
-            <div id="comentaires">
-                <div class="bigger highlight commentaire-title horizontal">
-                    <div>Commentaire(s): </div><div class="center"> </div><div class="plus" onclick="new_commentaire()"> + </div>
+            <div id="commentaires" class="box">
+                <div class="bigger highlight horizontal">
+                    <div>Commentaire(s): </div>
+                    <div class="center"> </div><div class="plus" onclick="new_commentaire()"> + </div>
                 </div>
+                <div id="new_comment" style="display: none">
+                    <iframe src="/add_comment?key={{ aireDeJeux.key }}" onload="update_comment()"></iframe>
+                </div>
+                <div id="liste_commentaires">
                 {% if listCommentaires %}
                     {% for commentaire in listCommentaires %}
                     <p class="commentaire">
@@ -62,11 +67,11 @@
                     </p>
                     {% endfor %}
                 {% endif %}
-
+                </div>
             </div>
         </div>
         <div class="contenue">
-            <div class="ratio23outside">
+            <div class="ratio23outside box">
             <div class="ratio23inside">
             <div id="map"></div></div></div>
             {{ macros.photos(listImage, aireDeJeux.indice) }}
@@ -74,7 +79,6 @@
     </div>
 </div>
 <script>
-    console.log("{{aireDeJeux.accessibilite}}")
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
@@ -98,6 +102,32 @@
     }
     initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else aireDeJeux.coordonnees_ville.lat}},
         {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else aireDeJeux.coordonnees_ville.lon}});
-
+    function new_commentaire(){
+        document.getElementById("new_comment").style.display="block";
+    }
+    var pas_de_nouveau_commentaire = "true"
+    function update_comment(){
+        if (pas_de_nouveau_commentaire == "true") {
+            pas_de_nouveau_commentaire = "false"
+        } else {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    json = xmlhttp.responseText;
+                    liste_commentaires = JSON.parse(json);
+                    var out = "";
+                    template = "<p class='commentaire'>%commentaire%</p>";
+                    for (i=0; i<liste_commentaires.length; i++) {
+                        new_commentaire = template.replace('%commentaire%', liste_commentaires[i]);
+                        out += new_commentaire;
+                    }
+                    document.getElementById("new_comment").style.display="none";
+                    document.getElementById("liste_commentaires").innerHTML = out;
+                }
+            }
+            xmlhttp.open("GET", "/listeCommentaire?q=" + "{{aireDeJeux.key}}", true);
+            xmlhttp.send();
+        }
+    }
 </script>
 {% endblock %}

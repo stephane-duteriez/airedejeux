@@ -1,6 +1,9 @@
-
+.html {
+    background-color: #e3f2fd;
+    }
 .highlight {
     background-color: #2196f3;
+    color: white;
 }
 
 .bigger {
@@ -8,11 +11,16 @@
     padding: 6px;
     }
 
+.body{
+    width : 100%;
+    margin: 0px;
+    min-height: 100%;
+    }
+
 #main {
     width:100%;
     margin-left: auto;
     margin-right: auto;
-    background-color: #90caf9;
     }
 
 #header {
@@ -21,73 +29,76 @@
     max-height: 15%;
     text-align: center;
     font-size: 3em;
-    margin-top : 20px;
-    margin-bottom : 5px;
+    box-shadow : 0em 0.1em 0.1em #888888;
+    background-color: #2196f3;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    color: #ffffff;
 }
 
+.title {
+    margin : 1em 1em 0.2em 0.2em;
+    }
+
 div.menu{
-    font-size:1.3em;
+    font-size:0.5em;
 }
 
 ul.menu {
     display: flex;
     list-style-type: none;
-    margin: 0;
-    padding: 0;
     justify-content: center;
     flex-wrap: wrap;
+    margin : 0px 0px 0.4em 0px ;
+    padding : 0px;
 }
 
 li.menu, p.menu {
-    border-radius: 10px;
     float:left;
     display: inline;
     text-align: center;
-    background-color: #0d47a1;
     color: #ffffff;
-    padding-top: 5px;
-    padding-bottom: 4px;
-    margin: 2px;
-    width:19%;
-    min-width:100px;
-    box-shadow: 5px 5px 2px #2962ff;
+    margin : 0px 2em 0px 0px;
     }
 
 li.menu:hover {
-    background-color: #1565c0;
+    color: #1565c0;
     }
 
-#title {
+#cherche_ville {
     display:flex;
-    text-align:center;
     font-size:2em;
-    margin-bottom: 10px;
-    flex-direction: column;
+    padding: 0.2em 0.2em 0.2em 0.2em;
+    flex-wrap: wrap;
 }
+.select_ville {
+    display:flex;
+    }
+.main_content {
+    background-color: white;
+    width:80%;
+    min-width:300px;
+    margin-top: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
+    box-shadow: 0em 0.2em 0.2em #888888
+    }
 
-
-
+.ville_title {
+    margin-right: 1em;
+    }
 #ville_input {
-    padding-right:5px;
+    padding-right: 1em;
     font-size: 0.8em;
-    justify-content:center;
-    max-width: 80%;
+    max-width: 10em;
     }
 
-#hints {
-    display : flex;
-    flex-flow: row wrap
-    }
-
-.hint {
-    margin: 2px;
-    font-size: 0.8em;
-    background-color: #42a5f5;
-    flex: 1 1 100px;
-    }
-
-.hint:hover {
-    background-color: #64b5f6;
+.title_detail {
+    font-size: 2em;
+    color: white;
+    padding: 0.2em;
     }
 
 #name {
@@ -114,12 +125,6 @@ li.menu:hover {
     padding:2px
     }
 
-#acces {
-    width:100%;
-    max-width : 300px;
-    height : 4em;
-    }
-
 #box-activitees {
     flex:1 1 100%;
     }
@@ -139,29 +144,32 @@ li.menu:hover {
 
 
 #description{
-    width:100%;
     flex:1 1 300px;
     }
 
 #commentaires{
-    flex:1 1 100%;
+    flex:1 1 300px;
     }
 
 .commentaire,.description,#list-activitees,#description-accessibilte{
     padding-left: 10px;
-    border-style: solid;
-    border-width: thin;
     min-height: 50px;
     }
 
 .box {
-    width : 100%;
-    max-width : 300px;
-    height : 100px;
+    box-shadow: 0.3em 0.5em 0.5em 0.2em #888888;
+    margin: 1em;
+    }
+.input_box {
+    box-shadow: 0.3em 0.5em 0.5em 0.2em #888888;
+    margin: 1em;
+    width: 90%;
+    min-height:5em;
     }
 .map_home {
     height:300px;
     }
+
 #map {
     width: 100%;
     height: 100%;
@@ -187,7 +195,7 @@ li.menu:hover {
 
 .blanc-aire-de-jeux{
     border-style: solid;
-    border-color: #90caf9;
+    border-color: white;
     }
 
 .aire-de-jeux {
@@ -213,7 +221,6 @@ li.menu:hover {
 
 .horizontal {
     display: flex;
-    width: 100%;
     }
 .inside {
     flex: 1 1 50px;
@@ -222,7 +229,6 @@ li.menu:hover {
     width:100%;
     }
 .ratio23outside {
-    width:100%;
     position:relative;
     padding-top: 66%;
     height:0px;
@@ -267,18 +273,17 @@ li.menu:hover {
     width: 100%;
     height: 4em;
     }
-#commentaire-title {
-    display: flex;
-    }
 .center {
     flex: 1 1;
     }
 .plus {
-    border-style: solid;
     padding: 0px 6px;
+    margin-right: 0.5em;
     background-color: #90caf9;
     font-weight: bold;
+    box-shadow: 0.2em 0.2em 0.1em #1565c0;
+    color: white;
     }
 .plus:hover {
-    background-color: #1565c0;
+    color: #1565c0;
     }
