@@ -4,12 +4,29 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<style>
+#commentaire{
+    width: 95%;
+    height: 6em;
+    box-shadow: 0.3em 0.5em 0.5em 0.2em #888888;
+    }
+#submit{
+    box-shadow: 0.3em 1em 1em 0.2em #888888;
+    background-color: #42a5f5;
+    color: white;
+    border: none;
+    margin-left:1em;
+    padding: 0.5em;
+    }
+#submit:hover{
+    color: #1565c0;
+    }
+</style>
 <body>
     <form action="/add_comment" method="post" enctype="multipart/form-data">
-        commentaire : <br>
-        <textarea name="commentaire"></textarea>
+        <textarea name="commentaire" width="100%" id="commentaire"></textarea><br>
         <input type="text" name="key" value="{{ key }}" hidden>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" id="submit">
     </form>
 </body>
 </html>

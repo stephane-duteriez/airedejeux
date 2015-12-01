@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 # TODO avoir l'option de s'enregistrer avec un compt gmail
-# TODO ajout d'un commentaire directement depuis la page detail
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
-# TODO ajouter action sur le bouton "+" pour inserer un mouveau commentaire
-# TODO indiquer  que lq photo est en téléchargement
+# TODO indiquer  que lq photo est en téléchargemment
+# TODO améliorer la visualisation sur mobile avec des materiel bord à bords
 import webapp2
 import json
 import time
@@ -69,22 +68,21 @@ class AireDeJeuxHandler(Handler):
 class CreerAireDeJeuxHandler(Handler):
     # TODO mettre de filtre pour valider les donnee avant de les envoyer vers la base de donnee
     # TODO changer le fonctionement du bouton Ajouter pour vérifier que l'utilisateur à submit avant de quiter la page
-    def render_main(self, indice="",  dataVille=""):
-        self.render("modifier.html", new_indice=indice, ville=dataVille, aireDeJeux="", nouveau="true")
+    def render_main(self, indice="", data_ville=""):
+        self.render("modifier.html", new_indice=indice, ville=data_ville, aireDeJeux="", nouveau="true")
 
     def get(self):
-        urlsafeKeyVille = self.request.get("keyVille")
-
+        urlsafe_key_ville = self.request.get("keyVille")
         existe = True
         while existe:
             indice = random_str()
-            alreadyExist = AireDeJeux.query(AireDeJeux.indice == indice)
-            if alreadyExist.count() == 0:
+            already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
+            if already_existe.count() == 0:
                 existe = False
 
-        if urlsafeKeyVille:
-            keyVille = ndb.Key(urlsafe=urlsafeKeyVille)
-            ville = keyVille.get()
+        if urlsafe_key_ville:
+            key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
+            ville = key_ville.get()
             self.render_main(indice, ville.urlsafe())
         else:
             self.render_main(indice)
@@ -109,11 +107,11 @@ class ListeImageHandler(webapp2.RequestHandler):
     def get(self):
         indice = self.request.GET['q']
         logging.info(indice)
-        queryPhotos = Photo.query(Photo.indice_aireDeJeux == indice)
-        listImage = queryPhotos.fetch(10)
-        logging.info(listImage)
+        query_photos = Photo.query(Photo.indice_aireDeJeux == indice)
+        liste_images = query_photos.fetch(10)
+        logging.info(liste_images)
         data = []
-        for image in listImage:
+        for image in liste_images:
             data.append(image.photo_url)
         self.response.write(json.dumps(data))
 
@@ -175,35 +173,34 @@ class ChercherHandler(Handler):
 
 class ListAireDeJeuxHandler(webapp2.RequestHandler):
     def get(self):
-        urlsafeKeyVille = self.request.get("keyVille")
-        keyVille = ndb.Key(urlsafe=urlsafeKeyVille)
-        queryAireDeJeux = AireDeJeux.query(AireDeJeux.ville == keyVille)
-        listAireDeJeux = queryAireDeJeux.fetch(30)
+        urlsafe_key_ville = self.request.get("keyVille")
+        key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
+        query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)
+        liste_aire_de_jeux = query_aire_de_jeux.fetch(30)
         data = []
-        for aireDeJeux in listAireDeJeux:
-            nextADJ = {"nom": aireDeJeux.nom,
-                       "indiceAireDeJeux": aireDeJeux.indice,
-                       "url": aireDeJeux.url,
-                       "lat": "",
-                       "lng": ""}
+        for aireDeJeux in liste_aire_de_jeux:
+            next_aire_de_jeux = {"nom": aireDeJeux.nom,
+                                 "indiceAireDeJeux": aireDeJeux.indice,
+                                 "url": aireDeJeux.url,
+                                 "lat": "",
+                                 "lng": ""}
             detail = aireDeJeux.detail.get()
             if detail.coordonnees:
-                nextADJ["lat"] = detail.coordonnees.lat
-                nextADJ["lng"] = detail.coordonnees.lon
-            data.append(nextADJ)
+                next_aire_de_jeux["lat"] = detail.coordonnees.lat
+                next_aire_de_jeux["lng"] = detail.coordonnees.lon
+            data.append(next_aire_de_jeux)
         self.response.write(json.dumps(data))
 
 
 class ListeCommentaireHandler(webapp2.RequestHandler):
     def get(self):
         time.sleep(0.2)
-        urlsafeKeyAireDeJeux = self.request.get("q")
-        keyAireDeJeux = ndb.Key(urlsafe=urlsafeKeyAireDeJeux)
-        queryCommentaire = Commentaire.query(Commentaire.aireDeJeux == keyAireDeJeux)
-        listeCommentaire = queryCommentaire.fetch(30)
+        urlsafe_key_aire_de_jeux = self.request.get("q")
+        key_aire_de_jeux = ndb.Key(urlsafe=urlsafe_key_aire_de_jeux)
+        query_commentaire = Commentaire.query(Commentaire.aireDeJeux == key_aire_de_jeux)
+        liste_commentaire = query_commentaire.fetch(30)
         data = []
-        logging.info(listeCommentaire)
-        for commentaire in listeCommentaire:
+        for commentaire in liste_commentaire:
             data.append(commentaire.commentaire)
         self.response.headers['Content-Type'] = 'text/json'
         self.response.write(json.dumps(data))
@@ -220,20 +217,19 @@ class ModifierHandler(Handler):
     def get(self, indice):
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
         ville = db_aire_de_jeux.ville.get()
-        db_detail = db_aire_de_jeux.detail.get()
         query_photos = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
         list_image = query_photos.fetch(10)
         self.render_main(db_aire_de_jeux.export(), ville.urlsafe(), list_image)
 
     def post(self, indice):
-        dbAireDeJeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
+        db_aire_de_jeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
         db_detail = Detail(indice=indice)
         latitude = self.request.get('lat')
         longitude = self.request.get('lng')
         score = self.request.get('score')
         horaire = self.request.get('horaire')
         accessibilite = self.request.get('acces')
-        textActivites = self.request.get('activites')
+        text_activites = self.request.get('activites')
         description = self.request.get('description')
         age = self.request.get('age')
         commentaire = self.request.get('commentaire')
@@ -246,8 +242,8 @@ class ModifierHandler(Handler):
             db_detail.accessibilite = accessibilite
         if horaire and horaire != '"None"':
             db_detail.horaires = horaire
-        if textActivites and textActivites != '"None"':
-            list_activites = [activite.strip() for activite in textActivites.split(",")]
+        if text_activites and text_activites != '"None"':
+            list_activites = [activite.strip() for activite in text_activites.split(",")]
             db_detail.activites = list_activites
         if description and description != '"None"':
             db_detail.description = description
@@ -255,17 +251,17 @@ class ModifierHandler(Handler):
             db_detail.age = age
 
         key_detail = db_detail.put()
-        dbAireDeJeux.detail = key_detail
-        dbAireDeJeux.put()
+        db_aire_de_jeux.detail = key_detail
+        db_aire_de_jeux.put()
 
         if commentaire:
-            nouveau_commentaire = Commentaire(aireDeJeux=dbAireDeJeux.key, commentaire=commentaire)
+            nouveau_commentaire = Commentaire(aireDeJeux=db_aire_de_jeux.key, commentaire=commentaire)
             send_mail_notification("nouveaux commentaire", nouveau_commentaire.str())
             nouveau_commentaire.put()
 
         time.sleep(0.1)
-        send_mail_notification("nouvelle aire-de-jeux", dbAireDeJeux.str())
-        self.redirect("/aireDeJeux/" + dbAireDeJeux.url)
+        send_mail_notification("nouvelle aire-de-jeux", db_aire_de_jeux.str())
+        self.redirect("/aireDeJeux/" + db_aire_de_jeux.url)
 
 
 class PhotoUploadFormHandler(Handler):
@@ -311,6 +307,7 @@ class AddCommentHandler(Handler):
         )
         new_comment.put()
         send_mail_notification("new comment", new_comment.str())
+        self.redirect('/add_comment?key=' + key_aire_de_jeux)
 
 
 class ViewPhotoHandler(blobstore_handlers.BlobstoreDownloadHandler):
@@ -325,12 +322,12 @@ class VerifierUniqueHandler(webapp2.RequestHandler):
     def get(self):
         key_ville = ndb.Key(urlsafe=self.request.get("keyVille"))
         nom_aire_de_jeux = self.request.get("nom")
-        queryExiste = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom_aire_de_jeux, AireDeJeux.ville == key_ville))
-        resulta = True
-        if queryExiste.get():
-            resulta = False
-        logging.info(resulta)
-        self.response.write(json.dumps(resulta))
+        query_existe = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom_aire_de_jeux, AireDeJeux.ville == key_ville))
+        result = True
+        if query_existe.get():
+            result = False
+        logging.info(result)
+        self.response.write(json.dumps(result))
 
 
 class GoogleVerificationHandler(Handler):

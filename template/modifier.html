@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
     <form
-            {% if nouveau == "true" %}
+            {% if nouveau=="true" %}
              action="/ajouterAireDeJeux"
             {% else %}
             action="/modifier/{{ aireDeJeux.indice|e if aireDeJeux != '' }}"
@@ -15,7 +15,7 @@
         <div class="contenant">
             <div class="contenue">
                 <div hidden><input type="hidden" name="indice" value="{{ new_indice }}"></div>
-                Nom de l'aire de jeux : <br>
+                <p>Nom de l'aire de jeux :</p>
                 <div><input type="text" name="nom_aire_de_jeux" id="nom" onchange="check_unique()"
                             value="{{aireDeJeux.nom|e if aireDeJeux != '' }}" required
                             ><span id="alert"></span></div>
@@ -32,7 +32,7 @@
                     latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat if aireDeJeux != '' }}"><br>
                     longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon if aireDeJeux != '' }}">
                 </div></div>
-                score : <br>
+                <p>Score :</p>
                 <div id="stars" onmouseleave="reset()">
                 {% for i in range(5) %}
                     <svg width="22" height="22" class="stars" onclick="changeScore({{ i }}, 'new')"
@@ -47,18 +47,18 @@
                 </div>
                 <div><input type="number" name="score" id="score"
                             value={{ aireDeJeux.score if aireDeJeux else 0}} hidden></div>
-                horaire :
+                <p>Horaire :</p>
                 <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
-                tranche d'age:
+                <p>Tranche d'age:</p>
                 <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age != 'None' }}"></div>
-                activités : Entrez une liste des activités séparées par une virgule<br>
+                <p>Activités : Entrez une liste des activités séparées par une virgule<br></p>
                 <div><textarea name="activites" class="input_box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
-                description : <br>
+                <p>Description :</p>
                 <div><textarea name="description" class="input_box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
-                accessibilité :
+                <p>Accessibilité :</p>
                 <div><textarea name="acces" id="acces" class="input_box">
                     {{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}</textarea></div>
-                commentaire : <br>
+                <p>Commentaire :</p>
                 <div><textarea name="commentaire" class="input_box"></textarea></div>
                 <input type="submit" value="Submit">
             </div>

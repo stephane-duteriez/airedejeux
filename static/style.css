@@ -43,6 +43,7 @@
 
 div.menu{
     font-size:0.5em;
+    margin: 0em 0em 0.2em 0.2em;
 }
 
 ul.menu {
@@ -50,7 +51,7 @@ ul.menu {
     list-style-type: none;
     justify-content: center;
     flex-wrap: wrap;
-    margin : 0px 0px 0.4em 0px ;
+    margin : 0px 0px 0em 0px ;
     padding : 0px;
 }
 
@@ -179,12 +180,14 @@ li.menu:hover {
     display : flex;
     width : 100%;
     flex-flow : row wrap;
+    padding: 0em;
+    margin: 0px;
     }
 
 .contenue {
     flex : 1 1 250px;
-    padding : 5px;
-    margin : 5px;
+    padding : 0px;
+    margin : 0px;
     }
 
 .aire-de-jeux, .blanc-aire-de-jeux {
@@ -273,6 +276,10 @@ li.menu:hover {
     width: 100%;
     height: 4em;
     }
+#iframAddComment {
+    border: none;
+    width: 100%;
+    }
 .center {
     flex: 1 1;
     }
@@ -286,4 +293,39 @@ li.menu:hover {
     }
 .plus:hover {
     color: #1565c0;
+    }
+p {
+    margin: 0.2em 0em 0.2em 0.2em;
+    }
+input {
+    margin: 0.2em 0em 0.2em 1em;
+    }
+@media only screen and (max-width: 768px) {
+    .title {
+        margin : 0.2em 1em 0.2em 0.2em;
+    }
+    #header{
+        font-size: 1.5em;
+        }
+    div.menu{
+        font-size: 0.8em;
+        }
+    .main_content {
+        width: 100%;
+        }
+    .box {
+        margin:1em 0em 1em 0em;
+        width: 100%;
+        }
+    .bigger {
+        font-size: 1em;
+        }
+    .title_detail {
+        font-size: 1.5em;
+        }
+    #title {
+        display: flex;
+        justify-content: space-between;
+        }
+
     }

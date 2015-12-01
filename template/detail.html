@@ -57,7 +57,8 @@
                     <div class="center"> </div><div class="plus" onclick="new_commentaire()"> + </div>
                 </div>
                 <div id="new_comment" style="display: none">
-                    <iframe src="/add_comment?key={{ aireDeJeux.key }}" onload="update_comment()"></iframe>
+                    <iframe src="/add_comment?key={{ aireDeJeux.key }}" onload="update_comment()"
+                    id="iframAddComment"></iframe>
                 </div>
                 <div id="liste_commentaires">
                 {% if listCommentaires %}
@@ -104,11 +105,12 @@
         {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else aireDeJeux.coordonnees_ville.lon}});
     function new_commentaire(){
         document.getElementById("new_comment").style.display="block";
+
     }
-    var pas_de_nouveau_commentaire = "true"
+    var pas_de_nouveau_commentaire = "true";
     function update_comment(){
         if (pas_de_nouveau_commentaire == "true") {
-            pas_de_nouveau_commentaire = "false"
+            pas_de_nouveau_commentaire = "false";
         } else {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
@@ -118,8 +120,8 @@
                     var out = "";
                     template = "<p class='commentaire'>%commentaire%</p>";
                     for (i=0; i<liste_commentaires.length; i++) {
-                        new_commentaire = template.replace('%commentaire%', liste_commentaires[i]);
-                        out += new_commentaire;
+                        new_comment = template.replace('%commentaire%', liste_commentaires[i]);
+                        out += new_comment;
                     }
                     document.getElementById("new_comment").style.display="none";
                     document.getElementById("liste_commentaires").innerHTML = out;
