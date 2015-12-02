@@ -73,6 +73,7 @@
         <div class="contenue">
             <div class="ratio23outside box">
             <div class="ratio23inside">
+            <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
             <div id="map"></div></div></div>
             {{ macros.photos(listImage, aireDeJeux.indice) }}
         </div>
@@ -110,6 +111,7 @@
         if (screen.width<700) {
             map.setOptions({ scrollwheel: false });
             map.setOptions({ draggable: false });
+            document.getElementById("debloquerMap").style.visibility = "visible";
         }
     }
     function new_commentaire(){
@@ -139,6 +141,10 @@
             xmlhttp.open("GET", "/listeCommentaire?q=" + "{{aireDeJeux.key}}", true);
             xmlhttp.send();
         }
+    }
+    function active_map() {
+        console.log("test")
+        map.setOptions({ scrollwheel: true, draggable: true});
     }
 </script>
 <script async defer

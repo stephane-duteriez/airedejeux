@@ -15,6 +15,7 @@
     {{ macros.select_ville() }}
 </div>
 <div class="map_home" id="map_home" style="display:none">
+    <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
     <div id="map"></div>
 </div>
 <div id="template-liste-aire-de-jeux" hidden>
@@ -27,10 +28,11 @@
 </div>
 <script>
     var map_ready = false;
+    var map;
     function hint(nom_ville) {
         var xmlhttp = new XMLHttpRequest();
         var data;
-        var map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
+        map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var json = xmlhttp.responseText;
@@ -91,6 +93,7 @@
         if (screen.width<700) {
             map.setOptions({ scrollwheel: false });
             map.setOptions({ draggable: false });
+            document.getElementById("debloquerMap").style.visibility = "visible";
         }
         return map;
     }
@@ -106,7 +109,10 @@
     function initMap() {
         map_ready = true;
     }
-
+    function active_map() {
+        console.log("test")
+        map.setOptions({ scrollwheel: true, draggable: true});
+    }
 </script>
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?callback=initMap">
