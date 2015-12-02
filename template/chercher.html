@@ -2,7 +2,6 @@
 {% import "macro.html" as macros %}
 {% block head %}
     <title>Ou trouver des aire-de-jeux, recherche par ville</title>
-    <script src="https://maps.googleapis.com/maps/api/js"></script>
     <meta name="description" content="Permet de rechercher les aire-de-jeux publics par ville, dans toute la France.
     Sur le principe des sites communautaires chaque'un peut y ajouter les places de jeux qu'il connaît déjà.">
 {% endblock %}
@@ -27,6 +26,7 @@
 
 </div>
 <script>
+    var map_ready = false;
     function hint(nom_ville) {
         var xmlhttp = new XMLHttpRequest();
         var data;
@@ -82,6 +82,7 @@
         var mapOption = {
             center: myLatLng,
             zoom: 12,
+            streetViewControl: false,
             mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
         }
         var map = new google.maps.Map(mapCanvas, mapOption);
@@ -98,6 +99,12 @@
             });
         }
     }
+    function initMap() {
+        map_ready = true;
+    }
 
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?callback=initMap">
 </script>
 {% endblock %}

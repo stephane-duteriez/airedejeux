@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% import "macro.html" as macros %}
 {% block head %}
-    <script src="https://maps.googleapis.com/maps/api/js"></script>
 {% endblock %}
 {% block content %}
     <form
@@ -38,9 +37,9 @@
                     <svg width="22" height="22" class="stars" onclick="changeScore({{ i }}, 'new')"
                          onmouseover="changeScore({{i}}, 'show')">
                         {% if aireDeJeux.score and aireDeJeux.score > i %}
-                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />{{i}}
+                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill="yellow" />{{i}}
                         {% else %}
-                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="grey" />{{i}}
+                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill=#bbdefb />{{i}}
                         {% endif %}
                     </svg>
                 {% endfor %}
@@ -91,12 +90,13 @@
     {% if nouveau != "true" %}
         document.getElementById("nom").readOnly=true;
         document.getElementById("ville_input").readOnly=true;
+        function initMap() {
         {% if aireDeJeux.coordonnees.lat %}
             initialize( {{aireDeJeux.coordonnees.lat }}, {{ aireDeJeux.coordonnees.lon }} );
         {% else %}
-            console.log("test2");
             initialize( {{ville.coordonnees.lat }}, {{ ville.coordonnees.lon }} );
         {% endif %}
+        }
         function initialize(lat, lon) {
             var mapCanvas = document.getElementById("map");
             var myLatLng = {lat: lat, lng: lon};
@@ -176,6 +176,7 @@
             map: map,
             title: 'Hello World!',
             draggable: true,
+            streetViewControl: false,
         });
         marker.addListener('dragend', function() {
             map.setCenter(marker.getPosition());
@@ -186,9 +187,10 @@
             placeMarker(marker, event.latLng);
         });
     }
+    function initMap() {
     {% if ville != "" %}
         hint(n_ville);
-    {% endif %}
+    {% endif %} }
     {% endif %}
 
     function hint(nom_ville) {
@@ -206,7 +208,7 @@
             if(i<=score) {
                 document.getElementById("star_" + i.toString()).setAttribute("fill",color);
             } else {
-                document.getElementById("star_" + i.toString()).setAttribute("fill","grey");
+                document.getElementById("star_" + i.toString()).setAttribute("fill","#bbdefb");
             }
         }
     }
@@ -217,7 +219,7 @@
             if(i<=score) {
                 document.getElementById("star_" + i.toString()).setAttribute("fill","yellow");
             } else {
-                document.getElementById("star_" + i.toString()).setAttribute("fill","grey");
+                document.getElementById("star_" + i.toString()).setAttribute("fill","#bbdefb");
             }
         }
     }
@@ -228,5 +230,7 @@
         document.getElementById("lng").value = marker.getPosition().lng();
     }
     </script>
-
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+    </script>
 {% endblock %}

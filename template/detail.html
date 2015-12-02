@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% import "macro.html" as macros %}
 {% block head %}
-    <script src="https://maps.googleapis.com/maps/api/js"></script>
 {% endblock %}
 {% block menu %}
     <li class="menu" onclick="location.href='/modifier/{{ aireDeJeux.indice|e }}'" style="cursor: pointer">Modifier</li>
@@ -16,9 +15,9 @@
         {% for i in range(5) %}
         <svg width="22" height="22" class="stars">
             {% if aireDeJeux.score and aireDeJeux.score > i %}
-                <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="yellow" />{{i}}
+                <circle cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill="yellow" />{{i}}
             {% else %}
-                <circle cx="11" cy="11" r="10" stroke="green" stroke-width="1" fill="grey" />{{i}}
+                <circle cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill=#bbdefb />{{i}}
             {% endif %}
         </svg>
         {% endfor %}
@@ -79,7 +78,7 @@
         </div>
     </div>
 </div>
-<script>
+<script type="text/javascript">
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
@@ -90,6 +89,9 @@
 
         var mapOption = {
             center: myLatLng,
+            streetViewControl: false,
+            scrollwheel: false,
+            draggable: false,
             zoom: 15,
             mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
         }
@@ -101,8 +103,10 @@
             map: map,
         });
     }
-    initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else aireDeJeux.coordonnees_ville.lat}},
-        {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else aireDeJeux.coordonnees_ville.lon}});
+    function initMap() {
+        initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else aireDeJeux.coordonnees_ville.lat}},
+            {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else aireDeJeux.coordonnees_ville.lon}});
+    }
     function new_commentaire(){
         document.getElementById("new_comment").style.display="block";
 
@@ -131,5 +135,8 @@
             xmlhttp.send();
         }
     }
+</script>
+<script async defer
+         src="https://maps.googleapis.com/maps/api/js?callback=initMap">
 </script>
 {% endblock %}
