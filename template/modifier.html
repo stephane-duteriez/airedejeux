@@ -108,6 +108,7 @@
             var mapOption = {
                 center: myLatLng,
                 zoom: 12,
+                streetViewControl: false,
                 mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
             }
             var map = new google.maps.Map(mapCanvas, mapOption);
@@ -119,11 +120,16 @@
                 title: 'Hello World!',
                 draggable: true,
             });
+
             marker.addListener('dragend', function() {
                 map.setCenter(marker.getPosition());
                 document.getElementById("lat").value = marker.getPosition().lat();
                 document.getElementById("lng").value = marker.getPosition().lng();
             });
+            if (screen.width<700) {
+                map.setOptions({ scrollwheel: false });
+                map.setOptions({ draggable: false });
+            }
             google.maps.event.addListener(map, 'click', function(event) {
                 placeMarker(marker, event.latLng);
             });
@@ -183,6 +189,10 @@
             document.getElementById("lat").value = marker.getPosition().lat();
             document.getElementById("lng").value = marker.getPosition().lng();
         });
+        if (screen.width<700) {
+            map.setOptions({ scrollwheel: false });
+            map.setOptions({ draggable: false });
+        }
         google.maps.event.addListener(map, 'click', function(event) {
             placeMarker(marker, event.latLng);
         });

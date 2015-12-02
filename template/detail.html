@@ -90,8 +90,8 @@
         var mapOption = {
             center: myLatLng,
             streetViewControl: false,
-            scrollwheel: false,
-            draggable: false,
+            scrollwheel: true,
+            draggable: true,
             zoom: 15,
             mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
         }
@@ -102,10 +102,15 @@
             position: myLatLng,
             map: map,
         });
+        return map;
     }
     function initMap() {
-        initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else aireDeJeux.coordonnees_ville.lat}},
+        map = initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else aireDeJeux.coordonnees_ville.lat}},
             {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else aireDeJeux.coordonnees_ville.lon}});
+        if (screen.width<700) {
+            map.setOptions({ scrollwheel: false });
+            map.setOptions({ draggable: false });
+        }
     }
     function new_commentaire(){
         document.getElementById("new_comment").style.display="block";

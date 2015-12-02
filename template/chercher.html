@@ -88,6 +88,10 @@
         var map = new google.maps.Map(mapCanvas, mapOption);
         map.mapTypes.set('map_style', styledMap);
         map.setMapTypeId('map_style');
+        if (screen.width<700) {
+            map.setOptions({ scrollwheel: false });
+            map.setOptions({ draggable: false });
+        }
         return map;
     }
     function addMarker(location, map, i) {
