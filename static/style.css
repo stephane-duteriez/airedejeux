@@ -169,13 +169,22 @@ li.menu:hover {
     }
 .map_home {
     height:300px;
+    padding-bottom: 2em;
     }
 
 #map {
     width: 100%;
     height: 100%;
+    z-index: 3;
     }
-
+#debloquerMap {
+    padding: 0.5em;
+    background-color: #2196f3;
+    color: white;
+    margin-right: 1em;
+    box-shadow: 0.3em 0.3em 0.2em #888888;
+    float: right;
+    }
 .contenant {
     display : flex;
     width : 100%;
@@ -236,6 +245,7 @@ li.menu:hover {
     padding-top: 66%;
     height:0px;
     margin-bottom:1em;
+    z-index: 2;
     }
 .ratio23inside {
     position: absolute;
@@ -245,7 +255,7 @@ li.menu:hover {
     bottom: 0;
     align-items:center;
     max-height:100%;
-    }
+    z-index: 2;    }
 .img_outside {
     position: absolute;
     top: 0;
@@ -299,13 +309,6 @@ p {
     }
 input {
     margin: 0.2em 0em 0.2em 1em;
-    }
-#debloquerMap {
-    padding: 0.5em;
-    background-color: #2196f3;
-    color: white;
-    width: 4em;
-    margin: auto;
     }
 @media only screen and (max-width: 768px) {
     .title {

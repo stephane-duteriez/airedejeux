@@ -63,9 +63,9 @@
             <div class="contenue">
                 <div class="ratio23outside">
                     <div class="ratio23inside">
-                        <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
                         <div id="map"></div>
                     </div>
+                    <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
                 </div>
                 {% if aireDeJeux == "" %}
                     {{ macros.photos(listImage, new_indice) }}
@@ -173,6 +173,7 @@
         var mapOption = {
             center: myLatLng,
             zoom: 12,
+            streetViewControl: false,
             mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
         }
         var map = new google.maps.Map(mapCanvas, mapOption);
@@ -182,8 +183,7 @@
             position: myLatLng,
             map: map,
             title: 'Hello World!',
-            draggable: true,
-            streetViewControl: false,
+            draggable: true
         });
         marker.addListener('dragend', function() {
             map.setCenter(marker.getPosition());
