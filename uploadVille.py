@@ -5,10 +5,8 @@ from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
-from dbClass import Commune
+from dbClass import *
 from google.appengine.datastore.datastore_query import Cursor
-
-
 
 
 class MainHandler(webapp2.RequestHandler):
@@ -20,6 +18,7 @@ class MainHandler(webapp2.RequestHandler):
         <input type="file" name="file"> <br>
         <input type="submit" name="submit" value="Submit">
         <a href='/admin/netoyerDoublon'>Netoyer es ville en doubles</a>
+        <a href='/admin/lowerCaseVille'>Lower case the name of the city</a>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -87,10 +86,33 @@ class suprimeDoubleVille(webapp2.RequestHandler):
                               countdown=86400)
 
 
+class lowerCase(webapp2.RequestHandler):
+    def get(self):
+        taskqueue.add(url='/admin/lowerCaseVille')
+        self.redirect("/admin/uploadform")
+
+    def post(self):
+        logging.info("do something")
+        max_data_access = 5000
+        curs = Cursor(urlsafe=self.request.get('cursor'))
+        if curs:
+            queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access, start_cursor=curs)
+        else:
+            queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access)
+        logging.info(len(queryVille))
+        for ville in queryVille:
+            ville.put()
+
+        if more:
+            taskqueue.add(url='/admin/lowerCaseVille', params={'cursor': next_cursor.urlsafe()},
+                              countdown=86400)
+
 app = webapp2.WSGIApplication([
     ('/admin/uploadform', MainHandler),
     ('/admin/upload', UploadHandler),
     ('/admin/process_csv', processCsv),
     ('/admin/process_doublon', suprimeDoubleVille),
-    ('/admin/netoyerDoublon', netoyerDoublonHandler)
+    ('/admin/netoyerDoublon', netoyerDoublonHandler),
+    ('/admin/lowerCaseVille', lowerCase)
+
 ], debug=True)

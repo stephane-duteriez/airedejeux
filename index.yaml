@@ -15,3 +15,4 @@ indexes:
   - name: departement
   - name: nom
   - name: CP
+  - name: nom_lower

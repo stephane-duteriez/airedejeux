@@ -8,6 +8,8 @@ import webapp2
 import json
 import time
 
+import urllib
+
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.api.images import get_serving_url
@@ -90,10 +92,11 @@ class CreerAireDeJeuxHandler(Handler):
 
 class ListeVilleHandler(webapp2.RequestHandler):
     def get(self):
-        q = (self.request.GET['q']).title()
-        villes = Commune.query(ndb.AND(Commune.nom >= q, Commune.nom <= q + "z"))
+        q = (self.request.GET['q']).lower()
+        villes = Commune.query(ndb.AND(Commune.nom_lower >= q, Commune.nom_lower <= q + "z"))
         self.response.headers['Content-Type'] = 'text/json'
-        results = villes.fetch(10)
+        results = villes.fetch(20)
+        logging.info(results)
         data = {}
         for ville in results:
             data[ville.nom + ", " + ville.departement] = {
@@ -158,7 +161,8 @@ class AjouterHandler(webapp2.RequestHandler):
             nouveau_commentaire.put()
         send_mail_notification("nouvelle aire-de-jeux", nouvelle_aire_de_jeux.str())
         time.sleep(0.1)
-        self.redirect("/aireDeJeux/" + url)
+        absolut_url = "/aireDeJeux/" + url
+        self.redirect(urllib.quote(absolut_url.encode("utf-8")))
 
 
 class ChercherHandler(Handler):
@@ -259,7 +263,9 @@ class ModifierHandler(Handler):
 
         time.sleep(0.1)
         send_mail_notification("nouvelle aire-de-jeux", db_aire_de_jeux.str())
-        self.redirect("/aireDeJeux/" + db_aire_de_jeux.url)
+
+        absolut_url = "/aireDeJeux/" + db_aire_de_jeux.url
+        self.redirect(urllib.quote(absolut_url.encode("utf-8")))
 
 
 class PhotoUploadFormHandler(Handler):

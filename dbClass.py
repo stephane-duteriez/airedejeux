@@ -66,6 +66,11 @@ class Commune(ndb.Model):
     departement = ndb.StringProperty()
     pays = ndb.StringProperty()
     coordonnees = ndb.GeoPtProperty()
+    nom_lower = ndb.ComputedProperty(lambda self: self.nom.lower())
+
+
+    #def _pre_put_hook(self):
+    #    self.nom_lower = self.nom.lower()
 
     def urlsafe(self):
         data = {"urlsafeKey": self.key.urlsafe(),
