@@ -32,7 +32,8 @@ class AireDeJeux(ndb.Model):
                 "age": detail.age,
                 "ville": ville.nom,
                 "departement": ville.departement,
-                "coordonnees_ville": ville.coordonnees
+                "coordonnees_ville": ville.coordonnees,
+                "key_ville": ville.key.urlsafe()
                 }
         return data
 
