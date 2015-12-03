@@ -125,7 +125,7 @@ class AjouterHandler(webapp2.RequestHandler):
         score = self.request.get('score')
         horaire = self.request.get('horaire')
         accessibilite = self.request.get('acces')
-        text_activites = self.request.get('activites')
+        liste_activites = self.request.get_all('activites')
         description = self.request.get('description')
         age = self.request.get('age')
         commentaire = self.request.get('commentaire')
@@ -143,8 +143,7 @@ class AjouterHandler(webapp2.RequestHandler):
             nouveau_detail.accessibilite = accessibilite
         if horaire:
             nouveau_detail.horaires = horaire
-        if text_activites:
-            liste_activites = [activite.strip() for activite in text_activites.split(",")]
+        if liste_activites:
             nouveau_detail.activites = liste_activites
         if description:
             nouveau_detail.description = description
@@ -229,7 +228,7 @@ class ModifierHandler(Handler):
         score = self.request.get('score')
         horaire = self.request.get('horaire')
         accessibilite = self.request.get('acces')
-        text_activites = self.request.get('activites')
+        liste_activites = self.request.get_all('activites')
         description = self.request.get('description')
         age = self.request.get('age')
         commentaire = self.request.get('commentaire')
@@ -242,9 +241,8 @@ class ModifierHandler(Handler):
             db_detail.accessibilite = accessibilite
         if horaire and horaire != '"None"':
             db_detail.horaires = horaire
-        if text_activites and text_activites != '"None"':
-            list_activites = [activite.strip() for activite in text_activites.split(",")]
-            db_detail.activites = list_activites
+        if liste_activites:
+            db_detail.activites = liste_activites
         if description and description != '"None"':
             db_detail.description = description
         if age and age != '"None"':

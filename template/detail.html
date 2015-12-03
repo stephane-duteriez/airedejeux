@@ -3,7 +3,9 @@
 {% block head %}
 {% endblock %}
 {% block menu %}
-    <li class="menu" onclick="location.href='/modifier/{{ aireDeJeux.indice|e }}'" style="cursor: pointer">Modifier</li>
+    <li class="menu" style="cursor: pointer">
+        <a href="/modifier/{{ aireDeJeux.indice|e }}">Modifier</a>
+    </li>
 {% endblock %}
 {% block content %}
 <div id="title" class="highlight title_detail">
@@ -25,10 +27,10 @@
     <div class="contenant">
         <div class="contenue">
             <div id="horraire" class="bigger horizontal">
-                <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e }}</div>
+                <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}</div>
             </div>
             <div id="age" class="bigger horizontal">
-                <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e }}</div>
+                <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}</div>
             </div>
             <div id="box-activitees" class="box">
                 <div id="title-activitee" class="bigger highlight">Activités:</div>
@@ -38,17 +40,17 @@
                     {% endfor %}
                 </div>
             </div>
+            <div id="description" class="box">
+                <div class="bigger highlight">Description:</div>
+                <p class="description">
+                    {{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}
+                </p>
+                </div>
             <div id="box-acces" class="box">
                 <div id="title-accessibilite" class="bigger highlight">Accessibilité</div>
-                <div id="description-accessibilte">{{ aireDeJeux.accessibilite|e }}</div>
-            </div>
-            <div id="description" class="box">
-            <div class="bigger highlight">
-                Description:
-            </div>
-            <p class="description">
-                {{ aireDeJeux.description|e }}
-            </p>
+                <div id="description-accessibilte">
+                    {{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}
+                </div>
             </div>
             <div id="commentaires" class="box">
                 <div class="bigger highlight horizontal">

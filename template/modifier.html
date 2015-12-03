@@ -2,15 +2,20 @@
 {% import "macro.html" as macros %}
 {% block head %}
 {% endblock %}
+{% block menu %}
+{% endblock %}
 {% block content %}
-    <form
+{% set activites = ["toboggan", "balançoire", "tourniquet", "table", "banc", "bac-à-sable", "cabane", "jeux sur ressort"] %}
+    <form id="content"
             {% if nouveau=="true" %}
              action="/ajouterAireDeJeux"
             {% else %}
             action="/modifier/{{ aireDeJeux.indice|e if aireDeJeux != '' }}"
             {% endif %}
             enctype="multipart/form-data" method="post">
-        <input type="submit" value="Submit">
+        <div class="wide">
+            <input type="submit" value="Submit" class="submit_bt">
+        </div>
         <div class="contenant">
             <div class="contenue">
                 <div hidden><input type="hidden" name="indice" value="{{ new_indice }}"></div>
@@ -27,7 +32,7 @@
                             required>
                 </div>
                 <div >coordonnées :
-                <div>
+                <div hidden>
                     latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat if aireDeJeux != '' }}"><br>
                     longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon if aireDeJeux != '' }}">
                 </div></div>
@@ -49,9 +54,14 @@
                 <p>Horaire :</p>
                 <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
                 <p>Tranche d'age:</p>
-                <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age != 'None' }}"></div>
-                <p>Activités : Entrez une liste des activités séparées par une virgule<br></p>
-                <div><textarea name="activites" class="input_box" >{{ aireDeJeux.activites|join(', ') }}</textarea></div>
+                <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}"></div>
+                <p>Activités<br></p>
+                <div class="input_box input_activites">
+                    {% for activite in activites %}
+                        <div class="activite"><input type="checkbox" name="activites" value="{{ activite }}"
+                               {% if activite in aireDeJeux.activites %} checked {% endif %}> {{ activite }} </input></div>
+                    {% endfor %}
+                </div>
                 <p>Description :</p>
                 <div><textarea name="description" class="input_box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
                 <p>Accessibilité :</p>
@@ -61,7 +71,7 @@
                 <div><textarea name="commentaire" class="input_box"></textarea></div>
             </div>
             <div class="contenue">
-                <div class="ratio23outside">
+                <div class="ratio23outside box">
                     <div class="ratio23inside">
                         <div id="map"></div>
                     </div>
@@ -74,7 +84,9 @@
                 {% endif %}
             </div>
         </div>
-        <input type="submit" value="Submit">
+        <div class="wide">
+            <input type="submit" value="Submit" class="submit_bt">
+        </div>
     </form>
     <script>
     {% if ville != "" %}
