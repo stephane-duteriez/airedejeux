@@ -161,8 +161,8 @@ class AjouterHandler(webapp2.RequestHandler):
             nouveau_commentaire.put()
         send_mail_notification("nouvelle aire-de-jeux", nouvelle_aire_de_jeux.str())
         time.sleep(0.1)
-        absolut_url = "/aireDeJeux/" + url
-        self.redirect(urllib.quote(absolut_url.encode("utf-8")))
+        absolute_url = "/aireDeJeux/" + url
+        self.redirect(urllib.quote(absolute_url.encode("utf-8")))
 
 
 class ChercherHandler(Handler):

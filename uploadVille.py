@@ -3,7 +3,6 @@ import webapp2
 
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
-from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
 from dbClass import *
 from google.appengine.datastore.datastore_query import Cursor
@@ -30,7 +29,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         blob_info = upload_files[0]
         taskqueue.add(url='/admin/process_csv', params={'blob_key': blob_info.key(), 'cursor': 0})
 
-        #blobstore.delete(blob_info.key())  # optional: delete file after import
+        # blobstore.delete(blob_info.key())  # optional: delete file after import
         self.redirect("/")
 
 
@@ -38,6 +37,7 @@ class netoyerDoublonHandler(webapp2.RequestHandler):
     def get(self):
         taskqueue.add(url='/admin/process_doublon')
         self.redirect("/admin/uploadform")
+
 
 class processCsv(webapp2.RequestHandler):
     def post(self):
@@ -70,12 +70,12 @@ class suprimeDoubleVille(webapp2.RequestHandler):
     def post(self):
         max_data_access = 10000
         curs = Cursor(urlsafe=self.request.get('cursor'))
-        if curs :
-            queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access, start_cursor=curs)
+        if curs:
+            query_ville, next_cursor, more = Commune.query().fetch_page(max_data_access, start_cursor=curs)
         else:
-            queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access)
+            query_ville, next_cursor, more = Commune.query().fetch_page(max_data_access)
 
-        for ville in queryVille:
+        for ville in query_ville:
             query_same = Commune.query(ndb.AND(ndb.AND(Commune.nom == ville.nom, Commune.departement == ville.departement),
                                                Commune.CP != ville.CP))
             for doublon in query_same:
