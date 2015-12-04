@@ -63,7 +63,6 @@ class AireDeJeuxHandler(Handler):
         list_commentaires = query_commentaire.fetch(10)
         query_photo = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
         liste_images = query_photo.fetch(10)
-        logging.info(db_aire_de_jeux.export())
         self.render_main(db_aire_de_jeux.export(), list_commentaires, liste_images)
 
 
@@ -96,7 +95,6 @@ class ListeVilleHandler(webapp2.RequestHandler):
         villes = Commune.query(ndb.AND(Commune.nom_lower >= q, Commune.nom_lower <= q + "z"))
         self.response.headers['Content-Type'] = 'text/json'
         results = villes.fetch(20)
-        logging.info(results)
         data = {}
         for ville in results:
             data[ville.nom + ", " + ville.departement] = {

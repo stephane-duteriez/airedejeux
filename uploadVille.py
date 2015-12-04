@@ -51,7 +51,6 @@ class processCsv(webapp2.RequestHandler):
                 pays, CP, ville, info1, info2, departement, \
                 numDepartement, arrond, numArrond, latitude, longitude, precision = row.split('\t')
                 if len(CP) <= 5:
-
                     entry = Commune(nom=ville, CP=CP, departement=numDepartement, pays=pays,
                                     coordonnees=ndb.GeoPt(latitude + ", " + longitude))
                     queryVille = Commune.query(ndb.AND(Commune.nom == entry.nom, Commune.CP == entry.CP))
@@ -92,14 +91,12 @@ class lowerCase(webapp2.RequestHandler):
         self.redirect("/admin/uploadform")
 
     def post(self):
-        logging.info("do something")
         max_data_access = 7000
         curs = Cursor(urlsafe=self.request.get('cursor'))
         if curs:
             queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access, start_cursor=curs)
         else:
             queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access)
-        logging.info(len(queryVille))
         for ville in queryVille:
             ville.put()
 
