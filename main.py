@@ -156,6 +156,11 @@ class AjouterHandler(webapp2.RequestHandler):
             send_mail_notification("nouveaux commentaire", nouveau_commentaire.str())
             nouveau_commentaire.put()
         send_mail_notification("nouvelle aire-de-jeux", nouvelle_aire_de_jeux.str())
+        ville.nbr_aire_de_jeux += 1
+        ville.put()
+        departement = Departement.query(Departement.nom == ville.departement).get()
+        departement.nbr_aire_de_jeux += 1
+        departement.put()
         time.sleep(0.1)
         absolute_url = "/aireDeJeux/" + url
         self.redirect(urllib.quote(absolute_url.encode("utf-8")))
