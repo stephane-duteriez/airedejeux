@@ -93,7 +93,7 @@ class lowerCase(webapp2.RequestHandler):
 
     def post(self):
         logging.info("do something")
-        max_data_access = 5000
+        max_data_access = 7000
         curs = Cursor(urlsafe=self.request.get('cursor'))
         if curs:
             queryVille, next_cursor, more = Commune.query().fetch_page(max_data_access, start_cursor=curs)
