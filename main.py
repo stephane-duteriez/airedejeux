@@ -341,6 +341,10 @@ class GoogleVerificationHandler(Handler):
     def get(self):
         self.render_main()
 
+
+class ListeDepartementsHandler(Handler):
+    def render_main(self):
+        self.render()
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
     ('/créerAireDeJeux', CreerAireDeJeuxHandler),
@@ -348,6 +352,7 @@ app = webapp2.WSGIApplication([
     ('/listeVille', ListeVilleHandler),
     ('/listAireDeJeux', ListAireDeJeuxHandler),
     ('/listeCommentaire', ListeCommentaireHandler),
+    ('/aireDeJeux', ListeDepartementsHandler),
     ('/aireDeJeux/(.*)?', AireDeJeuxHandler),
     ('/modifier/([^/]+)?', ModifierHandler),
     ('/add_photo', PhotoUploadFormHandler),

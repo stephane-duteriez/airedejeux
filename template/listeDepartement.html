@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "macro.html" as macros %}
+{% block head %}
+{% endblock %}
+{% block menu %}
+    <li class="menu" style="cursor: pointer">
+        <li class="menu" onclick="location.href='/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'" style="cursor: pointer" id="bt_creation">Ajouter</li>
+    </li>
+{% endblock %}
+{% block content %}
+<div id="title" class="highlight title_detail">
+    <div id="ville">Liste Aire-De-Jeux</div>
+</div>
+<div id="content">
+    {% for departement in liste_departements %}
+        <div class="departement">
+            {{departement.nom}}: {{deparetment.nbr_aire_de_jeux}}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
