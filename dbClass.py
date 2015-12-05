@@ -69,7 +69,6 @@ class Commune(ndb.Model):
     nom_lower = ndb.ComputedProperty(lambda self: self.nom.lower())
     nbr_aire_de_jeux = ndb.IntegerProperty(default=0)
 
-
     def urlsafe(self):
         data = {"urlsafeKey": self.key.urlsafe(),
                 "CP": self.CP,

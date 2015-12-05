@@ -4,17 +4,17 @@
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
-        <li class="menu" onclick="location.href='/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'" style="cursor: pointer" id="bt_creation">Ajouter</li>
+        <a href='/créerAireDeJeux'>Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
 <div id="title" class="highlight title_detail">
     <div id="ville">Liste Aire-De-Jeux</div>
 </div>
-<div id="content">
+<div class="liste_departement">
     {% for departement in liste_departements %}
         <div class="departement">
-            {{departement.nom}}: {{deparetment.nbr_aire_de_jeux}}
+            <a href="/aireDeJeux/{{ departement.nom }}">{{departement.nom}}: {{departement.nbr_aire_de_jeux}}</a>
         </div>
     {% endfor %}
 </div>

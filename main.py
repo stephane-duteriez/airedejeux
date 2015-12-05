@@ -343,11 +343,13 @@ class GoogleVerificationHandler(Handler):
 
 
 class ListeDepartementsHandler(Handler):
-    def render_main(self):
-        self.render()
+    def render_main(self, liste_departements):
+        self.render("listeDepartement.html", liste_departements=liste_departements)
 
     def get(self):
-        query_departement = Departement.query()
+        query_departement = Departement.query().order(Departement.nom).fetch(200)
+        self.render_main(query_departement)
+
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
     ('/créerAireDeJeux', CreerAireDeJeuxHandler),
