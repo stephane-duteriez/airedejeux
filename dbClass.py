@@ -67,6 +67,8 @@ class Commune(ndb.Model):
     pays = ndb.StringProperty()
     coordonnees = ndb.GeoPtProperty()
     nom_lower = ndb.ComputedProperty(lambda self: self.nom.lower())
+    nbr_aire_de_jeux = ndb.IntegerProperty(default=0)
+
 
     def urlsafe(self):
         data = {"urlsafeKey": self.key.urlsafe(),
@@ -75,6 +77,11 @@ class Commune(ndb.Model):
                 "coordonnees": self.coordonnees,
                 "nom": self.nom}
         return data
+
+
+class Departement(ndb.Model):
+    nom = ndb.StringProperty()
+    nbr_aire_de_jeux = ndb.IntegerProperty(default=0)
 
 
 class Commentaire(ndb.Model):
