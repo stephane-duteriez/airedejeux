@@ -107,10 +107,8 @@ class ListeVilleHandler(webapp2.RequestHandler):
 class ListeImageHandler(webapp2.RequestHandler):
     def get(self):
         indice = self.request.GET['q']
-        logging.info(indice)
         query_photos = Photo.query(Photo.indice_aireDeJeux == indice)
         liste_images = query_photos.fetch(10)
-        logging.info(liste_images)
         data = []
         for image in liste_images:
             data.append(image.photo_url)
@@ -273,7 +271,6 @@ class PhotoUploadFormHandler(Handler):
     def get(self):
         indice = self.request.get('indice')
         upload_url = blobstore.create_upload_url('/upload_photo')
-        logging.info('PhotoUploadForm, upload_url:' + upload_url)
         # To upload files to the blobstore, the request method must be "POST"
         # and enctype must be set to "multipart/form-data".
         self.render_main(upload_url, indice)

@@ -68,10 +68,6 @@ class Commune(ndb.Model):
     coordonnees = ndb.GeoPtProperty()
     nom_lower = ndb.ComputedProperty(lambda self: self.nom.lower())
 
-
-    #def _pre_put_hook(self):
-    #    self.nom_lower = self.nom.lower()
-
     def urlsafe(self):
         data = {"urlsafeKey": self.key.urlsafe(),
                 "CP": self.CP,
