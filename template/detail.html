@@ -5,7 +5,9 @@
 {% block menu %}
     <li class="menu" style="cursor: pointer">
         <a href="/modifier/{{ aireDeJeux.indice|e }}">Modifier</a>
-        <li class="menu" onclick="location.href='/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'" style="cursor: pointer" id="bt_creation">Ajouter</li>
+    </li>
+    <li class="menu" style="cursor: pointer">
+        <a href='/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'>Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
