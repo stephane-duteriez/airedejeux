@@ -25,6 +25,10 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <a href='/admin/rest_compte_dep_ville'>recompt le nombre d'aire de jeux par département et par commune</a>
         </div>
+        <div>
+            <input type="radio" name="type_csv" value="ville"> Fichier des villes <br>
+            <input type="radio" name="type_csv" value="departement" checked> Fichier des département <br>
+        </div>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -33,20 +37,23 @@ class MainHandler(webapp2.RequestHandler):
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
+        type = self.request.get("type_csv")
         blob_info = upload_files[0]
-        taskqueue.add(url='/admin/process_csv', params={'blob_key': blob_info.key(), 'cursor': 0})
-
+        if type == "ville":
+            taskqueue.add(url='/admin/process_csv', params={'blob_key': blob_info.key(), 'cursor': 0})
+        elif type == "departement":
+            taskqueue.add(url='/admin/departement_csv', params={'blob_key': blob_info.key()})
         # blobstore.delete(blob_info.key())  # optional: delete file after import
-        self.redirect("/")
+        self.redirect("/admin/")
 
 
-class netoyerDoublonHandler(webapp2.RequestHandler):
+class NetoyerDoublonHandler(webapp2.RequestHandler):
     def get(self):
         taskqueue.add(url='/admin/process_doublon')
-        self.redirect("/admin/uploadform")
+        self.redirect("/admin/")
 
 
-class processCsv(webapp2.RequestHandler):
+class ProcessCsv(webapp2.RequestHandler):
     def post(self):
         max_data_access = 1000
         blob_info = self.request.get('blob_key')
@@ -72,7 +79,22 @@ class processCsv(webapp2.RequestHandler):
             i += 1
 
 
-class suprimeDoubleVille(webapp2.RequestHandler):
+class DepartementCsv(webapp2.RequestHandler):
+    def post(self):
+        blob_info = self.request.get('blob_key')
+        blob_reader = blobstore.BlobReader(blob_info)
+        for row in blob_reader:
+            old_num, num, nom, info1, info2, info3 = row.split(",")
+            query_departement = Departement.query(Departement.numero == num[1:-1]).get()
+            if query_departement:
+                query_departement.lettre = nom[1:-1]
+                query_departement.put()
+            else:
+                nouveau_departement = Departement(numero=num[1:-1], lettre=nom[1:-1])
+                nouveau_departement.put()
+
+
+class SuprimeDoubleVille(webapp2.RequestHandler):
     def post(self):
         max_data_access = 10000
         curs = Cursor(urlsafe=self.request.get('cursor'))
@@ -92,10 +114,10 @@ class suprimeDoubleVille(webapp2.RequestHandler):
                               countdown=86400)
 
 
-class lowerCase(webapp2.RequestHandler):
+class LowerCase(webapp2.RequestHandler):
     def get(self):
         taskqueue.add(url='/admin/lowerCaseVille')
-        self.redirect("/admin/uploadform")
+        self.redirect("/admin/")
 
     def post(self):
         max_data_access = 7000
@@ -115,10 +137,10 @@ class lowerCase(webapp2.RequestHandler):
 class RecompteHandler(webapp2.RequestHandler):
     def get(self):
         taskqueue.add(url='/admin/rest_compte_dep_ville')
-        self.redirect("/admin/uploadform")
+        self.redirect("/admin/")
 
     def post(self):
-        max_data_access = 100
+        max_data_access = 1000
         curs = Cursor(urlsafe=self.request.get('cursor'))
         query_ville = AireDeJeux.query(projection=[AireDeJeux.ville], distinct=True)
         if curs:
@@ -141,20 +163,21 @@ class RecompteHandler(webapp2.RequestHandler):
                 count = 0
                 for ville in query_ville:
                     count += ville.nbr_aire_de_jeux
-                departement = Departement.query(Departement.nom == dep.departement).get()
+                departement = Departement.query(Departement.numero == dep.departement).get()
                 if departement:
                     departement.nbr_aire_de_jeux = count
                     departement.put()
                 else:
-                    new_departement = Departement(nom=dep.departement, nbr_aire_de_jeux=count)
+                    new_departement = Departement(numero=dep.departement, nbr_aire_de_jeux=count)
                     new_departement.put()
 
 app = webapp2.WSGIApplication([
-    ('/admin/uploadform', MainHandler),
+    ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
-    ('/admin/process_csv', processCsv),
-    ('/admin/process_doublon', suprimeDoubleVille),
-    ('/admin/netoyerDoublon', netoyerDoublonHandler),
-    ('/admin/lowerCaseVille', lowerCase),
+    ('/admin/process_csv', ProcessCsv),
+    ('/admin/departement_csv', DepartementCsv),
+    ('/admin/process_doublon', SuprimeDoubleVille),
+    ('/admin/netoyerDoublon', NetoyerDoublonHandler),
+    ('/admin/lowerCaseVille', LowerCase),
     ('/admin/rest_compte_dep_ville', RecompteHandler)
 ], debug=True)

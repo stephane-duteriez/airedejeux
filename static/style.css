@@ -340,14 +340,16 @@ input {
 .wide {
     width: 100%
     }
-.liste_departement{
+.liste_departement, .liste_communes{
     display:flex;
     flex-flow:row wrap;
     flex-direction:row;
     }
-.departement{
-    flex : 1 1;
+.departement, .commune{
+    flex : 1 1 400;
     font-size: 1.5em;
+    padding: 0.5em;
+    min-width: 13em;
     }
 @media only screen and (max-width: 768px) {
     .title {

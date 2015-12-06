@@ -56,7 +56,8 @@ class AireDeJeuxHandler(Handler):
                     listCommentaires=liste_commentaires,
                     listImage=liste_images)
 
-    def get(self, url):
+    def get(self, dep=None, ville=None, aireDeJeux=None):
+        url = dep + "/" + ville + "/" + aireDeJeux
         logging.info(url)
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
         query_commentaire = Commentaire.query(Commentaire.aireDeJeux == db_aire_de_jeux.key)
@@ -347,8 +348,32 @@ class ListeDepartementsHandler(Handler):
         self.render("listeDepartement.html", liste_departements=liste_departements)
 
     def get(self):
-        query_departement = Departement.query().order(Departement.nom).fetch(200)
+        query_departement = Departement.query().order(Departement.numero).fetch(200)
         self.render_main(query_departement)
+
+
+class DepartementHandler(Handler):
+    def render_main(self, departement, liste_communes):
+        self.render("listeCommunes.html", departement=departement, liste_communes=liste_communes)
+
+    def get(self, dep=None):
+        query_commune = Commune.query(ndb.AND(Commune.departement == dep, Commune.nbr_aire_de_jeux > 0))\
+            .fetch(200, projection=[Commune.nom, Commune.nbr_aire_de_jeux])
+        self.render_main(dep, query_commune)
+
+
+class CommuneHandler(Handler):
+    def render_main(self, commune, liste_aire_de_jeux):
+        self.render("listeAireDeJeux.html", commune=commune, liste_aire_de_jeux=liste_aire_de_jeux)
+
+    def get(self, dep=None, ville=None):
+        query_commune = Commune.query(ndb.AND(Commune.nom == ville, Commune.departement == dep))
+        commune = query_commune.get()
+        logging.info(commune)
+        key_ville = commune.key
+        query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)\
+            .fetch(200, projection=[AireDeJeux.nom])
+        self.render_main(commune, query_aire_de_jeux)
 
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
@@ -358,7 +383,9 @@ app = webapp2.WSGIApplication([
     ('/listAireDeJeux', ListAireDeJeuxHandler),
     ('/listeCommentaire', ListeCommentaireHandler),
     ('/aireDeJeux', ListeDepartementsHandler),
-    ('/aireDeJeux/(.*)?', AireDeJeuxHandler),
+    webapp2.Route('/aireDeJeux/<dep>', DepartementHandler),
+    webapp2.Route('/aireDeJeux/<dep>/<ville>', CommuneHandler),
+    webapp2.Route('/aireDeJeux/<dep>/<ville>/<aireDeJeux>', AireDeJeuxHandler),
     ('/modifier/([^/]+)?', ModifierHandler),
     ('/add_photo', PhotoUploadFormHandler),
     ('/add_comment', AddCommentHandler),

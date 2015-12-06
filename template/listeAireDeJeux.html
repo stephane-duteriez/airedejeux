@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block head %}
+{% endblock %}
+{% block menu %}
+    <li class="menu" style="cursor: pointer">
+        <a href='/créerAireDeJeux'>Ajouter</a>
+    </li>
+{% endblock %}
+{% block content %}
+<div id="title" class="highlight title_detail">
+    <div id="ville"><a href="/aireDeJeux/{{ commune.departement }}">{{ commune.departement }}</a></div>
+    <div id="ville">{{ commune.nom }}</div>
+</div>
+<div class="liste_communes">
+    {% for aire_de_jeux in liste_aire_de_jeux %}
+        <div class="commune">
+            <a href="/aireDeJeux/{{ commune.departement }}/{{ commune.nom }}/{{ aire_de_jeux.nom }}">
+                {{ aire_de_jeux.nom }}</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

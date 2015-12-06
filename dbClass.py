@@ -79,8 +79,9 @@ class Commune(ndb.Model):
 
 
 class Departement(ndb.Model):
-    nom = ndb.StringProperty()
+    numero = ndb.StringProperty()
     nbr_aire_de_jeux = ndb.IntegerProperty(default=0)
+    lettre = ndb.StringProperty()
 
 
 class Commentaire(ndb.Model):

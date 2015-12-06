@@ -12,7 +12,9 @@
 {% endblock %}
 {% block content %}
 <div id="title" class="highlight title_detail">
-    <div id="ville">{{ aireDeJeux.ville|e }}</div>
+    <div id="ville">
+        <a href="/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}">{{ aireDeJeux.ville|e }}</a>
+    </div>
     <div id="name">{{ aireDeJeux.nom|e }}</div>
 </div>
 <div id="content">

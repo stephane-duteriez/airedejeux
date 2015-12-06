@@ -10,10 +10,21 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: AireDeJeux
+  properties:
+  - name: ville
+  - name: nom
+
 - kind: Commune
   properties:
   - name: departement
   - name: nbr_aire_de_jeux
+
+- kind: Commune
+  properties:
+  - name: departement
+  - name: nbr_aire_de_jeux
+  - name: nom
 
 - kind: Commune
   properties:
