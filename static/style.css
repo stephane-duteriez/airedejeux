@@ -346,10 +346,13 @@ input {
     flex-direction:row;
     }
 .departement, .commune{
-    flex : 1 1 400;
+    flex : 1 1;
     font-size: 1.5em;
     padding: 0.5em;
     min-width: 13em;
+    }
+.vide {
+    color: grey;
     }
 @media only screen and (max-width: 768px) {
     .title {

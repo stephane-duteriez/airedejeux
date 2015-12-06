@@ -5,17 +5,15 @@
     <li class="menu" style="cursor: pointer">
         <a href='/créerAireDeJeux'>Ajouter</a>
     </li>
-    <li class="menu" style="cursor: pointer">
-        <a href='/aireDeJeux'>Liste Aire de jeux</a>
-    </li>
 {% endblock %}
 {% block content %}
+{% set vide = "vide" %}
 <div id="title" class="highlight title_detail">
     <div id="ville">Liste Aire-De-Jeux Par Département</div>
 </div>
 <div class="liste_departement">
     {% for departement in liste_departements %}
-        <div class="departement">
+        <div class="departement {{ vide if departement.nbr_aire_de_jeux == 0 }}">
             <a href="/aireDeJeux/{{ departement.numero }}">
                 {{ departement.numero }} {{ departement.lettre }}: {{ departement.nbr_aire_de_jeux }}</a>
         </div>

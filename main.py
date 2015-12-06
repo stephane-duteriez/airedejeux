@@ -3,7 +3,6 @@
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
 # TODO indiquer  que lq photo est en téléchargemment
-# TODO améliorer la visualisation sur mobile avec des materiel bord à bords
 import webapp2
 import json
 import time
@@ -353,27 +352,34 @@ class ListeDepartementsHandler(Handler):
 
 
 class DepartementHandler(Handler):
-    def render_main(self, departement, liste_communes):
-        self.render("listeCommunes.html", departement=departement, liste_communes=liste_communes)
+    def render_main(self, departement, lettre_dep, liste_communes):
+        self.render("listeCommunes.html",
+                    departement=departement,
+                    lettre_departement=lettre_dep,
+                    liste_communes=liste_communes)
 
     def get(self, dep=None):
         query_commune = Commune.query(ndb.AND(Commune.departement == dep, Commune.nbr_aire_de_jeux > 0))\
             .fetch(200, projection=[Commune.nom, Commune.nbr_aire_de_jeux])
-        self.render_main(dep, query_commune)
+        query_departement = Departement.query(Departement.numero == dep).get()
+        lettre_dep = query_departement.lettre
+        self.render_main(dep, lettre_dep, query_commune)
 
 
 class CommuneHandler(Handler):
-    def render_main(self, commune, liste_aire_de_jeux):
-        self.render("listeAireDeJeux.html", commune=commune, liste_aire_de_jeux=liste_aire_de_jeux)
+    def render_main(self, departement, commune, liste_aire_de_jeux):
+        self.render("listeAireDeJeux.html", departement=departement, commune=commune, liste_aire_de_jeux=liste_aire_de_jeux)
 
     def get(self, dep=None, ville=None):
         query_commune = Commune.query(ndb.AND(Commune.nom == ville, Commune.departement == dep))
         commune = query_commune.get()
+        query_departement = Departement.query(Departement.numero == commune.departement).get()
+        departement = query_departement.lettre
         logging.info(commune)
         key_ville = commune.key
         query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)\
             .fetch(200, projection=[AireDeJeux.nom])
-        self.render_main(commune, query_aire_de_jeux)
+        self.render_main(departement, commune.urlsafe(), query_aire_de_jeux)
 
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
