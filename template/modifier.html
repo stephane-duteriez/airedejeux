@@ -5,7 +5,15 @@
 {% block menu %}
 {% endblock %}
 {% block content %}
-{% set activites = ["toboggan", "balançoire", "tourniquet", "table", "banc", "bac-à-sable", "cabane", "jeux sur ressort"] %}
+{% set activites = ["toboggan",
+                    "balançoire",
+                    "tourniquet",
+                    "table",
+                    "banc",
+                    "bac-à-sable",
+                    "cabane",
+                    "jeux sur ressort",
+                    "structure pour grimper"] %}
     <form id="content"
             {% if nouveau=="true" %}
              action="/ajouterAireDeJeux"

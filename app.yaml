@@ -28,6 +28,11 @@ handlers:
 - url: /(robots\.txt|humans\.txt|crossdomain\.xml)
   static_files: static/\1
   upload: static/(robots\.txt|humans\.txt|crossdomain\.xml)
+
+- url: /BingSiteAuth.xml
+  static_files: static/BingSiteAuth.xml
+  upload: static/BingSiteAuth.xml
+
 - url: .*
   script: main.app
 

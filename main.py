@@ -3,6 +3,8 @@
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
 # TODO indiquer  que lq photo est en téléchargemment
+# TODO ajouter la posibilité d'ajouter un lien, doit etre validé
+# TODO ajouter une page
 import webapp2
 import json
 import time
