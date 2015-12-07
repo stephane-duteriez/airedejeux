@@ -158,7 +158,7 @@ class AjouterHandler(webapp2.RequestHandler):
         send_mail_notification("nouvelle aire-de-jeux", nouvelle_aire_de_jeux.str())
         ville.nbr_aire_de_jeux += 1
         ville.put()
-        departement = Departement.query(Departement.nom == ville.departement).get()
+        departement = Departement.query(Departement.numero == ville.departement).get()
         departement.nbr_aire_de_jeux += 1
         departement.put()
         time.sleep(0.1)
