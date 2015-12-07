@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% import "macro.html" as macros %}
 {% block head %}
+    <title>Aire de jeux {{ aireDeJeux.nom|e }} à {{ aireDeJeux.ville }}  </title>
+    <meta name="description" content="Informations tel que la localisation, les activités, les heurs d'ouvertures
+    et des photos de l'aire de jeux {{ aireDeJeux.nom|e }} à {{ aireDeJeux.ville }}">
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
