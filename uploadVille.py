@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import webapp2
 
+import cloudstorage as gcs
+
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.api import taskqueue
@@ -28,6 +30,9 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <input type="radio" name="type_csv" value="ville"> Fichier des villes <br>
             <input type="radio" name="type_csv" value="departement" checked> Fichier des département <br>
+        </div>
+        <div>
+            <a href='/admin/creat_sitemap_blob'>creer le fichier site map</a>
         </div>
         </form>""" % upload_url
 
@@ -171,6 +176,32 @@ class RecompteHandler(webapp2.RequestHandler):
                     new_departement = Departement(numero=dep.departement, nbr_aire_de_jeux=count)
                     new_departement.put()
 
+
+class SitemapBlobHandler(webapp2.RequestHandler):
+    def get(self):
+        sitemap = gcs.open("/oujouerdehors/sitemap.xml", mode="w", content_type="text/xml")
+        sitemap.write("""<?xml version="1.0" encoding="UTF-8"?>
+                            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+                                <url>""")
+        sitemap.write("<loc>http://www.oujouerdehors.org/</loc>")
+        template = "<loc>http://www.oujouerdehors.org/%DATA%</loc>"
+        query_aire_de_jeux = AireDeJeux.query()
+        for aire_de_jeux in query_aire_de_jeux:
+            new_url = template.replace("%DATA%", "/aireDeJeux/" + aire_de_jeux.url)
+            sitemap.write(new_url.encode("utf-8"))
+        query_departement = Departement.query(Departement.nbr_aire_de_jeux > 0)
+        for departement in query_departement:
+            logging.info(departement.numero)
+            new_url = template.replace("%DATA%", "/aireDeJeux/" + departement.numero)
+            sitemap.write(new_url.encode("utf-8"))
+        query_commune = Commune.query(Commune.nbr_aire_de_jeux > 0)
+        for commune in query_commune:
+            new_url = template.replace("%DATA%", "/aireDeJeux/" + commune.departement + "/" + commune.nom)
+            sitemap.write(new_url.encode("utf-8"))
+        sitemap.write("</url></urlset>")
+        sitemap.close()
+        self.redirect("/admin/")
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
@@ -179,5 +210,6 @@ app = webapp2.WSGIApplication([
     ('/admin/process_doublon', SuprimeDoubleVille),
     ('/admin/netoyerDoublon', NetoyerDoublonHandler),
     ('/admin/lowerCaseVille', LowerCase),
-    ('/admin/rest_compte_dep_ville', RecompteHandler)
+    ('/admin/rest_compte_dep_ville', RecompteHandler),
+    ('/admin/creat_sitemap_blob', SitemapBlobHandler)
 ], debug=True)

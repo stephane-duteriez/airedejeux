@@ -10,6 +10,7 @@ import json
 import time
 
 import urllib
+import cloudstorage as gcs
 
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
@@ -383,6 +384,13 @@ class CommuneHandler(Handler):
             .fetch(200, projection=[AireDeJeux.nom])
         self.render_main(departement, commune.urlsafe(), query_aire_de_jeux)
 
+
+class SiteMapHandler(Handler):
+    def get(self):
+        sitemap = gcs.open("/oujouerdehors/sitemap.xml")
+        self.write(sitemap.read())
+
+
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
     ('/créerAireDeJeux', CreerAireDeJeuxHandler),
@@ -401,5 +409,6 @@ app = webapp2.WSGIApplication([
     ('/upload_photo', PhotoUploadHandler),
     ('/listeImage', ListeImageHandler),
     ('/google21d16423d723f0d0.html', GoogleVerificationHandler),
-    ('/verifierUnique', VerifierUniqueHandler)
+    ('/verifierUnique', VerifierUniqueHandler),
+    ('/sitemap.xml', SiteMapHandler)
 ], debug=True)
