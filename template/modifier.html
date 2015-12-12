@@ -183,7 +183,7 @@
                     }
                 }
             }
-            xmlhttp.open("GET", "/verifierUnique?nom=" + nom + "&keyVille=" + key_ville, true);
+            xmlhttp.open("GET", "/verifierUnique?nom=" + nom.trim() + "&keyVille=" + key_ville, true);
             xmlhttp.send();
         }
     }

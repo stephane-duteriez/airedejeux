@@ -46,9 +46,10 @@
                 var out = "";
                 if (data.length > 0){
                     var i;
-                    template = "<div class=\"aire-de-jeux\" onclick=\"location.href='\aireDeJeux/%urlAireDeJeux%';\" style=\"cursor: pointer;\">" +
-                        "<div class=\"nom-aire-de-jeux\">" + "%indice% " +
-                        "%nom%</div></div>";
+                    template = "<a href=\"\aireDeJeux/%urlAireDeJeux%\" class=\"aire-de-jeux\">" +
+                            "<div  style=\"cursor: pointer;\">" +
+                            "<div class=\"nom-aire-de-jeux\">" + "%indice% " +
+                            "%nom%</div></div></a>";
                     for(i = 0;i < data.length; i++) {
                         newAireDeJeux = template.replace("%nom%", data[i].nom);
                         newAireDeJeux = newAireDeJeux.replace("%urlAireDeJeux%", data[i].url);

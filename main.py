@@ -120,7 +120,7 @@ class ListeImageHandler(webapp2.RequestHandler):
 
 class AjouterHandler(webapp2.RequestHandler):
     def post(self):
-        nom_aire_de_jeux = self.request.get('nom_aire_de_jeux')
+        nom_aire_de_jeux = self.request.get('nom_aire_de_jeux').strip(" ")
         key_ville = self.request.get('key_ville')
         latitude = self.request.get('lat')
         longitude = self.request.get('lng')
