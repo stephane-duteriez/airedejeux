@@ -55,7 +55,7 @@
                         newAireDeJeux = newAireDeJeux.replace("%urlAireDeJeux%", data[i].url);
                         newAireDeJeux = newAireDeJeux.replace("%indice%", (i+1).toString());
                         out += newAireDeJeux;
-                        addMarker({ lat: data[i].lat, lng: data[i].lng}, map, i+1)
+                        addMarker(data[i], map)
                     }
                 } else {
                     out = "<div class=\"message\">Désolé mais il n'y a pas encore d'aire de jeux" +
@@ -103,11 +103,19 @@
         }
         return map;
     }
-    function addMarker(location, map, i) {
-        if (location.lat && location.lng) {
+    function addMarker(aire_de_jeux, map) {
+        if (aire_de_jeux.coordonnees) {
             var marker = new google.maps.Marker({
-                position: location,
+                position: aire_de_jeux.coordonnees,
                 map: map,
+            });
+            var contentString = "<div><a href='/aireDeJeux/" + aire_de_jeux.url + "' >" +
+                                aire_de_jeux.nom + "</a></div>"
+            var infoWindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+            marker.addListener('click', function() {
+                infoWindow.open(map, marker);
             });
         }
     }

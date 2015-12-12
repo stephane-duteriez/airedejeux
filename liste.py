@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 import webapp2
 import json
 import time
-
 
 from dbClass import *
 
@@ -34,6 +34,14 @@ class ListeImageHandler(webapp2.RequestHandler):
 
 class ListeAireDeJeuxHandler(webapp2.RequestHandler):
     def get(self):
+        def byName(aire_de_jeux):
+            test = "éèçàûüÛÜîëêËÊÎôÔ"
+            reference = [(u"é", u"e"), (u"è", u"e"), (u"ê", u"e")]
+            resultat = aire_de_jeux["nom"].lower()
+            for item1, item2 in reference:
+                resultat = resultat.replace(item1, item2)
+            return resultat
+
         urlsafe_key_ville = self.request.get("keyVille")
         key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
         query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)
@@ -43,13 +51,15 @@ class ListeAireDeJeuxHandler(webapp2.RequestHandler):
             next_aire_de_jeux = {"nom": aireDeJeux.nom,
                                  "indiceAireDeJeux": aireDeJeux.indice,
                                  "url": aireDeJeux.url,
-                                 "lat": "",
-                                 "lng": ""}
+                                 "coordonnees": ""}
             detail = aireDeJeux.detail.get()
             if detail.coordonnees:
-                next_aire_de_jeux["lat"] = detail.coordonnees.lat
-                next_aire_de_jeux["lng"] = detail.coordonnees.lon
+                next_aire_de_jeux["coordonnees"] = {
+                    "lat": detail.coordonnees.lat,
+                    "lng": detail.coordonnees.lon
+                }
             data.append(next_aire_de_jeux)
+        data.sort(key=byName)
         self.response.write(json.dumps(data))
 
 
