@@ -10,3 +10,4 @@ Disallow:/ajouterAireDeDeJeux
 Disallow:/modifier/
 Disallow:/listImage
 Allow:/aireDeJeux/
+Sitemap: http://www.oujouerdehors.org/sitemap.xml
