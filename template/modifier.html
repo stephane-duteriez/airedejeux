@@ -120,8 +120,12 @@
         function initialize(lat, lon) {
             var mapCanvas = document.getElementById("map");
             var myLatLng = {lat: lat, lng: lon};
-            var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
-            { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+            var styles =  [ { "stylers": [ { "saturation": 5 },
+                                           { "lightness": -5 },
+                                           { "gamma": 1.16 },
+                                           { "hue": "#004cff" } ] } ,
+                            { "featureType": "poi.park",
+                                "stylers": [ { "hue": "#3bff00" } ] }];
             var styledMap = new google.maps.StyledMapType(styles,
         {name: "Styled Map"});
 
@@ -186,8 +190,12 @@
     function initialize(lat, lon) {
         var mapCanvas = document.getElementById("map");
         var myLatLng = {lat: lat, lng: lon};
-        var styles =  [ { "stylers": [ { "saturation": 5 }, { "lightness": -5 },
-        { "gamma": 1.16 }, { "hue": "#004cff" } ] } ];
+        var styles =  [ { "stylers": [ { "saturation": 5 },
+                                           { "lightness": -5 },
+                                           { "gamma": 1.16 },
+                                           { "hue": "#004cff" } ] } ,
+                        { "featureType": "poi.park",
+                                "stylers": [ { "hue": "#3bff00" } ] }];
         var styledMap = new google.maps.StyledMapType(styles,
     {name: "Styled Map"});
         var mapOption = {

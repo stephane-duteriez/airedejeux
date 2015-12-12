@@ -182,9 +182,9 @@ class SitemapBlobHandler(webapp2.RequestHandler):
         sitemap = gcs.open("/oujouerdehors/sitemap.xml", mode="w", content_type="text/xml")
         sitemap.write("""<?xml version="1.0" encoding="UTF-8"?>
                             <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-                                <url>""")
-        sitemap.write("<loc>http://www.oujouerdehors.org/</loc>")
-        template = "<loc>http://www.oujouerdehors.org/%DATA%</loc>"
+                                """)
+        sitemap.write("<url><loc>http://www.oujouerdehors.org/</loc></url>")
+        template = "<url><loc>http://www.oujouerdehors.org/%DATA%</loc></url>"
         query_aire_de_jeux = AireDeJeux.query()
         for aire_de_jeux in query_aire_de_jeux:
             new_url = template.replace("%DATA%", "/aireDeJeux/" + aire_de_jeux.url)
@@ -198,7 +198,7 @@ class SitemapBlobHandler(webapp2.RequestHandler):
         for commune in query_commune:
             new_url = template.replace("%DATA%", "/aireDeJeux/" + commune.departement + "/" + commune.nom)
             sitemap.write(new_url.encode("utf-8"))
-        sitemap.write("</url></urlset>")
+        sitemap.write("</urlset>")
         sitemap.close()
         self.redirect("/admin/")
 
