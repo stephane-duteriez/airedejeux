@@ -6,6 +6,15 @@ import time
 from dbClass import *
 
 
+def classement(enregistrement, attribut):
+            test = "éèçàûüÛÜîëêËÊÎôÔ"
+            reference = [(u"é", u"e"), (u"è", u"e"), (u"ê", u"e")]
+            resultat = enregistrement[attribut].lower()
+            for item1, item2 in reference:
+                resultat = resultat.replace(item1, item2)
+            return resultat
+
+
 class ListeVilleHandler(webapp2.RequestHandler):
     def get(self):
         q = (self.request.GET['q']).lower()
@@ -34,14 +43,6 @@ class ListeImageHandler(webapp2.RequestHandler):
 
 class ListeAireDeJeuxHandler(webapp2.RequestHandler):
     def get(self):
-        def byName(aire_de_jeux):
-            test = "éèçàûüÛÜîëêËÊÎôÔ"
-            reference = [(u"é", u"e"), (u"è", u"e"), (u"ê", u"e")]
-            resultat = aire_de_jeux["nom"].lower()
-            for item1, item2 in reference:
-                resultat = resultat.replace(item1, item2)
-            return resultat
-
         urlsafe_key_ville = self.request.get("keyVille")
         key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
         query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)
@@ -59,7 +60,7 @@ class ListeAireDeJeuxHandler(webapp2.RequestHandler):
                     "lng": detail.coordonnees.lon
                 }
             data.append(next_aire_de_jeux)
-        data.sort(key=byName)
+        data.sort(key=lambda x: classement(x, "nom"))
         self.response.write(json.dumps(data))
 
 

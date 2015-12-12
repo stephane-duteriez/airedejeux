@@ -81,6 +81,10 @@
             <div class="contenue">
                 <div class="ratio23outside box">
                     <div class="ratio23inside">
+                        <div id="floating-panel">
+                          <input id="address" type="textbox" value="Paris, Rue de la Paix">
+                          <input id="geocode" type="button" value="Geocode">
+                        </div>
                         <div id="map"></div>
                     </div>
                     <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
@@ -145,8 +149,7 @@
                 draggable: true,
             });
 
-            marker.addListener('dragend', function() {
-                map.setCenter(marker.getPosition());
+            marker.addListener('position_changed', function() {
                 document.getElementById("lat").value = marker.getPosition().lat();
                 document.getElementById("lng").value = marker.getPosition().lng();
             });
@@ -158,6 +161,12 @@
             google.maps.event.addListener(map, 'click', function(event) {
                 placeMarker(marker, event.latLng);
             });
+            var geocoder = new google.maps.Geocoder();
+
+            document.getElementById('geocode').addEventListener('click', function() {
+                geocodeAddress(geocoder, map, marker);
+            });
+
         }
 
     {% else %}
@@ -213,7 +222,7 @@
             title: 'Hello World!',
             draggable: true
         });
-        marker.addListener('dragend', function() {
+        marker.addListener('position_changed', function() {
             map.setCenter(marker.getPosition());
             document.getElementById("lat").value = marker.getPosition().lat();
             document.getElementById("lng").value = marker.getPosition().lng();
@@ -225,6 +234,11 @@
         }
         google.maps.event.addListener(map, 'click', function(event) {
             placeMarker(marker, event.latLng);
+        });
+        var geocoder = new google.maps.Geocoder();
+
+        document.getElementById('geocode').addEventListener('click', function() {
+                geocodeAddress(geocoder, map, marker);
         });
     }
     function initMap() {
@@ -272,6 +286,18 @@
         document.getElementById("lat").value = marker.getPosition().lat();
         document.getElementById("lng").value = marker.getPosition().lng();
     }
+    function geocodeAddress(geocoder, resultsMap, marker) {
+        var address = document.getElementById('address').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                resultsMap.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+
     </script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?callback=initMap">

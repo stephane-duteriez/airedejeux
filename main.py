@@ -301,9 +301,12 @@ class DepartementHandler(Handler):
                     liste_communes=liste_communes)
 
     def get(self, dep=None):
+        def byName(Commune):
+            return Commune.nom
         query_commune = Commune.query(ndb.AND(Commune.departement == dep, Commune.nbr_aire_de_jeux > 0))\
             .fetch(200, projection=[Commune.nom, Commune.nbr_aire_de_jeux])
         query_departement = Departement.query(Departement.numero == dep).get()
+        query_commune.sort(key=byName)
         lettre_dep = query_departement.lettre
         self.render_main(dep, lettre_dep, query_commune)
 
@@ -313,14 +316,22 @@ class CommuneHandler(Handler):
         self.render("listeAireDeJeux.html", departement=departement, commune=commune, liste_aire_de_jeux=liste_aire_de_jeux)
 
     def get(self, dep=None, ville=None):
+        def classement(enregistrement):
+            reference = [(u"é", u"e"), (u"è", u"e"), (u"ê", u"e")]
+            resultat = enregistrement.nom.lower()
+            for item1, item2 in reference:
+                resultat = resultat.replace(item1, item2)
+            return resultat
+
         query_commune = Commune.query(ndb.AND(Commune.nom == ville, Commune.departement == dep))
         commune = query_commune.get()
         query_departement = Departement.query(Departement.numero == commune.departement).get()
         departement = query_departement.lettre
-        logging.info(commune)
         key_ville = commune.key
         query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)\
             .fetch(200, projection=[AireDeJeux.nom])
+        logging.info(query_aire_de_jeux)
+        query_aire_de_jeux.sort(key=lambda x: classement(x))
         self.render_main(departement, commune.urlsafe(), query_aire_de_jeux)
 
 
