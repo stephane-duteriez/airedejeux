@@ -92,32 +92,6 @@ class CreerAireDeJeuxHandler(Handler):
             self.render_main(indice)
 
 
-class ListeVilleHandler(webapp2.RequestHandler):
-    def get(self):
-        q = (self.request.GET['q']).lower()
-        villes = Commune.query(ndb.AND(Commune.nom_lower >= q, Commune.nom_lower <= q + "z"))
-        self.response.headers['Content-Type'] = 'text/json'
-        results = villes.fetch(20)
-        data = {}
-        for ville in results:
-            data[ville.nom + ", " + ville.departement] = {
-                                "key": ville.key.urlsafe(),
-                                "lat": ville.coordonnees.lat,
-                                "lon": ville.coordonnees.lon}
-        self.response.write(json.dumps(data))
-
-
-class ListeImageHandler(webapp2.RequestHandler):
-    def get(self):
-        indice = self.request.GET['q']
-        query_photos = Photo.query(Photo.indice_aireDeJeux == indice)
-        liste_images = query_photos.fetch(10)
-        data = []
-        for image in liste_images:
-            data.append(image.photo_url)
-        self.response.write(json.dumps(data))
-
-
 class AjouterHandler(webapp2.RequestHandler):
     def post(self):
         nom_aire_de_jeux = self.request.get('nom_aire_de_jeux').strip(" ")
@@ -176,41 +150,6 @@ class ChercherHandler(Handler):
 
     def get(self):
         self.render_main()
-
-
-class ListAireDeJeuxHandler(webapp2.RequestHandler):
-    def get(self):
-        urlsafe_key_ville = self.request.get("keyVille")
-        key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
-        query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)
-        liste_aire_de_jeux = query_aire_de_jeux.fetch(30)
-        data = []
-        for aireDeJeux in liste_aire_de_jeux:
-            next_aire_de_jeux = {"nom": aireDeJeux.nom,
-                                 "indiceAireDeJeux": aireDeJeux.indice,
-                                 "url": aireDeJeux.url,
-                                 "lat": "",
-                                 "lng": ""}
-            detail = aireDeJeux.detail.get()
-            if detail.coordonnees:
-                next_aire_de_jeux["lat"] = detail.coordonnees.lat
-                next_aire_de_jeux["lng"] = detail.coordonnees.lon
-            data.append(next_aire_de_jeux)
-        self.response.write(json.dumps(data))
-
-
-class ListeCommentaireHandler(webapp2.RequestHandler):
-    def get(self):
-        time.sleep(0.2)
-        urlsafe_key_aire_de_jeux = self.request.get("q")
-        key_aire_de_jeux = ndb.Key(urlsafe=urlsafe_key_aire_de_jeux)
-        query_commentaire = Commentaire.query(Commentaire.aireDeJeux == key_aire_de_jeux)
-        liste_commentaire = query_commentaire.fetch(30)
-        data = []
-        for commentaire in liste_commentaire:
-            data.append(commentaire.commentaire)
-        self.response.headers['Content-Type'] = 'text/json'
-        self.response.write(json.dumps(data))
 
 
 class ModifierHandler(Handler):
@@ -395,9 +334,6 @@ app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
     ('/créerAireDeJeux', CreerAireDeJeuxHandler),
     ('/ajouterAireDeJeux', AjouterHandler),
-    ('/listeVille', ListeVilleHandler),
-    ('/listAireDeJeux', ListAireDeJeuxHandler),
-    ('/listeCommentaire', ListeCommentaireHandler),
     ('/aireDeJeux', ListeDepartementsHandler),
     webapp2.Route('/aireDeJeux/<dep>', DepartementHandler),
     webapp2.Route('/aireDeJeux/<dep>/<ville>', CommuneHandler),
@@ -407,8 +343,8 @@ app = webapp2.WSGIApplication([
     ('/add_comment', AddCommentHandler),
     ('/view_photo/([^/]+)?', ViewPhotoHandler),
     ('/upload_photo', PhotoUploadHandler),
-    ('/listeImage', ListeImageHandler),
     ('/google21d16423d723f0d0.html', GoogleVerificationHandler),
     ('/verifierUnique', VerifierUniqueHandler),
     ('/sitemap.xml', SiteMapHandler)
-], debug=True)
+         ], debug=True)
+

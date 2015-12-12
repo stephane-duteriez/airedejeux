@@ -33,6 +33,9 @@ handlers:
   static_files: static/BingSiteAuth.xml
   upload: static/BingSiteAuth.xml
 
+- url: /liste/.*
+  script: liste.app
+
 - url: .*
   script: main.app
 

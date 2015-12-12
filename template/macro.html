@@ -79,7 +79,7 @@
                 }
             }
             var indice = "{{ new_indice }}";
-            xmlhttp.open("GET", "/listeImage?q=" + indice, true);
+            xmlhttp.open("GET", "/liste/Image?q=" + indice, true);
             xmlhttp.send();
         }
     }
@@ -116,7 +116,7 @@
                             document.getElementById("hints").innerHTML = out;
                         }
                     }
-                    xmlhttp.open("GET", "/listeVille?q=" + str, true);
+                    xmlhttp.open("GET", "/liste/Ville?q=" + str, true);
                     xmlhttp.send();
                 }
             }
