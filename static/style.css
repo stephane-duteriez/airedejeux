@@ -355,18 +355,25 @@ input {
     color: grey;
     }
 #floating-panel {
-  position: absolute;
-  top: 10px;
-  left: 25%;
-  z-index: 5;
-  background-color: #fff;
-  padding: 5px;
-  border: 1px solid #999;
-  text-align: center;
-  font-family: 'Roboto','sans-serif';
-  line-height: 30px;
-  padding-left: 10px;
+    position: absolute;
+    top: 10px;
+    left: 25%;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    text-align: center;
+    font-family: 'Roboto','sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
 }
+.ajouter {
+    padding: 0.2em;
+    margin: 0.2em;
+    box-shadow: 0.2em 0.2em 0.1em #888888;
+    background-color: #1565c0;
+    color: white;
+    }
 @media only screen and (max-width: 768px) {
     .title {
         margin : 0.2em 1em 0.2em 0.2em;

@@ -61,8 +61,8 @@
                     out = "<div class=\"message\">Désolé mais il n'y a pas encore d'aire de jeux" +
                      "enregistré pour cette ville. Si vous en connaissez, vous pouvez les ajouter" +
                      "en cliquant le lien suivant</div>" +
-                     "<p class=\"menu\" onclick=\"location.href='/créerAireDeJeux?keyVille=" + liste_ville[nom_ville].key  +
-                     "'\" style=\"cursor: pointer\">Ajouter</p>";
+                     "<div class=\"ajouter\" onclick=\"location.href='/créerAireDeJeux?keyVille=" + liste_ville[nom_ville].key  +
+                     "'\" style=\"cursor: pointer\">Ajouter</div>";
 
                 }
                 document.getElementById("list-aire-de-jeux").innerHTML = out +
