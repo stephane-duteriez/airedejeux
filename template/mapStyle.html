@@ -1,0 +1,58 @@
+{% macro script(centre_carte, large) -%}
+var styles =  [ { "stylers": [ { "saturation": 5 },
+                                   { "lightness": -5 },
+                                   { "gamma": 1.16 },
+                                   { "hue": "#004cff" } ] } ,
+                    { "featureType": "poi.park",
+                      "stylers": [ { "hue": "#3bff00" } ] }];
+
+function initialize(lat, lon) {
+    var mapCanvas = document.getElementById("map");
+    var myLatLng = {lat: lat, lng: lon};
+    var styledMap = new google.maps.StyledMapType(styles,
+            {name: "Styled Map"});
+    var mapOption = {
+        center: myLatLng,
+        streetViewControl: false,
+        scrollwheel: true,
+        draggable: true,
+        zoom: {{ large }},
+        mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
+    };
+    var map = new google.maps.Map(mapCanvas, mapOption);
+    map.mapTypes.set('map_style', styledMap);
+    map.setMapTypeId('map_style');
+    return map;
+}
+
+function initMap(centre_carte) {
+    map = initialize({{ centre_carte.lat }},{{ centre_carte.lon }});
+    initMarker();
+    if (screen.width<700) {
+        map.setOptions({ scrollwheel: false });
+        map.setOptions({ draggable: false });
+        document.getElementById("debloquerMap").style.visibility = "visible";
+    }
+}
+
+function active_map() {
+    map.setOptions({ scrollwheel: true, draggable: true});
+}
+
+{%- endmacro  %}
+
+{% macro addMarker(position, url, nom) -%}
+    var myLatLng = {lat: {{ position.lat }}, lng: {{ position.lon }}};
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+    });
+    var contentString = "<div><a href='/aireDeJeux/{{ url }}' >" +
+                        "{{ nom }}</a></div>";
+    var infoWindow = new google.maps.InfoWindow({
+        content: contentString
+    });
+    marker.addListener('click', function() {
+        infoWindow.open(map, marker);
+    });
+{%- endmacro %}

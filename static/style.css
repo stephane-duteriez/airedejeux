@@ -348,7 +348,7 @@ input {
 .departement, .commune{
     flex : 1 1;
     font-size: 1.5em;
-    padding: 0.5em;
+    padding: 0.2em;
     min-width: 13em;
     }
 .vide {
@@ -374,6 +374,11 @@ input {
     background-color: #1565c0;
     color: white;
     }
+.conteneur-map {
+    height: 400px;
+    display: flex;
+    }
+
 @media only screen and (max-width: 768px) {
     .title {
         margin : 0.2em 1em 0.2em 0.2em;

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macro.html" as macros %}
+{% import "mapStyle.html" as mapStyle %}
 {% block head %}
     <title>Aire de jeux {{ aireDeJeux.nom|e }} à {{ aireDeJeux.ville }}  </title>
     <meta name="description" content="Informations tel que la localisation, les activités, les heurs d'ouvertures
@@ -92,48 +93,21 @@
     </div>
 </div>
 <script type="text/javascript">
-    function initialize(lat, lon) {
-        var mapCanvas = document.getElementById("map");
-        var myLatLng = {lat: lat, lng: lon};
-        var styles =  [ { "stylers": [ { "saturation": 5 },
-                                           { "lightness": -5 },
-                                           { "gamma": 1.16 },
-                                           { "hue": "#004cff" } ] } ,
-                        { "featureType": "poi.park",
-                                "stylers": [ { "hue": "#3bff00" } ] }];
-        var styledMap = new google.maps.StyledMapType(styles,
-    {name: "Styled Map"});
+    {% if aireDeJeux.coordonnees.lat %}
+        {{ mapStyle.script(aireDeJeux.coordonnees, 15) }}
+        function initMarker() {
+            {{ mapStyle.addMarker(aireDeJeux.coordonnees, aireDeJeux.url, aireDeJeux.nom) }}
+        }
+    {% else %}
+        {{ mapStyle.script(aireDeJeux.coordonnees_ville) }}
+        function initMarker() {
+        }
+    {% endif %}
 
-        var mapOption = {
-            center: myLatLng,
-            streetViewControl: false,
-            scrollwheel: true,
-            draggable: true,
-            zoom: 15,
-            mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
-        }
-        var map = new google.maps.Map(mapCanvas, mapOption);
-        map.mapTypes.set('map_style', styledMap);
-        map.setMapTypeId('map_style');
-        var marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-        });
-        return map;
-    }
-    function initMap() {
-        map = initialize({{ aireDeJeux.coordonnees.lat if aireDeJeux.coordonnees.lat else aireDeJeux.coordonnees_ville.lat}},
-            {{ aireDeJeux.coordonnees.lon if aireDeJeux.coordonnees.lon else aireDeJeux.coordonnees_ville.lon}});
-        if (screen.width<700) {
-            map.setOptions({ scrollwheel: false });
-            map.setOptions({ draggable: false });
-            document.getElementById("debloquerMap").style.visibility = "visible";
-        }
-    }
     function new_commentaire(){
-        document.getElementById("new_comment").style.display="block";
-
+    document.getElementById("new_comment").style.display="block";
     }
+
     var pas_de_nouveau_commentaire = "true";
     function update_comment(){
         if (pas_de_nouveau_commentaire == "true") {
@@ -157,10 +131,6 @@
             xmlhttp.open("GET", "/liste/Commentaire?q=" + "{{aireDeJeux.key}}", true);
             xmlhttp.send();
         }
-    }
-    function active_map() {
-        console.log("test")
-        map.setOptions({ scrollwheel: true, draggable: true});
     }
 </script>
 <script async defer

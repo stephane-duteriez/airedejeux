@@ -13,7 +13,8 @@
                     "bac-à-sable",
                     "cabane",
                     "jeux sur ressort",
-                    "structure pour grimper"] %}
+                    "structure pour grimper",
+                    "toile d'araignée"] %}
     <form id="content"
             {% if nouveau=="true" %}
              action="/ajouterAireDeJeux"
@@ -288,7 +289,8 @@
     }
     function geocodeAddress(geocoder, resultsMap, marker) {
         var address = document.getElementById('address').value;
-        geocoder.geocode({'address': address}, function(results, status) {
+        var ville = document.getElementById('ville_input').value;
+        geocoder.geocode({'address': address + ", " + ville}, function(results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
                 resultsMap.setCenter(results[0].geometry.location);
                 marker.setPosition(results[0].geometry.location);

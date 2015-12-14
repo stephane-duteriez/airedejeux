@@ -13,6 +13,13 @@ indexes:
 - kind: AireDeJeux
   properties:
   - name: ville
+  - name: detail
+  - name: nom
+  - name: url
+
+- kind: AireDeJeux
+  properties:
+  - name: ville
   - name: nom
 
 - kind: Commune

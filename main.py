@@ -312,11 +312,16 @@ class DepartementHandler(Handler):
 
 
 class CommuneHandler(Handler):
+    # Affiche une page qui liste les aires-de-jeux sur une commune
     def render_main(self, departement, commune, liste_aire_de_jeux):
-        self.render("listeAireDeJeux.html", departement=departement, commune=commune, liste_aire_de_jeux=liste_aire_de_jeux)
+        self.render("listeAireDeJeux.html",
+                    departement=departement,
+                    commune=commune,
+                    liste_aire_de_jeux=liste_aire_de_jeux)
 
     def get(self, dep=None, ville=None):
         def classement(enregistrement):
+            # améliore l'ordre alphabétique pour mieux prendre en compte les accents
             reference = [(u"é", u"e"), (u"è", u"e"), (u"ê", u"e")]
             resultat = enregistrement.nom.lower()
             for item1, item2 in reference:
@@ -329,10 +334,19 @@ class CommuneHandler(Handler):
         departement = query_departement.lettre
         key_ville = commune.key
         query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)\
-            .fetch(200, projection=[AireDeJeux.nom])
+            .fetch(200, projection=[AireDeJeux.nom, AireDeJeux.url, AireDeJeux.detail])
+        liste_aire_de_jeux = []
+        for aire_de_jeux in query_aire_de_jeux:
+            detail = aire_de_jeux.detail.get()
+            record_aire_de_jeux = {
+                "nom": aire_de_jeux.nom,
+                "url": aire_de_jeux.url,
+                "coordonnees": detail.coordonnees
+            }
+            liste_aire_de_jeux.append(record_aire_de_jeux)
         logging.info(query_aire_de_jeux)
-        query_aire_de_jeux.sort(key=lambda x: classement(x))
-        self.render_main(departement, commune.urlsafe(), query_aire_de_jeux)
+        query_aire_de_jeux.sort(key=lambda x: classement(x))  # mais les aire-de-jeux par ordre alphabétique
+        self.render_main(departement, commune.urlsafe(), liste_aire_de_jeux)
 
 
 class SiteMapHandler(Handler):
