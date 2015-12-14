@@ -99,7 +99,7 @@
             {{ mapStyle.addMarker(aireDeJeux.coordonnees, aireDeJeux.url, aireDeJeux.nom) }}
         }
     {% else %}
-        {{ mapStyle.script(aireDeJeux.coordonnees_ville) }}
+        {{ mapStyle.script(aireDeJeux.coordonnees_ville, 15) }}
         function initMarker() {
         }
     {% endif %}

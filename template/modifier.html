@@ -136,11 +136,11 @@
 
             var mapOption = {
                 center: myLatLng,
-                zoom: 12,
+                zoom: 15,
                 streetViewControl: false,
                 mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
             }
-            var map = new google.maps.Map(mapCanvas, mapOption);
+            map = new google.maps.Map(mapCanvas, mapOption);
             map.mapTypes.set('map_style', styledMap);
             map.setMapTypeId('map_style');
             var marker = new google.maps.Marker({
@@ -214,7 +214,7 @@
             streetViewControl: false,
             mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
         }
-        var map = new google.maps.Map(mapCanvas, mapOption);
+        map = google.maps.Map(mapCanvas, mapOption);
         map.mapTypes.set('map_style', styledMap);
         map.setMapTypeId('map_style');
         var marker = new google.maps.Marker({
@@ -242,7 +242,9 @@
                 geocodeAddress(geocoder, map, marker);
         });
     }
+    var map;
     function initMap() {
+        map = new google.maps.Map();
     {% if ville != "" %}
         hint(n_ville);
     {% endif %} }
@@ -279,8 +281,8 @@
         }
     }
     function active_map() {
-        console.log("test")
         map.setOptions({ scrollwheel: true, draggable: true});
+        document.getElementById("debloquerMap").style.background = "grey";
     }
     function placeMarker(marker, location) {
         marker.setPosition(location);

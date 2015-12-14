@@ -5,7 +5,7 @@ var styles =  [ { "stylers": [ { "saturation": 5 },
                                    { "hue": "#004cff" } ] } ,
                     { "featureType": "poi.park",
                       "stylers": [ { "hue": "#3bff00" } ] }];
-
+var map;
 function initialize(lat, lon) {
     var mapCanvas = document.getElementById("map");
     var myLatLng = {lat: lat, lng: lon};
@@ -19,14 +19,13 @@ function initialize(lat, lon) {
         zoom: {{ large }},
         mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
     };
-    var map = new google.maps.Map(mapCanvas, mapOption);
+    map = new google.maps.Map(mapCanvas, mapOption);
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
-    return map;
 }
 
 function initMap(centre_carte) {
-    map = initialize({{ centre_carte.lat }},{{ centre_carte.lon }});
+    initialize({{ centre_carte.lat }},{{ centre_carte.lon }});
     initMarker();
     if (screen.width<700) {
         map.setOptions({ scrollwheel: false });
@@ -37,22 +36,27 @@ function initMap(centre_carte) {
 
 function active_map() {
     map.setOptions({ scrollwheel: true, draggable: true});
+    document.getElementById("debloquerMap").style.background = "grey";
 }
 
-{%- endmacro  %}
-
-{% macro addMarker(position, url, nom) -%}
-    var myLatLng = {lat: {{ position.lat }}, lng: {{ position.lon }}};
+function addMarker(position, url, nom) {
     var marker = new google.maps.Marker({
-        position: myLatLng,
+        position: position,
         map: map,
     });
-    var contentString = "<div><a href='/aireDeJeux/{{ url }}' >" +
-                        "{{ nom }}</a></div>";
+    var contentString = "<div><a href='/aireDeJeux/" + url + "' >" +
+                        nom + "</a></div>"
     var infoWindow = new google.maps.InfoWindow({
         content: contentString
     });
     marker.addListener('click', function() {
         infoWindow.open(map, marker);
     });
+}
+
+{%- endmacro  %}
+
+{% macro addMarker(position, url, nom) -%}
+    var myLatLng = {lat: {{ position.lat }}, lng: {{ position.lon }}};
+    addMarker(myLatLng,"{{ url }}", "{{ nom }}")
 {%- endmacro %}

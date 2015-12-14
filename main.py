@@ -323,7 +323,7 @@ class CommuneHandler(Handler):
         def classement(enregistrement):
             # améliore l'ordre alphabétique pour mieux prendre en compte les accents
             reference = [(u"é", u"e"), (u"è", u"e"), (u"ê", u"e")]
-            resultat = enregistrement.nom.lower()
+            resultat = enregistrement["nom"].lower()
             for item1, item2 in reference:
                 resultat = resultat.replace(item1, item2)
             return resultat
@@ -345,7 +345,7 @@ class CommuneHandler(Handler):
             }
             liste_aire_de_jeux.append(record_aire_de_jeux)
         logging.info(query_aire_de_jeux)
-        query_aire_de_jeux.sort(key=lambda x: classement(x))  # mais les aire-de-jeux par ordre alphabétique
+        liste_aire_de_jeux.sort(key=lambda x: classement(x))  # mais les aire-de-jeux par ordre alphabétique
         self.render_main(departement, commune.urlsafe(), liste_aire_de_jeux)
 
 

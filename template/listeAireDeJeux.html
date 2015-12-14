@@ -15,10 +15,10 @@
     <div id="ville"><a href="/aireDeJeux/{{ commune.departement }}">{{ departement }}</a></div>
     <div id="ville">{{ commune.nom }}</div>
 </div>
-<div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
 <div class="conteneur-map">
     <div id="map"></div>
 </div>
+<div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
 <div class="liste_communes">
     {% for aire_de_jeux in liste_aire_de_jeux %}
         <div class="commune">
