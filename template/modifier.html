@@ -171,83 +171,86 @@
         }
 
     {% else %}
-    function check_unique() {
-        nom = document.getElementById("nom").value;
-        key_ville = document.getElementById("key_ville").value;
-        if (nom && key_ville) {
-            var xmlhttp = new XMLHttpRequest();
-            var valide = true;
-            console.log("test");
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    json = xmlhttp.responseText;
-                    data = JSON.parse(json);
-                    console.log(data);
-                    if (data == true) {
-                        document.getElementById("alert").innerHTML = "";
-                        valide = true;
-                    } else {
-                        document.getElementById("alert").innerHTML = "Il y a déjà une aire de jeux à ce nom dans" +
-                         " cette ville, choisissez un nouveau nom, svp.";
-                        valide = false;
+        function check_unique() {
+            nom = document.getElementById("nom").value;
+            key_ville = document.getElementById("key_ville").value;
+            if (nom && key_ville) {
+                var xmlhttp = new XMLHttpRequest();
+                var valide = true;
+                console.log("test");
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        json = xmlhttp.responseText;
+                        data = JSON.parse(json);
+                        console.log(data);
+                        if (data == true) {
+                            document.getElementById("alert").innerHTML = "";
+                            valide = true;
+                        } else {
+                            document.getElementById("alert").innerHTML = "Il y a déjà une aire de jeux à ce nom dans" +
+                             " cette ville, choisissez un nouveau nom, svp.";
+                            valide = false;
+                        }
                     }
                 }
+                xmlhttp.open("GET", "/verifierUnique?nom=" + nom.trim() + "&keyVille=" + key_ville, true);
+                xmlhttp.send();
             }
-            xmlhttp.open("GET", "/verifierUnique?nom=" + nom.trim() + "&keyVille=" + key_ville, true);
-            xmlhttp.send();
         }
-    }
-    function initialize(lat, lon) {
-        var mapCanvas = document.getElementById("map");
-        var myLatLng = {lat: lat, lng: lon};
-        var styles =  [ { "stylers": [ { "saturation": 5 },
-                                           { "lightness": -5 },
-                                           { "gamma": 1.16 },
-                                           { "hue": "#004cff" } ] } ,
-                        { "featureType": "poi.park",
-                                "stylers": [ { "hue": "#3bff00" } ] }];
-        var styledMap = new google.maps.StyledMapType(styles,
-    {name: "Styled Map"});
-        var mapOption = {
-            center: myLatLng,
-            zoom: 12,
-            streetViewControl: false,
-            mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
-        }
-        map = google.maps.Map(mapCanvas, mapOption);
-        map.mapTypes.set('map_style', styledMap);
-        map.setMapTypeId('map_style');
-        var marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-            title: 'Hello World!',
-            draggable: true
-        });
-        marker.addListener('position_changed', function() {
-            map.setCenter(marker.getPosition());
-            document.getElementById("lat").value = marker.getPosition().lat();
-            document.getElementById("lng").value = marker.getPosition().lng();
-        });
-        if (screen.width<700) {
-            map.setOptions({ scrollwheel: false });
-            map.setOptions({ draggable: false });
-            document.getElementById("debloquerMap").style.visibility = "visible";
-        }
-        google.maps.event.addListener(map, 'click', function(event) {
-            placeMarker(marker, event.latLng);
-        });
-        var geocoder = new google.maps.Geocoder();
+        var map;
+        function initialize(lat, lon) {
+            var mapCanvas = document.getElementById("map");
+            var myLatLng = {lat: lat, lng: lon};
+            var styles =  [ { "stylers": [ { "saturation": 5 },
+                                               { "lightness": -5 },
+                                               { "gamma": 1.16 },
+                                               { "hue": "#004cff" } ] } ,
+                            { "featureType": "poi.park",
+                                    "stylers": [ { "hue": "#3bff00" } ] }];
+            var styledMap = new google.maps.StyledMapType(styles,
+        {name: "Styled Map"});
+            var mapOption = {
+                center: myLatLng,
+                zoom: 12,
+                streetViewControl: false,
+                mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
+            }
+            map.setOptions(mapOption);
+            map.mapTypes.set('map_style', styledMap);
+            map.setMapTypeId('map_style');
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                title: 'Hello World!',
+                draggable: true
+            });
+            marker.addListener('position_changed', function() {
+                map.setCenter(marker.getPosition());
+                document.getElementById("lat").value = marker.getPosition().lat();
+                document.getElementById("lng").value = marker.getPosition().lng();
+            });
+            if (screen.width<700) {
+                map.setOptions({ scrollwheel: false });
+                map.setOptions({ draggable: false });
+                document.getElementById("debloquerMap").style.visibility = "visible";
+            }
+            google.maps.event.addListener(map, 'click', function(event) {
+                placeMarker(marker, event.latLng);
+            });
+            var geocoder = new google.maps.Geocoder();
 
-        document.getElementById('geocode').addEventListener('click', function() {
-                geocodeAddress(geocoder, map, marker);
-        });
-    }
-    var map;
-    function initMap() {
-        map = new google.maps.Map();
-    {% if ville != "" %}
-        hint(n_ville);
-    {% endif %} }
+            document.getElementById('geocode').addEventListener('click', function() {
+                    geocodeAddress(geocoder, map, marker);
+            });
+        }
+
+        function initMap() {
+        console.log("test1");
+            map = new google.maps.Map(document.getElementById('map'));
+        console.log("test2");
+        {% if ville != "" %}
+            hint(n_ville);
+        {% endif %} }
     {% endif %}
 
     function hint(nom_ville) {
