@@ -183,7 +183,9 @@ class SitemapBlobHandler(webapp2.RequestHandler):
         sitemap.write("""<?xml version="1.0" encoding="UTF-8"?>
                             <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
                                 """)
-        sitemap.write("<url><loc>http://www.oujouerdehors.org/</loc></url>")
+        sitemap.write("""<url><loc>http://www.oujouerdehors.org/</loc>
+                        <changefreq>monthly</changefreq>
+                        <priority>1</priority></url>""")
         template = "<url><loc>http://www.oujouerdehors.org/%DATA%</loc></url>"
         query_aire_de_jeux = AireDeJeux.query()
         for aire_de_jeux in query_aire_de_jeux:
@@ -198,7 +200,8 @@ class SitemapBlobHandler(webapp2.RequestHandler):
         for commune in query_commune:
             new_url = template.replace("%DATA%", "/aireDeJeux/" + commune.departement + "/" + commune.nom)
             sitemap.write(new_url.encode("utf-8"))
-        sitemap.write("</urlset>")
+        sitemap.write("""<changefreq>monthly</changefreq>
+                        <priority>0.5</priority></urlset>""")
         sitemap.close()
         self.redirect("/admin/")
 
