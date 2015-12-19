@@ -8,9 +8,9 @@ builtins:
 - remote_api: on
 
 handlers:
-- url: /favicon.ico
-  static_files: favicon.ico
-  upload: favicon.ico
+- url: /favicon\.png
+  static_files: img/favicon.png
+  upload: img/favicon\.png
 
 - url: /static
   static_dir: static

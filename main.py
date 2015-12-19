@@ -4,7 +4,8 @@
 # TODO recherche de place de jeux à proximité en dehors de la ville
 # TODO indiquer  que lq photo est en téléchargemment
 # TODO ajouter la posibilité d'ajouter un lien, doit etre validé
-# TODO ajouter une page
+# TODO permettre de localiser le marker a partir de la position du téléphone
+# TODO faire une page pour valider ou supprimer facilement les derniere mise a jour de la base e données
 import webapp2
 import json
 import time
@@ -144,7 +145,6 @@ class AjouterHandler(webapp2.RequestHandler):
 
 
 class ChercherHandler(Handler):
-    # TODO mettre un lien sur chaque marqueur pour sélectionner l'aire de jeux en question
     def render_main(self):
         self.render("chercher.html")
 
