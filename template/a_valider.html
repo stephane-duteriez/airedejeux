@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelles enregistrements a valider</title>
+    <style>
+        .info {
+            box-shadow : 0.2em 0.2em 0.5em #888888;
+            margin : 0.5em;
+            padding : 0.5em;
+        }
+        .valider {
+            width:5em;
+            padding:0.2em;
+            box-shadow : 0.2em 0.2em 0.5em #888888;
+        }
+        .valider:hover {
+            color:grey;
+        }
+    </style>
+</head>
+<body>
+    {% set indice = 0 %}
+    <h1>Aire De Jeux</h1>
+    {% for aire_de_jeux in liste_aire_de_jeux %}
+    <div class="info">
+        {{ aire_de_jeux.nom|e }}
+        <div id="indice{{ indice }}"
+             class="valider"
+             onclick="valider(this.id, '{{ aire_de_jeux.key.urlsafe() }}')">
+            Valider
+        </div>
+        {% set indice = indice + 1 %}
+    </div>
+    {% endfor %}
+    {% set indice = indice + liste_aire_de_jeux|length %}
+    <h1>Details</h1>
+    {% for detail in liste_details %}
+    <div class="info">
+        {{ detail.horaires|e }}<br>
+        {{ detail.accessibilite|e }}<br>
+        {{ detail.description|e }}<br>
+        {{ detail.age|e }}
+        <div id="indice{{ indice }}"
+             class="valider"
+             onclick="valider(this.id, '{{ detail.key.urlsafe() }}')">
+            Valider
+        </div>
+        {% set indice = indice + 1 %}
+    </div>
+    {% endfor %}
+    {% set indice = indice + liste_details|length %}
+    <h1>Commentaire</h1>
+    {% for comments in liste_comments %}
+    <div class="info">
+        {{ comments.commentaire|e }}
+        <div id="indice{{ indice }}"
+             class="valider"
+             onclick="valider(this.id, '{{ comments.key.urlsafe() }}')">
+            Valider
+        </div>
+        {% set indice = indice + 1 %}
+    </div>
+    {% endfor %}
+    {% set indice = indice + liste_comments|length %}
+    <h1>Photos</h1>
+    {% for photo in liste_photos %}
+    <div class="info">
+        <img src="{{ photo.photo_url }}=s150">
+        <div id="indice{{ indice }}"
+             class="valider"
+             onclick="valider(this.id, '{{ photo.key.urlsafe() }}')">
+            Valider
+        </div>
+        {% set indice = indice + 1 %}
+    </div>
+    {% endfor %}
+</body>
+<script>
+    function valider(id, key) {
+        document.getElementById(id).style.backgroundColor = "green";
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", "/admin/a_valider", true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send("key=" + key);
+    }
+</script>
+</html>

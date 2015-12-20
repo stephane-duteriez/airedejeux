@@ -29,7 +29,6 @@ def send_mail_notification(subject, body):
                                 to="stephane.duteriez@gmail.com")
     message.body = body
     message.subject = subject
-    logging.info(body)
     message.send()
 
 

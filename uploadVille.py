@@ -11,6 +11,24 @@ from dbClass import *
 from google.appengine.datastore.datastore_query import Cursor
 
 
+template_dir = os.path.join(os.path.dirname(__file__), 'template')
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
+
+
+class Handler(webapp2.RequestHandler):
+    # Handler modifier pour intégrer la prise ne charge de jinja
+    def write(self, *a, **kw):
+        self.response.out.write(*a, **kw)
+
+    @staticmethod
+    def render_str(template, **params):
+        t = jinja_env.get_template(template)
+        return t.render(params).encode(encoding="utf-8")
+
+    def render(self, template, **kw):
+        self.write(self.render_str(template, **kw).decode(encoding="utf-8"))
+
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         upload_url = blobstore.create_upload_url('/admin/upload')
@@ -38,6 +56,9 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <a href='/admin/ajout_date_creation'>Ajouter des dates sur les enregistrements de la base de données</a>
         </div>
+        <div>
+            <a href='/admin/a_valider'>Affichage des enregistrement a valider</a>
+        </div
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -260,6 +281,30 @@ class AjoutDateHandler(webapp2.RequestHandler):
         self.redirect("/admin/")
 
 
+class AValiderHandler(Handler):
+    def render_main(self, liste_aire_de_jeux, liste_details, liste_comments, liste_photos):
+        self.render("a_valider.html",
+                    liste_aire_de_jeux=liste_aire_de_jeux,
+                    liste_details=liste_details,
+                    liste_comments=liste_comments,
+                    liste_photos=liste_photos)
+
+    def get(self):
+        query_aire_de_jeux = AireDeJeux.query(AireDeJeux.valider==False).fetch(100)
+        query_details = Detail.query(Detail.valider==False).fetch(100)
+        query_comments = Commentaire.query(Commentaire.valider==False).fetch(100)
+        query_photos = Photo.query(Photo.valider==False).fetch(100)
+        self.render_main(query_aire_de_jeux, query_details, query_comments, query_photos)
+
+    def post(self):
+        urlsafe_key = self.request.get('key')
+        logging.info("key=" + urlsafe_key)
+        key = ndb.Key(urlsafe=urlsafe_key)
+        enregistrement = key.get()
+        enregistrement.valider = True
+        enregistrement.put()
+
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
@@ -270,5 +315,6 @@ app = webapp2.WSGIApplication([
     ('/admin/lowerCaseVille', LowerCase),
     ('/admin/rest_compte_dep_ville', RecompteHandler),
     ('/admin/creat_sitemap_blob', SitemapBlobHandler),
-    ('/admin/ajout_date_creation', AjoutDateHandler)
+    ('/admin/ajout_date_creation', AjoutDateHandler),
+    ('/admin/a_valider', AValiderHandler)
 ], debug=True)

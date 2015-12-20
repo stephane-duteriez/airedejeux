@@ -104,3 +104,4 @@ class Photo(ndb.Model):
     photo_url = ndb.StringProperty()
     date_creation = ndb.DateTimeProperty(auto_now_add=True)
     valider = ndb.BooleanProperty(default=False)
+
