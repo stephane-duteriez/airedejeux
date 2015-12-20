@@ -6,6 +6,7 @@ var styles =  [ { "stylers": [ { "saturation": 5 },
                     { "featureType": "poi.park",
                       "stylers": [ { "hue": "#3bff00" } ] }];
 var map;
+var bounds;
 function initialize(lat, lon) {
     var mapCanvas = document.getElementById("map");
     var myLatLng = {lat: lat, lng: lon};
@@ -20,6 +21,7 @@ function initialize(lat, lon) {
         mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
     };
     map = new google.maps.Map(mapCanvas, mapOption);
+    bounds = new google.maps.LatLngBounds(myLatLng);
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
 }
@@ -27,6 +29,7 @@ function initialize(lat, lon) {
 function initMap(centre_carte) {
     initialize({{ centre_carte.lat }},{{ centre_carte.lon }});
     initMarker();
+    map.fitBounds(bounds)
     if (screen.width<700) {
         map.setOptions({ scrollwheel: false });
         map.setOptions({ draggable: false });
@@ -58,5 +61,7 @@ function addMarker(position, url, nom) {
 
 {% macro addMarker(position, url, nom) -%}
     var myLatLng = {lat: {{ position.lat }}, lng: {{ position.lon }}};
-    addMarker(myLatLng,"{{ url }}", "{{ nom }}")
+    console.log(bounds);
+    bounds.extend(new google.maps.LatLng(myLatLng));
+    addMarker(myLatLng,"{{ url }}", "{{ nom }}");
 {%- endmacro %}

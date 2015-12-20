@@ -334,7 +334,7 @@ class CommuneHandler(Handler):
             }
             liste_aire_de_jeux.append(record_aire_de_jeux)
         logging.info(query_aire_de_jeux)
-        liste_aire_de_jeux.sort(key=lambda x: classement(x))  # mais les aire-de-jeux par ordre alphabétique
+        liste_aire_de_jeux.sort(key=lambda x: classement(x)) # mais les aire-de-jeux par ordre alphabétique
         self.render_main(departement, commune.urlsafe(), liste_aire_de_jeux)
 
 

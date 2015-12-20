@@ -31,7 +31,7 @@
     {% endfor %}
 </div>
 <script type="text/javascript">
-    {{ mapStyle.script(commune.coordonnees, 12) }}
+    {{ mapStyle.script(commune.coordonnees, 15) }}
     function initMarker() {
         {% for aire_de_jeux in liste_aire_de_jeux %}
             {% if aire_de_jeux.coordonnees.lat %}
