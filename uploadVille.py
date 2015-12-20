@@ -294,6 +294,7 @@ class AValiderHandler(Handler):
         query_details = Detail.query(Detail.valider==False).fetch(100)
         query_comments = Commentaire.query(Commentaire.valider==False).fetch(100)
         query_photos = Photo.query(Photo.valider==False).fetch(100)
+        valider(False)
         self.render_main(query_aire_de_jeux, query_details, query_comments, query_photos)
 
     def post(self):

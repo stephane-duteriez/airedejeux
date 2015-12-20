@@ -4,9 +4,32 @@ import os
 import logging
 
 from google.appengine.ext import ndb
+from google.appengine.api import memcache
+from google.appengine.api import mail
 
 template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
+
+
+def send_mail_notification(subject, body):
+    message = mail.EmailMessage(sender="aire-de-jeux notification <notification@aire-de-jeux.appspotmail.com>",
+                                to="stephane.duteriez@gmail.com")
+    message.body = body
+    message.subject = subject
+    message.send()
+
+
+def valider(nouvelle_etat):
+    a_valider = memcache.get("a_valider")
+    if a_valider is None or a_valider != nouvelle_etat:
+        variable = Variable.query().get()
+        if not variable:
+            variable = Variable()
+        if not variable.a_valider or variable.a_valider != nouvelle_etat:
+            variable.a_valider = nouvelle_etat
+            variable.put()
+            send_mail_notification("nouvelle enregistrement", "www.oujouerdehors.org/admin/a_valider")
+        memcache.set('a_valider', nouvelle_etat)
 
 
 class AireDeJeux(ndb.Model):
@@ -105,3 +128,6 @@ class Photo(ndb.Model):
     date_creation = ndb.DateTimeProperty(auto_now_add=True)
     valider = ndb.BooleanProperty(default=False)
 
+
+class Variable(ndb.Model):
+    a_valider = ndb.BooleanProperty()

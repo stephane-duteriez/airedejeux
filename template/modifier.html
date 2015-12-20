@@ -82,7 +82,7 @@
                 <div class="ratio23outside box">
                     <div class="ratio23inside">
                         <div id="floating-panel">
-                          <input id="address" type="textbox" value="Paris, Rue de la Paix">
+                          <input id="address" type="textbox" placeholder="Rue de la Paix">
                           <input id="geocode" type="button" value="Geocode">
                         </div>
                         <div id="map"></div>
@@ -296,6 +296,7 @@
         var ville = document.getElementById('ville_input').value;
         geocoder.geocode({'address': address + ", " + ville}, function(results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
+                resultsMap.setOptions({zoom:16});
                 resultsMap.setCenter(results[0].geometry.location);
                 marker.setPosition(results[0].geometry.location);
             } else {

@@ -16,20 +16,11 @@ import cloudstorage as gcs
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.api.images import get_serving_url
-from google.appengine.api import mail
 
 from dbClass import *
 
 template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
-
-
-def send_mail_notification(subject, body):
-    message = mail.EmailMessage(sender="aire-de-jeux notification <notification@aire-de-jeux.appspotmail.com>",
-                                to="stephane.duteriez@gmail.com")
-    message.body = body
-    message.subject = subject
-    message.send()
 
 
 # utilisé pour créer un indice aléatoire pour chaque indice
@@ -130,9 +121,8 @@ class AjouterHandler(webapp2.RequestHandler):
         key_aire_de_jeux = nouvelle_aire_de_jeux.put()
         if commentaire:
             nouveau_commentaire = Commentaire(aireDeJeux=key_aire_de_jeux, commentaire=commentaire)
-            send_mail_notification("nouveaux commentaire", nouveau_commentaire.str())
             nouveau_commentaire.put()
-        send_mail_notification("nouvelle aire-de-jeux", nouvelle_aire_de_jeux.str())
+        valider(True)
         ville.nbr_aire_de_jeux += 1
         ville.put()
         departement = Departement.query(Departement.numero == ville.departement).get()
@@ -200,11 +190,10 @@ class ModifierHandler(Handler):
 
         if commentaire:
             nouveau_commentaire = Commentaire(aireDeJeux=db_aire_de_jeux.key, commentaire=commentaire)
-            send_mail_notification("nouveaux commentaire", nouveau_commentaire.str())
             nouveau_commentaire.put()
 
         time.sleep(0.1)
-        send_mail_notification("nouvelle aire-de-jeux", db_aire_de_jeux.str())
+        valider(True)
 
         absolut_url = "/aireDeJeux/" + db_aire_de_jeux.url
         self.redirect(urllib.quote(absolut_url.encode("utf-8")))
@@ -229,6 +218,7 @@ class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             upload = self.get_uploads()[0]
             photo = Photo(indice_aireDeJeux=indice, blobKey=upload.key(), photo_url=get_serving_url(upload.key()))
             photo.put()
+            valider(True)
             time.sleep(0.1)
             self.redirect('/add_photo?indice=' + indice)
         except:
@@ -251,7 +241,7 @@ class AddCommentHandler(Handler):
             commentaire=comment
         )
         new_comment.put()
-        send_mail_notification("new comment", new_comment.str())
+        valider(True)
         self.redirect('/add_comment?key=' + key_aire_de_jeux)
 
 
