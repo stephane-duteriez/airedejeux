@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import webapp2
+import datetime
 
 import cloudstorage as gcs
 
@@ -33,6 +34,9 @@ class MainHandler(webapp2.RequestHandler):
         </div>
         <div>
             <a href='/admin/creat_sitemap_blob'>creer le fichier site map</a>
+        </div>
+        <div>
+            <a href='/admin/ajout_date_creation'>Ajouter des dates sur les enregistrements de la base de données</a>
         </div>
         </form>""" % upload_url
 
@@ -205,6 +209,57 @@ class SitemapBlobHandler(webapp2.RequestHandler):
         sitemap.close()
         self.redirect("/admin/")
 
+
+class AjoutDateHandler(webapp2.RequestHandler):
+    def get(self):
+        curent_date = datetime.datetime.now()
+        query_aire_de_jeux = AireDeJeux.query()
+        for aire_de_jeux in query_aire_de_jeux:
+            change = False
+            if not aire_de_jeux.date_creation:
+                aire_de_jeux.date_creation = curent_date
+                change = True
+            if not aire_de_jeux.valider:
+                aire_de_jeux.valider = True
+                change = True
+            if change:
+                aire_de_jeux.put()
+        query_detail = Detail.query()
+        for detail in query_detail:
+            change = False
+            if not detail.date_creation:
+                detail.date_creation = curent_date
+                change = True
+            if not detail.valider:
+                detail.valider = True
+                change = True
+            if change:
+                detail.put()
+        query_commentaire = Commentaire.query()
+        for commentaire in query_commentaire:
+            change = False
+            if not commentaire.date_creation:
+                commentaire.date_creation = curent_date
+                change = True
+            if not commentaire.valider:
+                commentaire.valider = True
+                change = True
+            if change:
+                commentaire.put()
+        query_photos = Photo.query()
+        for photo in query_photos:
+            change = False
+            if not photo.date_creation:
+                photo.date_creation = curent_date
+                change = True
+            if not photo.valider:
+                photo.valider = True
+                change = True
+            if change:
+                photo.put()
+        self.redirect("/admin/")
+
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
@@ -214,5 +269,6 @@ app = webapp2.WSGIApplication([
     ('/admin/netoyerDoublon', NetoyerDoublonHandler),
     ('/admin/lowerCaseVille', LowerCase),
     ('/admin/rest_compte_dep_ville', RecompteHandler),
-    ('/admin/creat_sitemap_blob', SitemapBlobHandler)
+    ('/admin/creat_sitemap_blob', SitemapBlobHandler),
+    ('/admin/ajout_date_creation', AjoutDateHandler)
 ], debug=True)

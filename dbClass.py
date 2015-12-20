@@ -15,6 +15,8 @@ class AireDeJeux(ndb.Model):
     indice = ndb.StringProperty(required=True)
     detail = ndb.KeyProperty()
     url = ndb.StringProperty()
+    date_creation = ndb.DateTimeProperty(auto_now_add=True)
+    valider = ndb.BooleanProperty(default=False)
 
     def export(self):
         detail = self.detail.get()
@@ -58,6 +60,8 @@ class Detail(ndb.Model):
     description = ndb.StringProperty()
     coordonnees = ndb.GeoPtProperty()
     age = ndb.StringProperty()
+    date_creation = ndb.DateTimeProperty(auto_now_add=True)
+    valider = ndb.BooleanProperty(default=False)
 
 
 class Commune(ndb.Model):
@@ -85,10 +89,10 @@ class Departement(ndb.Model):
 
 
 class Commentaire(ndb.Model):
-    userId = ndb.KeyProperty()
     aireDeJeux = ndb.KeyProperty()
     commentaire = ndb.StringProperty()
-    valide = ndb.BooleanProperty()
+    date_creation = ndb.DateTimeProperty(auto_now_add=True)
+    valider = ndb.BooleanProperty(default=False)
 
     def str(self):
         return self.commentaire
@@ -98,3 +102,5 @@ class Photo(ndb.Model):
     blobKey = ndb.BlobKeyProperty()
     indice_aireDeJeux = ndb.StringProperty()
     photo_url = ndb.StringProperty()
+    date_creation = ndb.DateTimeProperty(auto_now_add=True)
+    valider = ndb.BooleanProperty(default=False)
