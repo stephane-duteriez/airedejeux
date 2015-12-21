@@ -7,6 +7,8 @@ var styles =  [ { "stylers": [ { "saturation": 5 },
                       "stylers": [ { "hue": "#3bff00" } ] }];
 var map;
 var bounds;
+var info_window;
+
 function initialize(lat, lon) {
     var mapCanvas = document.getElementById("map");
     var myLatLng = {lat: lat, lng: lon};
@@ -22,6 +24,7 @@ function initialize(lat, lon) {
     };
     map = new google.maps.Map(mapCanvas, mapOption);
     bounds = new google.maps.LatLngBounds(myLatLng);
+    info_window = new google.maps.InfoWindow()
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
 }
@@ -49,11 +52,9 @@ function addMarker(position, url, nom) {
     });
     var contentString = "<div><a href='/aireDeJeux/" + url + "' >" +
                         nom + "</a></div>"
-    var infoWindow = new google.maps.InfoWindow({
-        content: contentString
-    });
     marker.addListener('click', function() {
-        infoWindow.open(map, marker);
+        info_window.setContent(contentString)
+        info_window.open(map, marker);
     });
 }
 
@@ -61,7 +62,6 @@ function addMarker(position, url, nom) {
 
 {% macro addMarker(position, url, nom) -%}
     var myLatLng = {lat: {{ position.lat }}, lng: {{ position.lon }}};
-    console.log(bounds);
     bounds.extend(new google.maps.LatLng(myLatLng));
     addMarker(myLatLng,"{{ url }}", "{{ nom }}");
 {%- endmacro %}
