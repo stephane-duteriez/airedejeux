@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macro.html" as macros %}
+{% import "mapStyle.html" as mapStyle %}
 {% block head %}
     <meta name="msvalidate.01" content="C13D965D94BE00F49BACD35519454320" />
     <title>Ou trouver des aire-de-jeux, recherche par ville</title>
@@ -34,10 +35,13 @@
 </div>
 <script>
     var map_ready = false;
-    var map;
+    {{ mapStyle.script("None", 15) }}
     function hint(nom_ville) {
         var xmlhttp = new XMLHttpRequest();
         var data;
+        while (!map_ready) {
+        }
+        document.getElementById("map_home").style.display= "block"
         map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -55,7 +59,10 @@
                         newAireDeJeux = newAireDeJeux.replace("%urlAireDeJeux%", data[i].url);
                         newAireDeJeux = newAireDeJeux.replace("%indice%", (i+1).toString());
                         out += newAireDeJeux;
-                        addMarker(data[i], map)
+                        if (data[i].coordonnees.lat) {
+                            addMarker(data[i].coordonnees, data[i].url, data[i].nom);
+                        }
+                        map.fitBounds(bounds);
                     }
                 } else {
                     out = "<div class=\"message\">Désolé mais il n'y a pas encore d'aire de jeux" +
@@ -68,65 +75,19 @@
                 document.getElementById("list-aire-de-jeux").innerHTML = out +
                                                         document.getElementById("template-liste-aire-de-jeux").innerHTML;
                 document.getElementById("bt_creation").href = "/créerAireDeJeux?keyVille=" + liste_ville[nom_ville].key ;
-                
+
             }
         }
         xmlhttp.open("GET", "/liste/AireDeJeux?keyVille=" + liste_ville[nom_ville].key, true);
         xmlhttp.send();
         document.getElementById("hints").innerHTML = "";
     }
-    function initialize(lat, lon) {
-        document.getElementById("map_home").style.display= "block";
-        var mapCanvas = document.getElementById("map");
-        var myLatLng = {lat: lat, lng: lon};
-        var styles =  [ { "stylers": [ { "saturation": 5 },
-                                           { "lightness": -5 },
-                                           { "gamma": 1.16 },
-                                           { "hue": "#004cff" } ] } ,
-                            { "featureType": "poi.park",
-                                "stylers": [ { "hue": "#3bff00" } ] }];
-        var styledMap = new google.maps.StyledMapType(styles,
-            {name: "Styled Map"});
-        var mapOption = {
-            center: myLatLng,
-            zoom: 12,
-            streetViewControl: false,
-            mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
-        }
-        var map = new google.maps.Map(mapCanvas, mapOption);
-        map.mapTypes.set('map_style', styledMap);
-        map.setMapTypeId('map_style');
-        if (screen.width<700) {
-            map.setOptions({ scrollwheel: false });
-            map.setOptions({ draggable: false });
-            document.getElementById("debloquerMap").style.visibility = "visible";
-        }
-        return map;
-    }
-    function addMarker(aire_de_jeux, map) {
-        if (aire_de_jeux.coordonnees) {
-            var marker = new google.maps.Marker({
-                position: aire_de_jeux.coordonnees,
-                map: map,
-            });
-            var contentString = "<div><a href='/aireDeJeux/" + aire_de_jeux.url + "' >" +
-                                aire_de_jeux.nom + "</a></div>"
-            var infoWindow = new google.maps.InfoWindow({
-                content: contentString
-            });
-            marker.addListener('click', function() {
-                infoWindow.open(map, marker);
-            });
-        }
-    }
-    function initMap() {
+    function mapReady() {
         map_ready = true;
     }
-    function active_map() {
-        map.setOptions({ scrollwheel: true, draggable: true});
-    }
+
 </script>
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?callback=mapReady">
 </script>
 {% endblock %}

@@ -27,19 +27,21 @@ function initialize(lat, lon) {
     info_window = new google.maps.InfoWindow()
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
-}
-
-function initMap(centre_carte) {
-    initialize({{ centre_carte.lat }},{{ centre_carte.lon }});
-    initMarker();
-    map.fitBounds(bounds)
     if (screen.width<700) {
         map.setOptions({ scrollwheel: false });
         map.setOptions({ draggable: false });
         document.getElementById("debloquerMap").style.visibility = "visible";
     }
+    return map;
 }
 
+{% if centre_carte != "None" %}
+function initMap(centre_carte) {
+    initialize({{ centre_carte.lat }},{{ centre_carte.lon }});
+    initMarker();
+    map.fitBounds(bounds);
+}
+{% endif %}
 function active_map() {
     map.setOptions({ scrollwheel: true, draggable: true});
     document.getElementById("debloquerMap").style.background = "grey";
@@ -56,12 +58,16 @@ function addMarker(position, url, nom) {
         info_window.setContent(contentString)
         info_window.open(map, marker);
     });
+    var min_windows = 0.0005;
+    var myLatLng1 = {lat: position.lat+min_windows, lng: position.lng+min_windows};
+    var myLatLng2 = {lat: position.lat-min_windows, lng: position.lng-min_windows};
+    bounds.extend(new google.maps.LatLng(myLatLng1));
+    bounds.extend(new google.maps.LatLng(myLatLng2));
 }
 
 {%- endmacro  %}
 
 {% macro addMarker(position, url, nom) -%}
     var myLatLng = {lat: {{ position.lat }}, lng: {{ position.lon }}};
-    bounds.extend(new google.maps.LatLng(myLatLng));
     addMarker(myLatLng,"{{ url }}", "{{ nom }}");
 {%- endmacro %}
