@@ -28,7 +28,8 @@ def valider(nouvelle_etat):
         if not variable.a_valider or variable.a_valider != nouvelle_etat:
             variable.a_valider = nouvelle_etat
             variable.put()
-            send_mail_notification("nouvelle enregistrement", "www.oujouerdehors.org/admin/a_valider")
+            if nouvelle_etat:
+                send_mail_notification("nouvelle enregistrement", "www.oujouerdehors.org/admin/a_valider")
         memcache.set('a_valider', nouvelle_etat)
 
 

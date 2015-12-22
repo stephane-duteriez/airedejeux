@@ -41,6 +41,10 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw).decode(encoding="utf-8"))
 
+    def test_appspot(self):
+        if self.request.host.endswith('appspot.com'):
+            return self.redirect('http://www.oujouerdehors.org', True)
+
 
 class AireDeJeuxHandler(Handler):
     def render_main(self, aire_de_jeux, liste_commentaires, liste_images):
@@ -50,9 +54,11 @@ class AireDeJeuxHandler(Handler):
                     listImage=liste_images)
 
     def get(self, dep=None, ville=None, aireDeJeux=None):
+        self.test_appspot()
         url = dep + "/" + ville + "/" + aireDeJeux
         logging.info(url)
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
+
         query_commentaire = Commentaire.query(Commentaire.aireDeJeux == db_aire_de_jeux.key)
         list_commentaires = query_commentaire.fetch(10)
         query_photo = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
@@ -67,6 +73,7 @@ class CreerAireDeJeuxHandler(Handler):
         self.render("modifier.html", new_indice=indice, ville=data_ville, aireDeJeux="", nouveau="true")
 
     def get(self):
+        self.test_appspot()
         urlsafe_key_ville = self.request.get("keyVille")
         existe = True
         while existe:
@@ -138,6 +145,7 @@ class ChercherHandler(Handler):
         self.render("chercher.html")
 
     def get(self):
+        self.test_appspot()
         self.render_main()
 
 
@@ -150,6 +158,7 @@ class ModifierHandler(Handler):
                     nouveau="false")
 
     def get(self, indice):
+        self.test_appspot()
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
         ville = db_aire_de_jeux.ville.get()
         query_photos = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
@@ -278,6 +287,7 @@ class ListeDepartementsHandler(Handler):
         self.render("listeDepartement.html", liste_departements=liste_departements)
 
     def get(self):
+        self.test_appspot()
         query_departement = Departement.query().order(Departement.numero).fetch(200)
         self.render_main(query_departement)
 
@@ -290,6 +300,7 @@ class DepartementHandler(Handler):
                     liste_communes=liste_communes)
 
     def get(self, dep=None):
+        self.test_appspot()
         def byName(Commune):
             return Commune.nom
         query_commune = Commune.query(ndb.AND(Commune.departement == dep, Commune.nbr_aire_de_jeux > 0))\
@@ -309,6 +320,7 @@ class CommuneHandler(Handler):
                     liste_aire_de_jeux=liste_aire_de_jeux)
 
     def get(self, dep=None, ville=None):
+        self.test_appspot()
         def classement(enregistrement):
             # améliore l'ordre alphabétique pour mieux prendre en compte les accents
             reference = [(u"é", u"e"), (u"è", u"e"), (u"ê", u"e")]
