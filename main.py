@@ -357,6 +357,10 @@ class SiteMapHandler(Handler):
         self.write(sitemap.read())
 
 
+class InfoHandler(Handler):
+    def get(self):
+        self.render("info.html")
+
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
     ('/créerAireDeJeux', CreerAireDeJeuxHandler),
@@ -372,6 +376,7 @@ app = webapp2.WSGIApplication([
     ('/upload_photo', PhotoUploadHandler),
     ('/google21d16423d723f0d0.html', GoogleVerificationHandler),
     ('/verifierUnique', VerifierUniqueHandler),
-    ('/sitemap.xml', SiteMapHandler)
+    ('/sitemap.xml', SiteMapHandler),
+    ('/info', InfoHandler)
          ], debug=True)
 

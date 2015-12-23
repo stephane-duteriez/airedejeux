@@ -15,12 +15,12 @@
     </li>
 {% endblock %}
 {% block content %}
-<div id="title" class="highlight title_detail">
+<h1 id="title" class="highlight title_detail">
     <div id="ville">
         <a href="{{host}}/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}">{{ aireDeJeux.ville|e }}</a>
     </div>
     <div id="name">{{ aireDeJeux.nom|e }}</div>
-</div>
+</h1>
 <div id="content">
     <div id="stars">
         {% for i in range(5) %}
@@ -92,6 +92,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
     {% if aireDeJeux.coordonnees.lat %}
         {{ mapStyle.script(aireDeJeux.coordonnees, 15) }}

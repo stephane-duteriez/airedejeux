@@ -211,6 +211,9 @@ class SitemapBlobHandler(webapp2.RequestHandler):
         sitemap.write("""<url><loc>http://www.oujouerdehors.org/</loc>
                         <changefreq>monthly</changefreq>
                         <priority>1</priority></url>""")
+        sitemap.write("""<url><loc>http://www.oujouerdehors.org/aireDeJeux</loc>
+                        <changefreq>monthly</changefreq>
+                        <priority>0.9</priority></url>""")
         template = """<url><loc>http://www.oujouerdehors.org/%DATA%</loc>
                         <changefreq>monthly</changefreq>
                         <priority>%SCORE%</priority></url>"""

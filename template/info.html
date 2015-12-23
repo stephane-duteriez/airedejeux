@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Information et Contact sur le site www.oujouerdehors.org</title>
+    <meta name="description" content="Information pour contacter le propriétaire du site ainsi que information
+    sur le fonctionnement et spécialement la modération sur le site">
+{% endblock %}
+{% block content %}
+    <h1 id="title" class="highlight title_detail">
+        Information sur le site oujouerdehors.org
+    </h1>
+    <h2>Contact</h2>
+    <p>Si vous avez des question à propos du site ou de propositions pour améliorer ou corriger le site,
+        vous pouvez me contacter à cette adresse.</p>
+    <p id="email"></p>
+    <h2>Information</h2>
+    <h3>Modération</h3>
+    <p>Afin de faciliter l'adition de nouvelles aire de jeux, il n'y a pas besoins de s'enregistrer pour pouvoir
+    faire des modifications. En générale une personnes va ajouter ou compléter un minimum d'aire de jeux et n'aura
+    plus besoins de revenir, donc demander de s'enregister semble plus contraignent que utile.</p>
+    <p>Donc pour le éviter les abus le site est fortement modéré. Tout language vulgaire ou haineux est à proscrire.
+    Ainsi que tout ce qui ne concerne pas directement les aire-de-jeux.</p>
+    <h3>Modération des photos</h3>
+    <p>EN PROGRESSIONS</p>
+    <p></p>
+{% endblock %}
+{% block script %}
+    <script language="JavaScript">
+    var username = "stephane.duteriez+web";
+    var hostname = "gmail.com";
+    var linktext = username + "@" + hostname ;
+    var email = document.getElementById("email");
+    email.innerHTML += "<a href='" + "mail" + "to:" + username + "@" + hostname + "'>" + linktext + "</a>";
+    </script>
+{% endblock %}

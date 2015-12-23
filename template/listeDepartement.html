@@ -10,9 +10,9 @@
 {% endblock %}
 {% block content %}
 {% set vide = "vide" %}
-<div id="title" class="highlight title_detail">
+<h1 id="title" class="highlight title_detail">
     <div id="ville">Liste Aire-De-Jeux Par Département</div>
-</div>
+</h1>
 <div class="liste_departement">
     {% for departement in liste_departements %}
         <div class="departement {{ vide if departement.nbr_aire_de_jeux == 0 }}">

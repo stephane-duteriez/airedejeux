@@ -11,10 +11,10 @@
     </li>
 {% endblock %}
 {% block content %}
-<div id="title" class="highlight title_detail">
+<h1 id="title" class="highlight title_detail">
     <div id="ville"><a href="{{host}}/aireDeJeux/{{ commune.departement }}">{{ departement }}</a></div>
     <div>{{ commune.nom }}</div>
-</div>
+</h1>
 <div class="conteneur-map">
     <div id="map"></div>
 </div>
@@ -30,6 +30,8 @@
         <div class="commune"></div>
     {% endfor %}
 </div>
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
     {{ mapStyle.script(commune.coordonnees, 15) }}
     function initMarker() {

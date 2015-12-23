@@ -15,9 +15,9 @@
     </li>
 {% endblock %}
 {% block content %}
-<div id="title" class="highlight title_detail">
+<h1 id="title" class="highlight title_detail">
     <div id="ville">{{ lettre_departement }}</div>
-</div>
+</h1>
 <div class="conteneur-map">
     <div id="map"></div>
 </div>
@@ -29,7 +29,12 @@
                 {{commune.nom}}: {{commune.nbr_aire_de_jeux}}</a>
         </div>
     {% endfor %}
+    {% for i in range(5) %}
+        <div class="commune"></div>
+    {% endfor %}
 </div>
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
     {{ mapStyle.script("None", 15) }}
     function initMap(centre_carte) {
@@ -46,8 +51,6 @@
             {% endif %}
         {% endfor %}
     }
-
-
 </script>
 <script async defer
          src="https://maps.googleapis.com/maps/api/js?callback=initMap">

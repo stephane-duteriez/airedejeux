@@ -1,5 +1,15 @@
 .html {
     background-color: #e3f2fd;
+    width: 100%;
+    }
+p {
+    margin: 0.2em 0em 0.2em 0.2em;
+    }
+.body{
+    width : 100%;
+    margin: 0px;
+    min-height: 100%;
+    font-family: 'Ubuntu', sans-serif;
     }
 .highlight {
     background-color: #2196f3;
@@ -9,8 +19,9 @@ a {
     color: inherit;
     text-decoration: none;
     }
-html {
-    width: 100%;
+h1 {
+    font-size: inherit;
+    margin: 0em;
     }
 a:hover {
     color: #1565c0;
@@ -20,12 +31,6 @@ a:hover {
     padding: 6px;
     }
 
-.body{
-    width : 100%;
-    margin: 0px;
-    min-height: 100%;
-    }
-
 #main {
     width:100%;
     margin-left: auto;
@@ -33,7 +38,6 @@ a:hover {
     }
 
 #header {
-    font-family: "";
     width : 100%;
     max-height: 15%;
     text-align: center;
@@ -321,9 +325,6 @@ div.activite {
 .plus:hover {
     color: #1565c0;
     }
-p {
-    margin: 0.2em 0em 0.2em 0.2em;
-    }
 input {
     margin: 0.2em 0em 0.2em 1em;
     }
@@ -363,10 +364,23 @@ input {
     padding: 5px;
     border: 1px solid #999;
     text-align: center;
-    font-family: 'Roboto','sans-serif';
     line-height: 30px;
-    padding-left: 10px;
+    padding: 0.2em;
 }
+#geocode {
+    background-color: #64b5f6;
+    color: white;
+    border: None;
+    box-shadow: 0.2em 0.2em 0.1em #888888;
+    margin: 0.4em;
+    }
+#geocode:hover {
+    color: #1565c0;
+}
+#address {
+    margin: 0.2em;
+    padding: 0.2em;
+    }
 .ajouter {
     padding: 0.2em;
     margin: 0.2em;

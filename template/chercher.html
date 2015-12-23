@@ -18,6 +18,9 @@
 {% endblock %}
 
 {% block content %}
+<h1 id="title" class="highlight title_detail">
+    Recherche des aire-de-jeux par Ville
+</h1>
 <div id="cherche_ville">
     {{ macros.select_ville() }}
 </div>
@@ -33,7 +36,9 @@
 <div id="list-aire-de-jeux">
 
 </div>
-<script>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
     var map_ready = false;
     {{ mapStyle.script("None", 15) }}
     function hint(nom_ville) {
