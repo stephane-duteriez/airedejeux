@@ -8,10 +8,10 @@
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
-        <a href='/créerAireDeJeux'>Ajouter</a>
+        <a href='{{host}}/créerAireDeJeux'>Ajouter</a>
     </li>
     <li class="menu" style="cursor: pointer">
-        <a href='/aireDeJeux'>Liste Aire de jeux</a>
+        <a href='{{host}}/aireDeJeux'>Liste Aire de jeux</a>
     </li>
 {% endblock %}
 {% block content %}
@@ -25,7 +25,7 @@
 <div class="liste_communes">
     {% for commune in liste_communes %}
         <div class="commune" >
-            <a href="/aireDeJeux/{{ departement }}/{{commune.nom}}">
+            <a href="{{host}}/aireDeJeux/{{ departement }}/{{commune.nom}}">
                 {{commune.nom}}: {{commune.nbr_aire_de_jeux}}</a>
         </div>
     {% endfor %}
@@ -42,7 +42,7 @@
         {% for commune in liste_communes %}
             {% if commune.coordonnees.lat %}
                 {% set text = commune.nom + ", aire-de-jeux: " + commune.nbr_aire_de_jeux|string %}
-                {{ mapStyle.addMarker(commune.coordonnees, departement + "/" + commune.nom, text) }}
+                {{ mapStyle.addMarker(commune.coordonnees, host, departement + "/" + commune.nom, text) }}
             {% endif %}
         {% endfor %}
     }

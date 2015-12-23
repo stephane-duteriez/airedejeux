@@ -39,7 +39,8 @@ class Handler(webapp2.RequestHandler):
         return t.render(params).encode(encoding="utf-8")
 
     def render(self, template, **kw):
-        self.write(self.render_str(template, **kw).decode(encoding="utf-8"))
+        host = self.request.host_url
+        self.write(self.render_str(template, host=host, **kw).decode(encoding="utf-8"))
 
     def test_appspot(self):
         if self.request.host.endswith('appspot.com'):

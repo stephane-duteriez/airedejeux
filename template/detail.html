@@ -8,16 +8,16 @@
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
-        <a href="/modifier/{{ aireDeJeux.indice|e }}">Modifier</a>
+        <a href="{{host}}/modifier/{{ aireDeJeux.indice|e }}">Modifier</a>
     </li>
     <li class="menu" style="cursor: pointer">
-        <a href='/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'>Ajouter</a>
+        <a href='{{host}}/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'>Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
 <div id="title" class="highlight title_detail">
     <div id="ville">
-        <a href="/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}">{{ aireDeJeux.ville|e }}</a>
+        <a href="{{host}}/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}">{{ aireDeJeux.ville|e }}</a>
     </div>
     <div id="name">{{ aireDeJeux.nom|e }}</div>
 </div>

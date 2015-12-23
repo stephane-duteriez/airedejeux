@@ -213,19 +213,22 @@ class SitemapBlobHandler(webapp2.RequestHandler):
                         <priority>1</priority></url>""")
         template = """<url><loc>http://www.oujouerdehors.org/%DATA%</loc>
                         <changefreq>monthly</changefreq>
-                        <priority>0.5</priority></url>"""
+                        <priority>%SCORE%</priority></url>"""
         query_aire_de_jeux = AireDeJeux.query()
         for aire_de_jeux in query_aire_de_jeux:
-            new_url = template.replace("%DATA%", "/aireDeJeux/" + aire_de_jeux.url)
+            new_url = template.replace("%DATA%", "aireDeJeux/" + aire_de_jeux.url)
+            new_url = new_url.replace("%SCORE%", "0.5")
             sitemap.write(new_url.encode("utf-8"))
         query_departement = Departement.query(Departement.nbr_aire_de_jeux > 0)
         for departement in query_departement:
             logging.info(departement.numero)
-            new_url = template.replace("%DATA%", "/aireDeJeux/" + departement.numero)
+            new_url = template.replace("%DATA%", "aireDeJeux/" + departement.numero)
+            new_url = new_url.replace("%SCORE%", "0.85")
             sitemap.write(new_url.encode("utf-8"))
         query_commune = Commune.query(Commune.nbr_aire_de_jeux > 0)
         for commune in query_commune:
-            new_url = template.replace("%DATA%", "/aireDeJeux/" + commune.departement + "/" + commune.nom)
+            new_url = template.replace("%DATA%", "aireDeJeux/" + commune.departement + "/" + commune.nom)
+            new_url = new_url.replace("%SCORE%", "0.75")
             sitemap.write(new_url.encode("utf-8"))
         sitemap.write("</urlset>")
         sitemap.close()

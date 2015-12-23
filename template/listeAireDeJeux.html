@@ -7,12 +7,12 @@
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
-        <a href='/créerAireDeJeux?keyVille={{ commune.urlsafeKey }}'>Ajouter</a>
+        <a href='{{host}}/créerAireDeJeux?keyVille={{ commune.urlsafeKey }}'>Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
 <div id="title" class="highlight title_detail">
-    <div id="ville"><a href="/aireDeJeux/{{ commune.departement }}">{{ departement }}</a></div>
+    <div id="ville"><a href="{{host}}/aireDeJeux/{{ commune.departement }}">{{ departement }}</a></div>
     <div>{{ commune.nom }}</div>
 </div>
 <div class="conteneur-map">
@@ -22,7 +22,7 @@
 <div class="liste_communes">
     {% for aire_de_jeux in liste_aire_de_jeux %}
         <div class="commune">
-            <a href="/aireDeJeux/{{ commune.departement }}/{{ commune.nom }}/{{ aire_de_jeux.nom }}">
+            <a href="{{host}}/aireDeJeux/{{ commune.departement }}/{{ commune.nom }}/{{ aire_de_jeux.nom }}">
                 {{ aire_de_jeux.nom }}</a>
         </div>
     {% endfor %}
@@ -35,7 +35,7 @@
     function initMarker() {
         {% for aire_de_jeux in liste_aire_de_jeux %}
             {% if aire_de_jeux.coordonnees.lat %}
-                {{ mapStyle.addMarker(aire_de_jeux.coordonnees, aire_de_jeux.url, aire_de_jeux.nom) }}
+                {{ mapStyle.addMarker(aire_de_jeux.coordonnees, host, aire_de_jeux.url, aire_de_jeux.nom) }}
             {% endif %}
         {% endfor %}
     }

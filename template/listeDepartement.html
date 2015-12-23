@@ -5,7 +5,7 @@
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
-        <a href='/créerAireDeJeux'>Ajouter</a>
+        <a href='{{host}}/créerAireDeJeux'>Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
@@ -16,8 +16,12 @@
 <div class="liste_departement">
     {% for departement in liste_departements %}
         <div class="departement {{ vide if departement.nbr_aire_de_jeux == 0 }}">
-            <a href="/aireDeJeux/{{ departement.numero }}">
+            {% if departement.nbr_aire_de_jeux > 0 %}
+            <a href="{{host}}/aireDeJeux/{{ departement.numero }}">
                 {{ departement.numero }} {{ departement.lettre }}: {{ departement.nbr_aire_de_jeux }}</a>
+            {% else %}
+            <p> {{ departement.numero }} {{ departement.lettre }}: {{ departement.nbr_aire_de_jeux }}</p>
+            {% endif %}
         </div>
     {% endfor %}
 </div>

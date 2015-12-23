@@ -47,12 +47,12 @@ function active_map() {
     document.getElementById("debloquerMap").style.background = "grey";
 }
 
-function addMarker(position, url, nom) {
+function addMarker(position, host, url, nom) {
     var marker = new google.maps.Marker({
         position: position,
         map: map,
     });
-    var contentString = "<div><a href='/aireDeJeux/" + url + "' >" +
+    var contentString = "<div><a href='" + host + "/aireDeJeux/" + url + "' >" +
                         nom + "</a></div>"
     marker.addListener('click', function() {
         info_window.setContent(contentString)
@@ -67,7 +67,7 @@ function addMarker(position, url, nom) {
 
 {%- endmacro  %}
 
-{% macro addMarker(position, url, nom) -%}
+{% macro addMarker(position, host, url, nom) -%}
     var myLatLng = {lat: {{ position.lat }}, lng: {{ position.lon }}};
-    addMarker(myLatLng,"{{ url }}", "{{ nom }}");
+    addMarker(myLatLng,"{{ host }}", "{{ url }}", "{{ nom }}");
 {%- endmacro %}
