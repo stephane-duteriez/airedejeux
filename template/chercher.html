@@ -65,7 +65,7 @@
                         newAireDeJeux = newAireDeJeux.replace("%indice%", (i+1).toString());
                         out += newAireDeJeux;
                         if (data[i].coordonnees.lat) {
-                            addMarker(data[i].coordonnees, data[i].url, data[i].nom);
+                            addMarker(data[i].coordonnees, "{{ host }}", data[i].url, data[i].nom);
                         }
                         map.fitBounds(bounds);
                     }

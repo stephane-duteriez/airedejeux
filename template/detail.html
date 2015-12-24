@@ -41,6 +41,10 @@
             <div id="age" class="bigger horizontal">
                 <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}</div>
             </div>
+            <div id="website" class="bigger horizontal">
+                <div class="inside">Website:</div><a class="inside" href="{{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}">
+                    {{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}</a>
+            </div>
             <div id="box-activitees" class="box">
                 <div id="title-activitee" class="bigger highlight">Activités:</div>
                 <div id="list-activitees">

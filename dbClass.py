@@ -56,6 +56,7 @@ class AireDeJeux(ndb.Model):
                 "description": detail.description,
                 "coordonnees": detail.coordonnees,
                 "age": detail.age,
+                "website": detail.website,
                 "ville": ville.nom,
                 "departement": ville.departement,
                 "coordonnees_ville": ville.coordonnees,
@@ -86,6 +87,7 @@ class Detail(ndb.Model):
     age = ndb.StringProperty()
     date_creation = ndb.DateTimeProperty(auto_now_add=True)
     valider = ndb.BooleanProperty(default=False)
+    website = ndb.StringProperty()
 
 
 class Commune(ndb.Model):
