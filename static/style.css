@@ -2,7 +2,7 @@
     background-color: #e3f2fd;
     width: 100%;
     }
-p {
+p, a {
     margin: 0.2em 0em 0.2em 0.2em;
     }
 .body{
@@ -107,6 +107,7 @@ li.menu:hover {
     padding-right: 1em;
     font-size: 0.8em;
     max-width: 10em;
+    margin: 0.3em 0em 0em 1em;
     }
 
 .title_detail {
@@ -339,7 +340,7 @@ input {
     color: #64b5f6;
     }
 .wide {
-    width: 100%
+    width: 100%;
     }
 .liste_departement, .liste_communes{
     display:flex;
@@ -354,6 +355,7 @@ input {
     }
 .vide {
     color: grey;
+    padding-top: 0em;
     }
 #floating-panel {
     position: absolute;

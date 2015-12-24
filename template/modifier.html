@@ -40,11 +40,10 @@
                             onchange="check_unique()"
                             required>
                 </div>
-                <div >coordonnées :
                 <div hidden>
                     latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat if aireDeJeux != '' }}"><br>
                     longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon if aireDeJeux != '' }}">
-                </div></div>
+                </div>
                 <p>Score :</p>
                 <div id="stars" onmouseleave="reset()">
                 {% for i in range(5) %}
