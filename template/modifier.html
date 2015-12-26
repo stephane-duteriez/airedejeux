@@ -88,7 +88,9 @@
                         </div>
                         <div id="map"></div>
                     </div>
-                    <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
+                    <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">Débloquer</div>
+                    <div id="meLocaliser" onclick="me_localiser();" style="visibility: hidden">Me localiser</div>
+                    <p id="erreurLocalisation"></p>
                 </div>
                 {% if aireDeJeux == "" %}
                     {{ macros.photos(listImage, new_indice) }}
@@ -158,6 +160,7 @@
                 map.setOptions({ scrollwheel: false });
                 map.setOptions({ draggable: false });
                 document.getElementById("debloquerMap").style.visibility = "visible";
+                document.getElementById("meLocaliser").style.visibility = "visible"
             }
             google.maps.event.addListener(map, 'click', function(event) {
                 placeMarker(marker, event.latLng);
@@ -198,6 +201,7 @@
             }
         }
         var map;
+        var marker;
         function initialize(lat, lon) {
             var mapCanvas = document.getElementById("map");
             var myLatLng = {lat: lat, lng: lon};
@@ -218,7 +222,7 @@
             map.setOptions(mapOption);
             map.mapTypes.set('map_style', styledMap);
             map.setMapTypeId('map_style');
-            var marker = new google.maps.Marker({
+            marker = new google.maps.Marker({
                 position: myLatLng,
                 map: map,
                 title: 'Hello World!',
@@ -233,6 +237,7 @@
                 map.setOptions({ scrollwheel: false });
                 map.setOptions({ draggable: false });
                 document.getElementById("debloquerMap").style.visibility = "visible";
+                document.getElementById("meLocaliser").style.visibility = "visible"
             }
             google.maps.event.addListener(map, 'click', function(event) {
                 placeMarker(marker, event.latLng);
@@ -245,9 +250,7 @@
         }
 
         function initMap() {
-        console.log("test1");
             map = new google.maps.Map(document.getElementById('map'));
-        console.log("test2");
         {% if ville != "" %}
             hint(n_ville);
         {% endif %} }
@@ -287,7 +290,7 @@
         map.setOptions({ scrollwheel: true, draggable: true});
         document.getElementById("debloquerMap").style.background = "grey";
     }
-    function placeMarker(marker, location) {
+    function placeMarker(location) {
         marker.setPosition(location);
         document.getElementById("lat").value = marker.getPosition().lat();
         document.getElementById("lng").value = marker.getPosition().lng();
@@ -305,7 +308,20 @@
             }
         });
     }
-
+    function me_localiser() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(set_position);
+        } else {
+            var erreur_message = document.GetElementById("erreurLocalisation");
+            erreur_message.innerHTML = "Localisation impossible";
+        }
+    }
+    function set_position(position) {
+        latLng = { lat : position.coords.latitude, lng: position.coords.longitude }
+        console.log(latLng);
+        map.setCenter(latLng);
+        marker.setPosition(latLng);
+    }
     </script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?callback=initMap">

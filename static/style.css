@@ -199,14 +199,19 @@ div.activite {
     height: 100%;
     z-index: 3;
     }
-#debloquerMap {
+#debloquerMap, #meLocaliser {
     padding: 0.5em;
     background-color: #2196f3;
     color: white;
     margin-right: 1em;
     box-shadow: 0.3em 0.3em 0.2em #888888;
+    }
+#debloquerMap {
     float: right;
     }
+#meLocaliser {
+    float: left;
+}
 .contenant {
     display : flex;
     width : 100%;
