@@ -70,6 +70,8 @@
                                {% if activite in aireDeJeux.activites %} checked {% endif %}> {{ activite }} </input></div>
                     {% endfor %}
                 </div>
+                <p>Website</p>
+                <div><input type="text" name="website" value="{{aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}"></div>
                 <p>Description :</p>
                 <div><textarea name="description" class="input_box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
                 <p>Accessibilité :</p>

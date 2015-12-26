@@ -41,10 +41,6 @@
             <div id="age" class="bigger horizontal">
                 <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}</div>
             </div>
-            <div id="website" class="bigger horizontal">
-                <div class="inside">Website:</div><a class="inside" href="{{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}">
-                    {{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}</a>
-            </div>
             <div id="box-activitees" class="box">
                 <div id="title-activitee" class="bigger highlight">Activités:</div>
                 <div id="list-activitees">
@@ -58,7 +54,11 @@
                 <p class="description">
                     {{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}
                 </p>
-                </div>
+            </div>
+            <div id="website" class="horizontal">
+                <p class="inside">Website:<a class="inside" href="{{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}">
+                    {{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}</a></p>
+            </div>
             <div id="box-acces" class="box">
                 <div id="title-accessibilite" class="bigger highlight">Accessibilité</div>
                 <div id="description-accessibilte">

@@ -41,6 +41,7 @@
         {{ detail.accessibilite|e }}<br>
         {{ detail.description|e }}<br>
         {{ detail.age|e }}
+        {{ detail.website|e }}
         <div id="indice{{ indice }}"
              class="valider"
              onclick="valider(this.id, '{{ detail.key.urlsafe() }}')">
