@@ -51,6 +51,7 @@ function addMarker(position, host, url, nom) {
     var marker = new google.maps.Marker({
         position: position,
         map: map,
+        title: nom
     });
     var contentString = "<div><a href=\"" + host + "/aireDeJeux/" + url + "\" >" +
                         nom + "</a></div>"

@@ -124,6 +124,8 @@
             initialize( {{ville.coordonnees.lat }}, {{ ville.coordonnees.lon }} );
         {% endif %}
         }
+        var map;
+        var marker;
         function initialize(lat, lon) {
             var mapCanvas = document.getElementById("map");
             var myLatLng = {lat: lat, lng: lon};
@@ -145,10 +147,9 @@
             map = new google.maps.Map(mapCanvas, mapOption);
             map.mapTypes.set('map_style', styledMap);
             map.setMapTypeId('map_style');
-            var marker = new google.maps.Marker({
+            marker = new google.maps.Marker({
                 position: myLatLng,
                 map: map,
-                title: 'Hello World!',
                 draggable: true,
             });
 
@@ -163,7 +164,7 @@
                 document.getElementById("meLocaliser").style.visibility = "visible"
             }
             google.maps.event.addListener(map, 'click', function(event) {
-                placeMarker(marker, event.latLng);
+                placeMarker(event.latLng);
             });
             var geocoder = new google.maps.Geocoder();
 
@@ -225,11 +226,9 @@
             marker = new google.maps.Marker({
                 position: myLatLng,
                 map: map,
-                title: 'Hello World!',
                 draggable: true
             });
             marker.addListener('position_changed', function() {
-                map.setCenter(marker.getPosition());
                 document.getElementById("lat").value = marker.getPosition().lat();
                 document.getElementById("lng").value = marker.getPosition().lng();
             });
@@ -240,7 +239,7 @@
                 document.getElementById("meLocaliser").style.visibility = "visible"
             }
             google.maps.event.addListener(map, 'click', function(event) {
-                placeMarker(marker, event.latLng);
+                placeMarker(event.latLng);
             });
             var geocoder = new google.maps.Geocoder();
 
