@@ -295,6 +295,7 @@ div.activite {
 .image{
     height: 100%;
     z-index: 2;
+    max-width: 100%;
     }
 .right {
     position:absolute;
