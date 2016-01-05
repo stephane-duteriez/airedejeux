@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import webapp2
 import datetime
-
+import json
 import cloudstorage as gcs
 
 from google.appengine.ext import blobstore
@@ -58,7 +58,10 @@ class MainHandler(webapp2.RequestHandler):
         </div>
         <div>
             <a href='/admin/a_valider'>Affichage des enregistrement a valider</a>
-        </div
+        </div>
+        <div>
+            <a href='/admin/ajout_fichier'>Ajout a partir d'un fichier de type json</a>
+        </div>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -313,9 +316,59 @@ class AValiderHandler(Handler):
         enregistrement.put()
 
 
+class AjouterFichierHandler(Handler):
+    def render_main(self):
+        upload_url = blobstore.create_upload_url('/admin/upload_aire_de_jeux')
+        self.render("ajout_fichier_aire_de_jeux.html", upload_url=upload_url)
+
+    def get(self):
+        self.render_main()
+
+
+class AjouterFichierBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self):
+        key_ville = ndb.Key(urlsafe=self.request.get('key_ville'))
+        ville = key_ville.get()
+        departement = Departement.query(Departement.numero == ville.departement).get()
+        upload_files = self.get_uploads('file')
+        blob_info = upload_files[0]
+        blob_key = blob_info.key()
+        blob_reader = blobstore.BlobReader(blob_key)
+        jason_value = blob_reader.read()
+        data = json.loads(jason_value)
+        for aire_de_jeux in data:
+            nom = aire_de_jeux["fields"]["nom"].title()
+            test_unique = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom, AireDeJeux.ville == key_ville)).get()
+            if not test_unique:
+                existe = True
+                while existe:
+                    indice = random_str()
+                    already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
+                    if already_existe.count() == 0:
+                        existe = False
+                coordonnees = ndb.GeoPt(float(aire_de_jeux["fields"]["geo_point_2d"][0]),
+                                        float(aire_de_jeux["fields"]["geo_point_2d"][1]))
+                new_detail = Detail(indice=indice,
+                                    valider=True,
+                                    coordonnees=coordonnees)
+                detail_key = new_detail.put()
+                new_aire_de_jeux = AireDeJeux(nom=nom,
+                                              ville=key_ville,
+                                              indice=indice,
+                                              detail=detail_key,
+                                              valider=True,
+                                              url=ville.departement + "/" + ville.nom + "/" + nom)
+                new_aire_de_jeux.put()
+                ville.nbr_aire_de_jeux += 1
+                departement.nbr_aire_de_jeux += 1
+        departement.put()
+        ville.put()
+
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
+    ('/admin/upload_aire_de_jeux', AjouterFichierBlobHandler),
     ('/admin/process_csv', ProcessCsv),
     ('/admin/departement_csv', DepartementCsv),
     ('/admin/process_doublon', SuprimeDoubleVille),
@@ -324,5 +377,7 @@ app = webapp2.WSGIApplication([
     ('/admin/rest_compte_dep_ville', RecompteHandler),
     ('/admin/creat_sitemap_blob', SitemapBlobHandler),
     ('/admin/ajout_date_creation', AjoutDateHandler),
-    ('/admin/a_valider', AValiderHandler)
+    ('/admin/a_valider', AValiderHandler),
+    ('/admin/ajout_fichier', AjouterFichierHandler)
+
 ], debug=True)

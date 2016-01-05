@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% import "macro.html" as macros %}
+<html lang="fr" class="html">
+<body>
+<form action="{{ upload_url }}" method="POST" enctype="multipart/form-data">
+ Ajouter des aire de jeux à partir d'un fichier bulk par ville
+    Upload File:
+    <input type="file" name="file"> <br>
+    <div class="select~_ville">
+        {{ macros.select_ville() }}
+    </div>
+    <div>
+        <input type="hidden" name="key_ville" id="key_ville" value="" required>
+    </div>
+<input type="submit" name="submit" value="Submit">
+</form>
+</body>
+<script>
+    function hint(nom_ville){
+        document.getElementById("key_ville").value = liste_ville[nom_ville].key;
+    }
+</script>
+</html>

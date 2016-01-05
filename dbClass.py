@@ -11,6 +11,11 @@ template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
 
 
+# utilisé pour créer un indice aléatoire pour chaque indice
+def random_str():
+    return os.urandom(16).encode('hex')
+
+
 def send_mail_notification(subject, body):
     message = mail.EmailMessage(sender="aire-de-jeux notification <notification@aire-de-jeux.appspotmail.com>",
                                 to="stephane.duteriez@gmail.com")

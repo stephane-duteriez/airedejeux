@@ -23,11 +23,6 @@ template_dir = os.path.join(os.path.dirname(__file__), 'template')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
 
 
-# utilisé pour créer un indice aléatoire pour chaque indice
-def random_str():
-    return os.urandom(16).encode('hex')
-
-
 class Handler(webapp2.RequestHandler):
     # Handler modifier pour intégrer la prise ne charge de jinja
     def write(self, *a, **kw):
@@ -108,7 +103,10 @@ class AjouterHandler(webapp2.RequestHandler):
         website = self.request.get('website')
         ville = ndb.Key(urlsafe=key_ville).get()
         url = ville.departement + "/" + ville.nom + "/" + nom_aire_de_jeux
-        nouvelle_aire_de_jeux = AireDeJeux(nom=nom_aire_de_jeux, ville=ville.key, indice=indice, url=url)
+        nouvelle_aire_de_jeux = AireDeJeux(nom=nom_aire_de_jeux,
+                                           ville=ville.key,
+                                           indice=indice,
+                                           url=url)
         # TODO vérifier qu'il n'éxiste pas déjà une aire de jeux avec le meme nom
         nouveau_detail = Detail(indice=indice)
         if latitude and longitude:
