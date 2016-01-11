@@ -87,9 +87,9 @@
 {%- endmacro  %}
 {% macro select_ville() -%}
     <p class="ville_title">Commune :</p>
-    <div><input list="hints" name="commune" oninput="showHint(this.value)"
+    <input list="hints" name="commune" oninput="showHint(this.value)"
                 placeholder="Pari..."
-                id="ville_input" value=""></div>
+                id="ville_input" value="">
     <datalist id="hints">
     </datalist>
     <script>

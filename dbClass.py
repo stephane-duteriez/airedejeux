@@ -62,10 +62,11 @@ class AireDeJeux(ndb.Model):
                 "coordonnees": detail.coordonnees,
                 "age": detail.age,
                 "website": detail.website,
+                "adresse": detail.adresse,
                 "ville": ville.nom,
                 "departement": ville.departement,
                 "coordonnees_ville": ville.coordonnees,
-                "key_ville": ville.key.urlsafe()
+                "key_ville": ville.key.urlsafe(),
                 }
         return data
 
@@ -93,6 +94,7 @@ class Detail(ndb.Model):
     date_creation = ndb.DateTimeProperty(auto_now_add=True)
     valider = ndb.BooleanProperty(default=False)
     website = ndb.StringProperty()
+    adresse = ndb.StringProperty()
 
 
 class Commune(ndb.Model):

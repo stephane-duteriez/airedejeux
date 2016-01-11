@@ -5,12 +5,17 @@
 p, a {
     margin: 0.2em 0em 0.2em 0.2em;
     }
+
 .body{
     width : 100%;
     margin: 0px;
     min-height: 100%;
     font-family: 'Ubuntu', sans-serif;
     }
+textarea
+{
+   font-family:'Ubuntu', sans-serif;
+}
 .highlight {
     background-color: #2196f3;
     color: white;
@@ -67,7 +72,6 @@ ul.menu {
     margin : 0px 0px 0em 0px ;
     padding : 0px;
 }
-
 li.menu, p.menu {
     float:left;
     display: inline;
@@ -75,11 +79,12 @@ li.menu, p.menu {
     color: #ffffff;
     margin : 0px 2em 0px 0px;
     }
-
 li.menu:hover {
     color: #1565c0;
     }
-
+.etendu {
+    width: 80%;
+    }
 #cherche_ville {
     display:flex;
     font-size:2em;
@@ -103,11 +108,13 @@ li.menu:hover {
 .ville_title {
     margin-right: 1em;
     }
+
 #ville_input {
     padding-right: 1em;
     font-size: 0.8em;
-    max-width: 10em;
+    max-width: 50em;
     margin: 0.3em 0em 0em 1em;
+    flex: 1 1;
     }
 
 .title_detail {

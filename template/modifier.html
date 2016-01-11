@@ -28,13 +28,13 @@
         <div class="contenant">
             <div class="contenue">
                 <div hidden><input type="hidden" name="indice" value="{{ new_indice }}"></div>
-                <p>Nom de l'aire de jeux :</p>
-                <div><input type="text" name="nom_aire_de_jeux" id="nom" onchange="check_unique()"
-                            value="{{aireDeJeux.nom|e if aireDeJeux != '' }}" required
-                            ><span id="alert"></span></div>
-                <div class="select~_ville">
+                <div class="select_ville">
                     {{ macros.select_ville() }}
                 </div>
+                <p>Nom de l'aire de jeux :</p>
+                <div><input type="text" name="nom_aire_de_jeux" id="nom" onchange="check_unique()"
+                            value="{{aireDeJeux.nom|e if aireDeJeux != '' }}" required class="etendu"
+                            ><span id="alert"></span></div>
                 <div>
                     <input type="hidden" name="key_ville" id="key_ville" value=""
                             onchange="check_unique()"
@@ -59,10 +59,12 @@
                 </div>
                 <div><input type="number" name="score" id="score"
                             value={{ aireDeJeux.score if aireDeJeux else 0}} hidden></div>
-                <p>Horaire :</p>
+                <p>Horaire:</p>
                 <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
                 <p>Tranche d'age:</p>
                 <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}"></div>
+                <p>Adresse:</p>
+                <div><input type="text" name="adresse" class="etendu" value="{{aireDeJeux.adresse|e if aireDeJeux.adresse|e != 'None' }}"></div>
                 <p>Activités<br></p>
                 <div class="input_box input_activites">
                     {% for activite in activites %}
@@ -71,7 +73,7 @@
                     {% endfor %}
                 </div>
                 <p>Website</p>
-                <div><input type="text" name="website" value="{{aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}"></div>
+                <div><input type="text" name="website" class="etendu" value="{{aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}"></div>
                 <p>Description :</p>
                 <div><textarea name="description" class="input_box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
                 <p>Accessibilité :</p>

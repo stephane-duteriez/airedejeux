@@ -101,6 +101,7 @@ class AjouterHandler(webapp2.RequestHandler):
         commentaire = self.request.get('commentaire')
         indice = self.request.get('indice')
         website = self.request.get('website')
+        adresse = self.request.get('adresse')
         ville = ndb.Key(urlsafe=key_ville).get()
         url = ville.departement + "/" + ville.nom + "/" + nom_aire_de_jeux
         nouvelle_aire_de_jeux = AireDeJeux(nom=nom_aire_de_jeux,
@@ -128,6 +129,8 @@ class AjouterHandler(webapp2.RequestHandler):
                 nouveau_detail.website = website
             else:
                 nouveau_detail.website = "http://" + website
+        if adresse:
+            nouveau_detail.adresse = adresse
         nouveau_detail.put()
         nouvelle_aire_de_jeux.detail = nouveau_detail.key
         key_aire_de_jeux = nouvelle_aire_de_jeux.put()
@@ -183,6 +186,7 @@ class ModifierHandler(Handler):
         age = self.request.get('age')
         commentaire = self.request.get('commentaire')
         website = self.request.get('website')
+        adresse = self.request.get('adresse')
 
         if latitude and longitude:
             db_detail.coordonnees = ndb.GeoPt(float(latitude), float(longitude))
@@ -198,6 +202,8 @@ class ModifierHandler(Handler):
             db_detail.description = description
         if age and age != '"None"':
             db_detail.age = age
+        if adresse and adresse != '"None"':
+            db_detail.adresse = adresse
         if website:
             if website[0:4] == "http":
                 db_detail.website = website

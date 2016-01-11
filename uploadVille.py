@@ -363,7 +363,7 @@ class AjouterFichierBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
                 departement.nbr_aire_de_jeux += 1
         departement.put()
         ville.put()
-
+        self.redirect("/admin/")
 
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),

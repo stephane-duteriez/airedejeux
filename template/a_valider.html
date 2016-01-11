@@ -40,8 +40,9 @@
         {{ detail.horaires|e }}<br>
         {{ detail.accessibilite|e }}<br>
         {{ detail.description|e }}<br>
-        {{ detail.age|e }}
-        {{ detail.website|e }}
+        {{ detail.age|e }}<br>
+        {{ detail.website|e }}<br>
+        {{ detail.adresse|e }}
         <div id="indice{{ indice }}"
              class="valider"
              onclick="valider(this.id, '{{ detail.key.urlsafe() }}')">
