@@ -46,7 +46,7 @@ class ListeAireDeJeuxHandler(webapp2.RequestHandler):
         urlsafe_key_ville = self.request.get("keyVille")
         key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
         query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)
-        liste_aire_de_jeux = query_aire_de_jeux.fetch(100)
+        liste_aire_de_jeux = query_aire_de_jeux.fetch(500)
         data = []
         for aireDeJeux in liste_aire_de_jeux:
             next_aire_de_jeux = {"nom": aireDeJeux.nom,

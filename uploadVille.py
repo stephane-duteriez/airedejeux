@@ -334,25 +334,34 @@ class AjouterFichierBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
         blob_info = upload_files[0]
         blob_key = blob_info.key()
         blob_reader = blobstore.BlobReader(blob_key)
-        jason_value = blob_reader.read()
+        jason_value = unicode(blob_reader.read(), 'latin-1')
         data = json.loads(jason_value)
+        liste_nom = {}
         for aire_de_jeux in data:
-            nom = aire_de_jeux["fields"]["nom"].title()
-            test_unique = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom, AireDeJeux.ville == key_ville)).get()
-            if not test_unique:
+            nom = aire_de_jeux[5][0][1][0]
+            if nom[:4] == 'Aire':
+                nom = nom[15:]
+                if nom in liste_nom.iterkeys():
+                    liste_nom[nom] += 1
+                else:
+                    liste_nom[nom] = 0
+                # test_unique = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom, AireDeJeux.ville == key_ville))
+                count = ""
+                if liste_nom[nom] > 0:
+                    count = " " + str(liste_nom[nom])
                 existe = True
                 while existe:
                     indice = random_str()
                     already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
                     if already_existe.count() == 0:
                         existe = False
-                coordonnees = ndb.GeoPt(float(aire_de_jeux["fields"]["geo_point_2d"][0]),
-                                        float(aire_de_jeux["fields"]["geo_point_2d"][1]))
+                coordonnees = ndb.GeoPt(float(aire_de_jeux[1][0][0][0]),
+                                        float(aire_de_jeux[1][0][0][1]))
                 new_detail = Detail(indice=indice,
                                     valider=True,
                                     coordonnees=coordonnees)
                 detail_key = new_detail.put()
-                new_aire_de_jeux = AireDeJeux(nom=nom,
+                new_aire_de_jeux = AireDeJeux(nom=nom + count,
                                               ville=key_ville,
                                               indice=indice,
                                               detail=detail_key,

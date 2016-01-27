@@ -320,7 +320,7 @@ class DepartementHandler(Handler):
         def byName(Commune):
             return Commune.nom
         query_commune = Commune.query(ndb.AND(Commune.departement == dep, Commune.nbr_aire_de_jeux > 0))\
-            .fetch(200, projection=[Commune.nom, Commune.nbr_aire_de_jeux, Commune.coordonnees])
+            .fetch(500, projection=[Commune.nom, Commune.nbr_aire_de_jeux, Commune.coordonnees])
         query_departement = Departement.query(Departement.numero == dep).get()
         query_commune.sort(key=byName)
         lettre_dep = query_departement.lettre
