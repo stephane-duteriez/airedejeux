@@ -334,42 +334,36 @@ class AjouterFichierBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
         blob_info = upload_files[0]
         blob_key = blob_info.key()
         blob_reader = blobstore.BlobReader(blob_key)
-        jason_value = unicode(blob_reader.read(), 'latin-1')
+        jason_value = blob_reader.read()
+        logging.info(jason_value)
         data = json.loads(jason_value)
         liste_nom = {}
         for aire_de_jeux in data:
-            nom = aire_de_jeux[5][0][1][0]
-            if nom[:4] == 'Aire':
-                nom = nom[15:]
-                if nom in liste_nom.iterkeys():
-                    liste_nom[nom] += 1
-                else:
-                    liste_nom[nom] = 0
-                # test_unique = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom, AireDeJeux.ville == key_ville))
-                count = ""
-                if liste_nom[nom] > 0:
-                    count = " " + str(liste_nom[nom])
-                existe = True
-                while existe:
-                    indice = random_str()
-                    already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
-                    if already_existe.count() == 0:
-                        existe = False
-                coordonnees = ndb.GeoPt(float(aire_de_jeux[1][0][0][0]),
-                                        float(aire_de_jeux[1][0][0][1]))
-                new_detail = Detail(indice=indice,
-                                    valider=True,
-                                    coordonnees=coordonnees)
-                detail_key = new_detail.put()
-                new_aire_de_jeux = AireDeJeux(nom=nom + count,
-                                              ville=key_ville,
-                                              indice=indice,
-                                              detail=detail_key,
-                                              valider=True,
-                                              url=ville.departement + "/" + ville.nom + "/" + nom)
-                new_aire_de_jeux.put()
-                ville.nbr_aire_de_jeux += 1
-                departement.nbr_aire_de_jeux += 1
+            nom = aire_de_jeux[0]
+            existe = True
+            while existe:
+                indice = random_str()
+                already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
+                if already_existe.count() == 0:
+                    existe = False
+            coordonnees = ndb.GeoPt(float(aire_de_jeux[1]),
+                                    float(aire_de_jeux[2]))
+            website = "http://www.jardins.nantes.fr/N/Jardin/Parcs-Jardins/Jardin-Description.asp?Rcs=" + \
+                      str(aire_de_jeux[3])
+            new_detail = Detail(indice=indice,
+                                valider=True,
+                                coordonnees=coordonnees,
+                                website=website)
+            detail_key = new_detail.put()
+            new_aire_de_jeux = AireDeJeux(nom=nom,
+                                          ville=key_ville,
+                                          indice=indice,
+                                          detail=detail_key,
+                                          valider=True,
+                                          url=ville.departement + "/" + ville.nom + "/" + nom)
+            new_aire_de_jeux.put()
+            ville.nbr_aire_de_jeux += 1
+            departement.nbr_aire_de_jeux += 1
         departement.put()
         ville.put()
         self.redirect("/admin/")
