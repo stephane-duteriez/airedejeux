@@ -62,6 +62,9 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <a href='/admin/ajout_fichier'>Ajout a partir d'un fichier de type json</a>
         </div>
+        <div>
+            <a href='/admin/ajout_fichier_csv'>Ajout a partir d'un fichier de type csv</a>
+        </div>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -368,10 +371,61 @@ class AjouterFichierBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
         ville.put()
         self.redirect("/admin/")
 
+
+class AjouterFichierCSVHandler(Handler):
+    def render_main(self):
+        upload_url = blobstore.create_upload_url('/admin/upload_aire_de_jeux_csv')
+        self.render("ajout_fichier_aire_de_jeux.html", upload_url=upload_url)
+
+    def get(self):
+        self.render_main()
+
+
+class AjouterFichierCSVBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self):
+        key_ville = ndb.Key(urlsafe=self.request.get('key_ville'))
+        ville = key_ville.get()
+        departement = Departement.query(Departement.numero == ville.departement).get()
+        upload_files = self.get_uploads('file')
+        blob_info = upload_files[0]
+        blob_key = blob_info.key()
+        blob_reader = blobstore.BlobReader(blob_key)
+        data = []
+        for line in blob_reader:
+            data.append(line.split(","))
+        for aire_de_jeux in data:
+            nom = aire_de_jeux[0].decode('iso-8859-3')
+            existe = True
+            while existe:
+                indice = random_str()
+                already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
+                if already_existe.count() == 0:
+                    existe = False
+            coordonnees = ndb.GeoPt(float(aire_de_jeux[2]),
+                                    float(aire_de_jeux[1]))
+            new_detail = Detail(indice=indice,
+                                valider=True,
+                                coordonnees=coordonnees)
+            detail_key = new_detail.put()
+            logging.info(nom)
+            new_aire_de_jeux = AireDeJeux(nom=nom,
+                                          ville=key_ville,
+                                          indice=indice,
+                                          detail=detail_key,
+                                          valider=True,
+                                          url=ville.departement + "/" + ville.nom + "/" + nom)
+            new_aire_de_jeux.put()
+            ville.nbr_aire_de_jeux += 1
+            departement.nbr_aire_de_jeux += 1
+        departement.put()
+        ville.put()
+        self.redirect("/admin/")
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
     ('/admin/upload_aire_de_jeux', AjouterFichierBlobHandler),
+    ('/admin/upload_aire_de_jeux_csv', AjouterFichierCSVBlobHandler),
     ('/admin/process_csv', ProcessCsv),
     ('/admin/departement_csv', DepartementCsv),
     ('/admin/process_doublon', SuprimeDoubleVille),
@@ -381,6 +435,6 @@ app = webapp2.WSGIApplication([
     ('/admin/creat_sitemap_blob', SitemapBlobHandler),
     ('/admin/ajout_date_creation', AjoutDateHandler),
     ('/admin/a_valider', AValiderHandler),
-    ('/admin/ajout_fichier', AjouterFichierHandler)
-
+    ('/admin/ajout_fichier', AjouterFichierHandler),
+    ('/admin/ajout_fichier_csv', AjouterFichierCSVHandler)
 ], debug=True)
