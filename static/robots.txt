@@ -7,4 +7,5 @@ Disallow:/liste/
 Disallow:/add_photo
 Disallow:/ajouterAireDeDeJeux
 Disallow:/modifier/
+Disallow:/add_comment
 Sitemap: http://www.oujouerdehors.org/sitemap.xml
