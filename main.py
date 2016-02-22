@@ -24,7 +24,7 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), aut
 
 
 class Handler(webapp2.RequestHandler):
-    # Handler modifier pour intégrer la prise ne charge de jinja
+    # Handler modifié pour intégrer la prise ne charge de jinja
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
@@ -38,11 +38,13 @@ class Handler(webapp2.RequestHandler):
         self.write(self.render_str(template, host=host, **kw).decode(encoding="utf-8"))
 
     def test_appspot(self):
+        # test le nom de domaine et redirige vers oujouerdehors dans le cas contraire
         if self.request.host.endswith('appspot.com'):
             return self.redirect('http://www.oujouerdehors.org', True)
 
 
 class AireDeJeuxHandler(Handler):
+    # génère la page de description d'une aire de jeux
     def render_main(self, aire_de_jeux, liste_commentaires, liste_images):
         self.render("detail.html",
                     aireDeJeux=aire_de_jeux,
@@ -50,13 +52,19 @@ class AireDeJeuxHandler(Handler):
                     listImage=liste_images)
 
     def get(self, dep=None, ville=None, aireDeJeux=None):
-        self.test_appspot()
+        self.test_appspot()  # test l'url
         url = dep + "/" + ville + "/" + aireDeJeux
-        logging.info(url)
+        # recherche une aire de jeux correspondant à l'url
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
-
+        # renvoi un message d'erreur si la page n'existe pas
+        if not db_aire_de_jeux:
+            self.write("Désolé mais cette page n'éxiste pas.")
+        # recherche d'éventuels commentaires attachés à cette aire de jeux
         query_commentaire = Commentaire.query(Commentaire.aireDeJeux == db_aire_de_jeux.key)
+        # limite à 10 commentaires
+        # TODO trier les commentaires et les photos par date pour afficher les derniers
         list_commentaires = query_commentaire.fetch(10)
+        # recherche les photos attachées à cette aire de jeux
         query_photo = Photo.query(Photo.indice_aireDeJeux == db_aire_de_jeux.indice)
         liste_images = query_photo.fetch(10)
         self.render_main(db_aire_de_jeux.export(), list_commentaires, liste_images)
@@ -69,25 +77,29 @@ class CreerAireDeJeuxHandler(Handler):
         self.render("modifier.html", new_indice=indice, ville=data_ville, aireDeJeux="", nouveau="true")
 
     def get(self):
-        self.test_appspot()
-        urlsafe_key_ville = self.request.get("keyVille")
-        existe = True
+        self.test_appspot()  # test l'url
+        urlsafe_key_ville = self.request.get("keyVille")  # récupère la clé de la ville si elle est déjà présente
+        existe = True  # crée un indice unique pour la nouvelle aire de jeux
         while existe:
             indice = random_str()
             already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
-            if already_existe.count() == 0:
+            if already_existe.count() == 0:  # recommence jusqu'à ce que l'indice ne soit pas déjà utilisé
                 existe = False
 
         if urlsafe_key_ville:
+            # si il y a un paramètre de ville, récupérer les information sur la ville est préremplire le formulaire
             key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
             ville = key_ville.get()
             self.render_main(indice, ville.urlsafe())
         else:
+            # sinon afficher un formulaire vierge
             self.render_main(indice)
 
 
 class AjouterHandler(webapp2.RequestHandler):
+    #  Permet d'ajouter une nouvelle aire de jeux
     def post(self):
+        #  efface les espace en début et fin pour éviter des erreurs avec les urls
         nom_aire_de_jeux = self.request.get('nom_aire_de_jeux').strip(" ")
         key_ville = self.request.get('key_ville')
         latitude = self.request.get('lat')
@@ -103,7 +115,7 @@ class AjouterHandler(webapp2.RequestHandler):
         website = self.request.get('website')
         adresse = self.request.get('adresse')
         ville = ndb.Key(urlsafe=key_ville).get()
-        url = ville.departement + "/" + ville.nom + "/" + nom_aire_de_jeux
+        url = ville.departement + "/" + ville.nom + "/" + nom_aire_de_jeux  # construit le url de la page
         nouvelle_aire_de_jeux = AireDeJeux(nom=nom_aire_de_jeux,
                                            ville=ville.key,
                                            indice=indice,
@@ -125,7 +137,7 @@ class AjouterHandler(webapp2.RequestHandler):
         if age:
             nouveau_detail.age = age
         if website:
-            if website[0:4] == "http":
+            if website[0:4] == "http":  # ajoute http devant le nom sinon il n'est pas reconnu en href
                 nouveau_detail.website = website
             else:
                 nouveau_detail.website = "http://" + website
@@ -137,18 +149,19 @@ class AjouterHandler(webapp2.RequestHandler):
         if commentaire:
             nouveau_commentaire = Commentaire(aireDeJeux=key_aire_de_jeux, commentaire=commentaire)
             nouveau_commentaire.put()
-        valider(True)
-        ville.nbr_aire_de_jeux += 1
+        valider(True)  # envoy en email pour demander la validation des entrées
+        ville.nbr_aire_de_jeux += 1  # incrémente le nombre d'aire de jeux dans la ville
         ville.put()
         departement = Departement.query(Departement.numero == ville.departement).get()
-        departement.nbr_aire_de_jeux += 1
+        departement.nbr_aire_de_jeux += 1  # incrément le nombre d'aire de jeux dans le département
         departement.put()
-        time.sleep(0.1)
+        time.sleep(0.1)  # donne du temps à la base de donnée de se mettre à jour.
         absolute_url = "/aireDeJeux/" + url
         self.redirect(urllib.quote(absolute_url.encode("utf-8")))
 
 
 class ChercherHandler(Handler):
+    #  gère la page de démarrage pour rechercher les aires de jeux par ville
     def render_main(self):
         self.render("chercher.html")
 
@@ -158,6 +171,7 @@ class ChercherHandler(Handler):
 
 
 class ModifierHandler(Handler):
+    # permet de modifier une aire de jeux déjà existante
     def render_main(self, aire_de_jeux, ville, list_image):
         self.render("modifier.html",
                     aireDeJeux=aire_de_jeux,
@@ -216,20 +230,21 @@ class ModifierHandler(Handler):
         if commentaire:
             nouveau_commentaire = Commentaire(aireDeJeux=db_aire_de_jeux.key, commentaire=commentaire)
             nouveau_commentaire.put()
-
+        # donne du temps à la base de donnée pour enregistrer la nouvelle aire de jeux
         time.sleep(0.1)
-        valider(True)
-
+        valider(True)  # envoi un émail si nécessaire pour demander une validation
+        # renvoie sur la page de description du nouvelle enregistrement
         absolut_url = "/aireDeJeux/" + db_aire_de_jeux.url
         self.redirect(urllib.quote(absolut_url.encode("utf-8")))
 
 
 class PhotoUploadFormHandler(Handler):
+    # création de la page pour ajouter des photos
     def render_main(self, upload_url, indice):
         self.render("uploadPhoto.html", upload_url=upload_url, indice=indice)
 
     def get(self):
-        indice = self.request.get('indice')
+        indice = self.request.get('indice')  # récupère l'indice de l'aire de jeux pour lier celle-ci avec la photo
         upload_url = blobstore.create_upload_url('/upload_photo')
         # To upload files to the blobstore, the request method must be "POST"
         # and enctype must be set to "multipart/form-data".
@@ -237,8 +252,9 @@ class PhotoUploadFormHandler(Handler):
 
 
 class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    # gestion de l'ajout des nouvelles photos
     def post(self):
-        indice = self.request.get('indice')
+        indice = self.request.get('indice')  # récupère l'indice de l'aire de jeux
         try:
             upload = self.get_uploads()[0]
             photo = Photo(indice_aireDeJeux=indice, blobKey=upload.key(), photo_url=get_serving_url(upload.key()))
