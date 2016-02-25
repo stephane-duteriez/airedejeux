@@ -9,7 +9,7 @@ var map;
 var bounds;
 var info_window;
 
-function initialize(lat, lon) {
+function initialize(lat, lon, NWlat, NWlon, SElat, SElon) {
     var mapCanvas = document.getElementById("map");
     var myLatLng = {lat: lat, lng: lon};
     var styledMap = new google.maps.StyledMapType(styles,
@@ -23,7 +23,11 @@ function initialize(lat, lon) {
         mapTypeIds:[google.maps.MapTypeId.ROADMAP, 'map_style']
     };
     map = new google.maps.Map(mapCanvas, mapOption);
-    bounds = new google.maps.LatLngBounds(myLatLng);
+    bounds = new google.maps.LatLngBounds();
+    var NWLatLng = {lat: NWlat, lng: NWlon};
+    var SELatLng = {lat: SElat, lng: SElon};
+    bounds.extend(new google.maps.LatLng(NWLatLng));
+    bounds.extend(new google.maps.LatLng(SELatLng));
     info_window = new google.maps.InfoWindow()
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
@@ -46,7 +50,9 @@ function active_map() {
     map.setOptions({ scrollwheel: true, draggable: true});
     document.getElementById("debloquerMap").style.background = "grey";
 }
-
+var nbColonne = 2;
+var nbLigne = 2;
+var liste_marqueur = [];
 function addMarker(position, host, url, nom) {
     var marker = new google.maps.Marker({
         position: position,
@@ -59,11 +65,6 @@ function addMarker(position, host, url, nom) {
         info_window.setContent(contentString)
         info_window.open(map, marker);
     });
-    var min_windows = 0.0005;
-    var myLatLng1 = {lat: position.lat+min_windows, lng: position.lng+min_windows};
-    var myLatLng2 = {lat: position.lat-min_windows, lng: position.lng-min_windows};
-    bounds.extend(new google.maps.LatLng(myLatLng1));
-    bounds.extend(new google.maps.LatLng(myLatLng2));
 }
 
 {%- endmacro  %}

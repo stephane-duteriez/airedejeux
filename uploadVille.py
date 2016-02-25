@@ -65,6 +65,12 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <a href='/admin/ajout_fichier_csv'>Ajout a partir d'un fichier de type csv</a>
         </div>
+        <div>
+            <a href='/admin/ajout_limite_ville'>Ajout d'une limite autour des villes</a>
+        </div>
+        <div>
+            <a href='/admin/ajout_limite_departement'>Ajout d'une limite autour des départements</a>
+        </div>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -420,6 +426,72 @@ class AjouterFichierCSVBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
         ville.put()
         self.redirect("/admin/")
 
+
+class AjouterBordureVille(webapp2.RequestHandler):
+    def get(self):
+        taskqueue.add(url='/admin/ajout_limite_ville')
+        self.redirect("/admin/")
+
+    def post(self):
+        max_data_access = 5000
+        curs = Cursor(urlsafe=self.request.get('cursor'))
+        query_ville = Commune.query()
+        if curs:
+            liste_ville, next_cursor, more = query_ville.fetch_page(max_data_access, start_cursor=curs)
+        else:
+            liste_ville, next_cursor, more = query_ville.fetch_page(max_data_access)
+        for ville in liste_ville:
+            query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == ville.key)
+            marge = 0.0015
+            ville.NWcoordonnees = ndb.GeoPt(ville.coordonnees.lat + marge, ville.coordonnees.lon - marge)
+            ville.SEcoordonnees = ndb.GeoPt(ville.coordonnees.lat - marge, ville.coordonnees.lon + marge)
+            for aire_de_jeux in query_aire_de_jeux:
+                detail = aire_de_jeux.detail.get()
+                if detail.coordonnees:
+                    if detail.coordonnees.lat > ville.NWcoordonnees.lat:
+                        ville.NWcoordonnees.lat = detail.coordonnees.lat + marge/5
+                    elif detail.coordonnees.lat < ville.SEcoordonnees.lat:
+                        ville.SEcoordonnees.lat = detail.coordonnees.lat - marge/5
+                    if detail.coordonnees.lon > ville.SEcoordonnees.lon:
+                        ville.SEcoordonnees.lon = detail.coordonnees.lon + marge/5
+                    elif detail.coordonnees.lon < ville.NWcoordonnees.lon:
+                        ville.NWcoordonnees.lon = detail.coordonnees.lon - marge/5
+            ville.put()
+        if more:
+            taskqueue.add(url='/admin/ajout_limite_ville', params={'cursor': next_cursor.urlsafe()}, countdown=86400)
+
+
+class AjouterBordureDepartement(webapp2.RequestHandler):
+    def get(self):
+        taskqueue.add(url='/admin/ajout_limite_departement')
+        self.redirect("/admin/")
+
+    def post(self):
+        max_data_access = 5000
+        query_departement = Departement.query()
+        liste_departement, next_cursor, more = query_departement.fetch_page(max_data_access)
+        for departement in liste_departement:
+            query_commune = Commune.query(Commune.departement == departement.numero)
+            marge = 0.002
+            test = False
+            for commune in query_commune:
+                if not test:
+                    departement.NWcoordonnees = ndb.GeoPt(commune.coordonnees.lat,
+                                                          commune.coordonnees.lon)
+                    departement.SEcoordonnees = ndb.GeoPt(commune.coordonnees.lat,
+                                                          commune.coordonnees.lon)
+                    test = True
+                elif commune.coordonnees:
+                    if commune.coordonnees.lat > departement.NWcoordonnees.lat:
+                        departement.NWcoordonnees.lat = commune.coordonnees.lat + marge/5
+                    elif commune.coordonnees.lat < departement.SEcoordonnees.lat:
+                        departement.SEcoordonnees.lat = commune.coordonnees.lat - marge/5
+                    if commune.coordonnees.lon > departement.SEcoordonnees.lon:
+                        departement.SEcoordonnees.lon = commune.coordonnees.lon + marge/5
+                    elif commune.coordonnees.lon < departement.NWcoordonnees.lon:
+                        departement.NWcoordonnees.lon = commune.coordonnees.lon - marge/5
+            departement.put()
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
@@ -435,5 +507,7 @@ app = webapp2.WSGIApplication([
     ('/admin/ajout_date_creation', AjoutDateHandler),
     ('/admin/a_valider', AValiderHandler),
     ('/admin/ajout_fichier', AjouterFichierHandler),
-    ('/admin/ajout_fichier_csv', AjouterFichierCSVHandler)
+    ('/admin/ajout_fichier_csv', AjouterFichierCSVHandler),
+    ('/admin/ajout_limite_ville', AjouterBordureVille),
+    ('/admin/ajout_limite_departement', AjouterBordureDepartement)
 ], debug=True)

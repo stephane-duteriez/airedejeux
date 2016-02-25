@@ -47,7 +47,7 @@
         while (!map_ready) {
         }
         document.getElementById("map_home").style.display= "block"
-        map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
+        map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon,liste_ville[nom_ville].NWlat, liste_ville[nom_ville].NWlon, liste_ville[nom_ville].SElat,liste_ville[nom_ville].SElon);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var json = xmlhttp.responseText;

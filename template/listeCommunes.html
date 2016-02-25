@@ -2,9 +2,9 @@
 {% import "mapStyle.html" as mapStyle %}
 {% block head %}
     <title>Ou trouver des aire-de-jeux, liste des aire-de-jeux pour le département
-        {{ lettre_departement }}, {{ departement }} </title>
+        {{ departement.lettre }}, {{ departement.numero}} </title>
     <meta name="description" content="Liste le nombre d'aire-de-jeux enregistrées par commune dans le département
-       {{ lettre_departement }}, {{ departement }} ">
+       {{ departement.lettre }}, {{ departement }} ">
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
@@ -16,7 +16,7 @@
 {% endblock %}
 {% block content %}
 <h1 id="title" class="highlight title_detail">
-    <div id="ville">{{ lettre_departement }}</div>
+    <div id="ville">{{ departement.lettre }}</div>
 </h1>
 <div class="conteneur-map">
     <div id="map"></div>
@@ -25,7 +25,7 @@
 <div class="liste_communes">
     {% for commune in liste_communes %}
         <div class="commune" >
-            <a href="{{host}}/aireDeJeux/{{ departement }}/{{commune.nom}}">
+            <a href="{{host}}/aireDeJeux/{{ departement.numero }}/{{commune.nom}}">
                 {{commune.nom}}: {{commune.nbr_aire_de_jeux}}</a>
         </div>
     {% endfor %}
@@ -36,18 +36,21 @@
 {% endblock %}
 {% block script %}
 <script type="text/javascript">
-    {{ mapStyle.script("None", 15) }}
-    function initMap(centre_carte) {
-        initialize({{ liste_communes[0].coordonnees.lat }}, {{ liste_communes[0].coordonnees.lon }});
+    {{ mapStyle.script("None", 10) }}
+    function initMap() {
+        initialize({{ liste_communes[0].coordonnees.lat }}, {{ liste_communes[0].coordonnees.lon }}, {{ departement.NWcoordonnees.lat }}, {{ departement.NWcoordonnees.lon }}, {{ departement.SEcoordonnees.lat }}, {{ departement.SEcoordonnees.lon }} );
         initMarker();
+        console.log(bounds);
         map.fitBounds(bounds);
+        google.maps.event.addListenerOnce(map, "idle", function() {
+            map.setZoom(map.getZoom() + 1);
+            });
     }
-    console.log(bounds);
     function initMarker() {
         {% for commune in liste_communes %}
             {% if commune.coordonnees.lat %}
                 {% set text = commune.nom + ", aire-de-jeux: " + commune.nbr_aire_de_jeux|string %}
-                {{ mapStyle.addMarker(commune.coordonnees, host, departement + "/" + commune.nom, text) }}
+                {{ mapStyle.addMarker(commune.coordonnees, host, departement.numero + "/" + commune.nom, text) }}
             {% endif %}
         {% endfor %}
     }

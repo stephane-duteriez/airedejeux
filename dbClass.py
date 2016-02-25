@@ -103,6 +103,8 @@ class Commune(ndb.Model):
     departement = ndb.StringProperty()
     pays = ndb.StringProperty()
     coordonnees = ndb.GeoPtProperty()
+    NWcoordonnees = ndb.GeoPtProperty()
+    SEcoordonnees = ndb.GeoPtProperty()
     nom_lower = ndb.ComputedProperty(lambda self: self.nom.lower())
     nbr_aire_de_jeux = ndb.IntegerProperty(default=0)
 
@@ -111,6 +113,10 @@ class Commune(ndb.Model):
                 "CP": self.CP,
                 "departement": self.departement,
                 "coordonnees": self.coordonnees,
+                "NWcoordonnees": self.NWcoordonnees,
+                "SEcoordonnees": self.SEcoordonnees,
+                "NW": self.NWcoordonnees,
+                "SE": self.SEcoordonnees,
                 "nom": self.nom}
         return data
 
@@ -119,6 +125,8 @@ class Departement(ndb.Model):
     numero = ndb.StringProperty()
     nbr_aire_de_jeux = ndb.IntegerProperty(default=0)
     lettre = ndb.StringProperty()
+    NWcoordonnees = ndb.GeoPtProperty()
+    SEcoordonnees = ndb.GeoPtProperty()
 
 
 class Commentaire(ndb.Model):

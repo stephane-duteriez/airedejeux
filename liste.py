@@ -23,10 +23,15 @@ class ListeVilleHandler(webapp2.RequestHandler):
         results = villes.fetch(20)
         data = {}
         for ville in results:
+            logging.info(ville)
             data[ville.nom + ", " + ville.departement] = {
                                 "key": ville.key.urlsafe(),
                                 "lat": ville.coordonnees.lat,
-                                "lon": ville.coordonnees.lon}
+                                "lon": ville.coordonnees.lon,
+                                "NWlat": ville.NWcoordonnees.lat,
+                                "NWlon": ville.NWcoordonnees.lon,
+                                "SElat": ville.SEcoordonnees.lat,
+                                "SElon": ville.SEcoordonnees.lon}
         self.response.write(json.dumps(data))
 
 

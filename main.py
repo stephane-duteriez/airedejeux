@@ -39,7 +39,7 @@ class Handler(webapp2.RequestHandler):
 
     def test_appspot(self):
         # test le nom de domaine et redirige vers oujouerdehors dans le cas contraire
-        if self.request.host.endswith('appspot.com'):
+        if not self.request.host.endswith('-dot-aire-de-jeux.appspot.com') and not self.request.host.endswith('8080'):
             return self.redirect('http://www.oujouerdehors.org', True)
 
 
@@ -325,22 +325,21 @@ class ListeDepartementsHandler(Handler):
 
 
 class DepartementHandler(Handler):
-    def render_main(self, departement, lettre_dep, liste_communes):
+    def render_main(self, departement, liste_communes):
         self.render("listeCommunes.html",
                     departement=departement,
-                    lettre_departement=lettre_dep,
                     liste_communes=liste_communes)
 
     def get(self, dep=None):
         self.test_appspot()
+
         def byName(Commune):
             return Commune.nom
         query_commune = Commune.query(ndb.AND(Commune.departement == dep, Commune.nbr_aire_de_jeux > 0))\
-            .fetch(500, projection=[Commune.nom, Commune.nbr_aire_de_jeux, Commune.coordonnees])
+            .fetch(500)
         query_departement = Departement.query(Departement.numero == dep).get()
         query_commune.sort(key=byName)
-        lettre_dep = query_departement.lettre
-        self.render_main(dep, lettre_dep, query_commune)
+        self.render_main(query_departement, query_commune)
 
 
 class CommuneHandler(Handler):
