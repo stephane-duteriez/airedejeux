@@ -103,7 +103,12 @@
 {% block script %}
 <script type="text/javascript">
     {% if aireDeJeux.coordonnees.lat %}
-        {{ mapStyle.script(aireDeJeux.coordonnees, 15) }}
+        {{ mapStyle.script(15) }}
+        function initMap() {
+            initialize({{ aireDeJeux.coordonnees.lat }},{{ aireDeJeux.coordonnees.lon }}, {{ aireDeJeux.coordonnees.lat + 0.002}},{{ aireDeJeux.coordonnees.lon -0.002}}, {{ aireDeJeux.coordonnees.lat -0.002 }},{{ aireDeJeux.coordonnees.lon +0.002}});
+            initMarker();
+            map.fitBounds(bounds);
+}
         function initMarker() {
             {{ mapStyle.addMarker(aireDeJeux.coordonnees, aireDeJeux.url, aireDeJeux.nom) }}
         }

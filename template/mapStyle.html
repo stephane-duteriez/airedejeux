@@ -1,4 +1,4 @@
-{% macro script(centre_carte, large) -%}
+{% macro script(large) -%}
 var styles =  [ { "stylers": [ { "saturation": 5 },
                                    { "lightness": -5 },
                                    { "gamma": 1.16 },
@@ -39,13 +39,6 @@ function initialize(lat, lon, NWlat, NWlon, SElat, SElon) {
     return map;
 }
 
-{% if centre_carte != "None" %}
-function initMap(centre_carte) {
-    initialize({{ centre_carte.lat }},{{ centre_carte.lon }});
-    initMarker();
-    map.fitBounds(bounds);
-}
-{% endif %}
 function active_map() {
     map.setOptions({ scrollwheel: true, draggable: true});
     document.getElementById("debloquerMap").style.background = "grey";
