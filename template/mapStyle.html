@@ -8,7 +8,8 @@ var styles =  [ { "stylers": [ { "saturation": 5 },
 var map;
 var bounds;
 var info_window;
-
+var list_aire_de_jeux = [];
+var markersArray = [];
 function initialize(lat, lon, NWlat, NWlon, SElat, SElon) {
     var mapCanvas = document.getElementById("map");
     var myLatLng = {lat: lat, lng: lon};
@@ -28,6 +29,7 @@ function initialize(lat, lon, NWlat, NWlon, SElat, SElon) {
     var SELatLng = {lat: SElat, lng: SElon};
     bounds.extend(new google.maps.LatLng(NWLatLng));
     bounds.extend(new google.maps.LatLng(SELatLng));
+    map.fitBounds(bounds);
     info_window = new google.maps.InfoWindow()
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
@@ -36,6 +38,9 @@ function initialize(lat, lon, NWlat, NWlon, SElat, SElon) {
         map.setOptions({ draggable: false });
         document.getElementById("debloquerMap").style.visibility = "visible";
     }
+    google.maps.event.addListener(map, 'bounds_changed', function() {
+        construction_a_pointer();
+    });
     return map;
 }
 
@@ -43,9 +48,67 @@ function active_map() {
     map.setOptions({ scrollwheel: true, draggable: true});
     document.getElementById("debloquerMap").style.background = "grey";
 }
-var nbColonne = 2;
-var nbLigne = 2;
-var liste_marqueur = [];
+var nbColonne = 4;
+var nbLigne = 4;
+var liste_a_pointer = [];
+var width_map = document.getElementById("map").width
+var height_map = document.getElementById("map").height
+function construction_a_pointer() {
+    var list_a_pointer = [];
+    for (i=0; i < nbLigne; i++) {
+        var ligne = [];
+        for (j=0; j < nbColonne; j++) {
+            ligne[j] = [0];
+        }
+        list_a_pointer[i] = ligne;
+    }
+    var limit_carte = map.getBounds();
+    var NE_carte = limit_carte.getNorthEast();
+    var SW_carte = limit_carte.getSouthWest();
+    var width_lon = NE_carte.lng()-SW_carte.lng();
+    var height_lat = NE_carte.lat()-SW_carte.lat();
+    for (var i = 0; i < list_aire_de_jeux.length; i++) {
+        colonne = Math.floor(((list_aire_de_jeux[i][0].lng-SW_carte.lng())/width_lon)*nbColonne);
+        ligne = Math.floor(((list_aire_de_jeux[i][0].lat-SW_carte.lat())/height_lat)*nbLigne);
+        if ((0 <= colonne) && (colonne < nbColonne) && (0 <= ligne) && ( ligne < nbLigne)) {
+            if (list_a_pointer[ligne][colonne]==0) {
+                list_a_pointer[ligne][colonne]=[1, list_aire_de_jeux[i][0], i]
+            } else {
+                new_lng = (list_a_pointer[ligne][colonne][1].lng * list_a_pointer[ligne][colonne][0] + list_aire_de_jeux[i][0].lng)/( list_a_pointer[ligne][colonne][0]+1)
+                new_lat = (list_a_pointer[ligne][colonne][1].lat * list_a_pointer[ligne][colonne][0] + list_aire_de_jeux[i][0].lat)/( list_a_pointer[ligne][colonne][0]+1)
+                list_a_pointer[ligne][colonne] = [list_a_pointer[ligne][colonne][0] + 1, {lat:new_lat, lng:new_lng}]
+            }
+        }
+    }
+    effacer_pointeur();
+    for (i=0; i < nbLigne; i++) {
+        for (j=0; j < nbColonne; j++) {
+            if (list_a_pointer[i][j][0]==1){
+                a_pointer = list_aire_de_jeux[list_a_pointer[i][j][2]];
+                addMarker(a_pointer[0], a_pointer[1], a_pointer[2], a_pointer[3]);
+            } else if (list_a_pointer[i][j][0] > 1) {
+                var marker = new google.maps.Marker({
+                    position: list_a_pointer[i][j][1],
+                    icon: {
+                      path: google.maps.SymbolPath.CIRCLE,
+                      scale: 8
+                    },
+                    map: map
+                });
+
+                markersArray.push(marker);
+            }
+        }
+    }
+}
+
+function effacer_pointeur() {
+    for (var i = 0; i < markersArray.length; i++ ) {
+        markersArray[i].setMap(null);
+    }
+    markersArray.length = 0;
+}
+
 function addMarker(position, host, url, nom) {
     var marker = new google.maps.Marker({
         position: position,
@@ -58,6 +121,7 @@ function addMarker(position, host, url, nom) {
         info_window.setContent(contentString)
         info_window.open(map, marker);
     });
+    markersArray.push(marker);
 }
 
 {%- endmacro  %}

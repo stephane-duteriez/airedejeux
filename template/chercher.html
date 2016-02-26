@@ -47,7 +47,7 @@
         while (!map_ready) {
         }
         document.getElementById("map_home").style.display= "block"
-        map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon,liste_ville[nom_ville].NWlat, liste_ville[nom_ville].NWlon, liste_ville[nom_ville].SElat,liste_ville[nom_ville].SElon);
+        initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon,liste_ville[nom_ville].NWlat, liste_ville[nom_ville].NWlon, liste_ville[nom_ville].SElat,liste_ville[nom_ville].SElon);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var json = xmlhttp.responseText;
@@ -65,10 +65,10 @@
                         newAireDeJeux = newAireDeJeux.replace("%indice%", (i+1).toString());
                         out += newAireDeJeux;
                         if (data[i].coordonnees.lat) {
-                            addMarker(data[i].coordonnees, "{{ host }}", data[i].url, data[i].nom);
+                            list_aire_de_jeux[list_aire_de_jeux.length] = [data[i].coordonnees, "{{ host }}", data[i].url, data[i].nom];
                         }
-                        map.fitBounds(bounds);
                     }
+                    construction_a_pointer()
                 } else {
                     out = "<div class=\"message\">Désolé mais il n'y a pas encore d'aire de jeux" +
                      "enregistré pour cette ville. Si vous en connaissez, vous pouvez les ajouter" +
