@@ -48,8 +48,8 @@ function active_map() {
     map.setOptions({ scrollwheel: true, draggable: true});
     document.getElementById("debloquerMap").style.background = "grey";
 }
-var nbColonne = 4;
-var nbLigne = 4;
+var nbColonne = 6;
+var nbLigne = 6;
 var liste_a_pointer = [];
 var width_map = document.getElementById("map").width
 var height_map = document.getElementById("map").height
@@ -62,7 +62,7 @@ function construction_a_pointer() {
         }
         list_a_pointer[i] = ligne;
     }
-    var limit_carte = map.getBounds();
+    var limit_carte = bounds;
     var NE_carte = limit_carte.getNorthEast();
     var SW_carte = limit_carte.getSouthWest();
     var width_lon = NE_carte.lng()-SW_carte.lng();

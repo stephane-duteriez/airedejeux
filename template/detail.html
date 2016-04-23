@@ -105,15 +105,13 @@
     {% if aireDeJeux.coordonnees.lat %}
         {{ mapStyle.script(15) }}
         function initMap() {
-            initialize({{ aireDeJeux.coordonnees.lat }},{{ aireDeJeux.coordonnees.lon }}, {{ aireDeJeux.coordonnees.lat + 0.002}},{{ aireDeJeux.coordonnees.lon -0.002}}, {{ aireDeJeux.coordonnees.lat -0.002 }},{{ aireDeJeux.coordonnees.lon +0.002}});
-            initMarker();
-            map.fitBounds(bounds);
+            map = initialize({{ aireDeJeux.coordonnees.lat }},{{ aireDeJeux.coordonnees.lon }}, {{ aireDeJeux.coordonnees.lat + 0.002}},{{ aireDeJeux.coordonnees.lon -0.002}}, {{ aireDeJeux.coordonnees.lat -0.002 }},{{ aireDeJeux.coordonnees.lon +0.002}});
+            list_aire_de_jeux[0] = [{{ aireDeJeux.coordonnees }},  "{{ host }}", "", "ici"];
+            construction_a_pointer()
+
 }
-        function initMarker() {
-            {{ mapStyle.addMarker(aireDeJeux.coordonnees, aireDeJeux.url, aireDeJeux.nom) }}
-        }
     {% else %}
-        {{ mapStyle.script(aireDeJeux.coordonnees_ville, 15) }}
+        {{ mapStyle.script(15) }}
         function initMarker() {
         }
     {% endif %}
@@ -148,6 +146,6 @@
     }
 </script>
 <script async defer
-         src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANWCzOy5sTaDwVJXZFeNJfopen73FrFdw&callback=initMap">
 </script>
 {% endblock %}

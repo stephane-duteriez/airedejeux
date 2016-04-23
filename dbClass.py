@@ -86,15 +86,15 @@ class Detail(ndb.Model):
     indice = ndb.StringProperty()
     activites = ndb.StringProperty(repeated=True)
     score = ndb.IntegerProperty()
-    horaires = ndb.StringProperty()
-    accessibilite = ndb.StringProperty()
-    description = ndb.StringProperty()
+    horaires = ndb.StringProperty(indexed=False)
+    accessibilite = ndb.StringProperty(indexed=False)
+    description = ndb.StringProperty(indexed=False)
     coordonnees = ndb.GeoPtProperty()
-    age = ndb.StringProperty()
+    age = ndb.StringProperty(indexed=False)
     date_creation = ndb.DateTimeProperty(auto_now_add=True)
     valider = ndb.BooleanProperty(default=False)
-    website = ndb.StringProperty()
-    adresse = ndb.StringProperty()
+    website = ndb.StringProperty(indexed=False)
+    adresse = ndb.StringProperty(indexed=False)
 
 
 class Commune(ndb.Model):
@@ -103,8 +103,8 @@ class Commune(ndb.Model):
     departement = ndb.StringProperty()
     pays = ndb.StringProperty()
     coordonnees = ndb.GeoPtProperty()
-    NWcoordonnees = ndb.GeoPtProperty()
-    SEcoordonnees = ndb.GeoPtProperty()
+    NWcoordonnees = ndb.GeoPtProperty(indexed=False)
+    SEcoordonnees = ndb.GeoPtProperty(indexed=False)
     nom_lower = ndb.ComputedProperty(lambda self: self.nom.lower())
     nbr_aire_de_jeux = ndb.IntegerProperty(default=0)
 

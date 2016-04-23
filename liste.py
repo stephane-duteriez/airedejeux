@@ -23,7 +23,6 @@ class ListeVilleHandler(webapp2.RequestHandler):
         results = villes.fetch(20)
         data = {}
         for ville in results:
-            logging.info(ville)
             data[ville.nom + ", " + ville.departement] = {
                                 "key": ville.key.urlsafe(),
                                 "lat": ville.coordonnees.lat,
@@ -73,8 +72,8 @@ class ListeAireDeJeuxHandler(webapp2.RequestHandler):
                 data.append(next_aire_de_jeux)
             data.sort(key=lambda x: classement(x, "nom"))
             self.response.write(json.dumps(data))
-        elif NW.lat:
-            query1 = Detail.query(Detail.coordonnees.lat > NW.lat)
+
+
 
 class ListeCommentaireHandler(webapp2.RequestHandler):
     def get(self):
