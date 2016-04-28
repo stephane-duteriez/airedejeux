@@ -41,7 +41,8 @@
             <div id="age" class="bigger horizontal">
                 <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}</div>
             </div>
-            <div id="adresse" class="bigger horizontal">
+            <div id="a}
+dresse" class="bigger horizontal">
                 <div class="inside">Adresse:</div><div class="inside">{{ aireDeJeux.adresse|e if aireDeJeux.adresse|e != 'None' }}</div>
             </div>
             <div id="box-activitees" class="box">
@@ -104,15 +105,18 @@
 <script type="text/javascript">
     {% if aireDeJeux.coordonnees.lat %}
         {{ mapStyle.script(15) }}
+        //init the list of places with only the one for this page
+        var myLatLng = {lat: {{ aireDeJeux.coordonnees.lat }}, lng: {{ aireDeJeux.coordonnees.lon }}};
+        list_aire_de_jeux[0] = [myLatLng,  "{{ host }}", "", "ici"];
+
         function initMap() {
             map = initialize({{ aireDeJeux.coordonnees.lat }},{{ aireDeJeux.coordonnees.lon }}, {{ aireDeJeux.coordonnees.lat + 0.002}},{{ aireDeJeux.coordonnees.lon -0.002}}, {{ aireDeJeux.coordonnees.lat -0.002 }},{{ aireDeJeux.coordonnees.lon +0.002}});
-            list_aire_de_jeux[0] = [{{ aireDeJeux.coordonnees }},  "{{ host }}", "", "ici"];
-            construction_a_pointer()
-
-}
+        }
     {% else %}
         {{ mapStyle.script(15) }}
-        function initMarker() {
+        //there is no coordinat recorded for this place so we center the map on the city center
+        function initMap() {
+            map = initialize({{ aireDeJeux.coordonnees_ville.lat }},{{ aireDeJeux.coordonnees_ville.lon }}, {{ aireDeJeux.coordonnees_ville.lat + 0.002}},{{ aireDeJeux.coordonnees_ville.lon -0.002}}, {{ aireDeJeux.coordonnees_villelat -0.002 }},{{ aireDeJeux.coordonnees_ville.lon +0.002}});
         }
     {% endif %}
 
