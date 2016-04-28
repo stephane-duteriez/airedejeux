@@ -133,7 +133,7 @@ class AjouterHandler(webapp2.RequestHandler):
         if liste_activites:
             nouveau_detail.activites = liste_activites
         if description:
-            nouveau_detail.description = description
+            nouveau_detail.dpescription = description
         if age:
             nouveau_detail.age = age
         if website:

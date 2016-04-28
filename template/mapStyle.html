@@ -10,7 +10,9 @@ var bounds;
 var info_window;
 var list_aire_de_jeux = [];
 var markersArray = [];
+
 function initialize(lat, lon, NWlat, NWlon, SElat, SElon) {
+    //creat the map fitting the rect define by NW and SE
     var mapCanvas = document.getElementById("map");
     var myLatLng = {lat: lat, lng: lon};
     var styledMap = new google.maps.StyledMapType(styles,
@@ -39,12 +41,14 @@ function initialize(lat, lon, NWlat, NWlon, SElat, SElon) {
         document.getElementById("debloquerMap").style.visibility = "visible";
     }
     google.maps.event.addListener(map, 'bounds_changed', function() {
+        //every time the bounds are changing the pointers on the map should be adjust
         construction_a_pointer();
     });
     return map;
 }
 
 function active_map() {
+    //allow to reactive the map in mobile view
     map.setOptions({ scrollwheel: true, draggable: true});
     document.getElementById("debloquerMap").style.background = "grey";
 }
@@ -55,6 +59,7 @@ var width_map = document.getElementById("map").width
 var height_map = document.getElementById("map").height
 function construction_a_pointer() {
     var list_a_pointer = [];
+    //construit une grille qui contient au plus un pointeur par case
     for (i=0; i < nbLigne; i++) {
         var ligne = [];
         for (j=0; j < nbColonne; j++) {
@@ -62,7 +67,9 @@ function construction_a_pointer() {
         }
         list_a_pointer[i] = ligne;
     }
-    var limit_carte = bounds;
+    //get the limit of the map to calculate the array of the pointers
+    var limit_carte = map.getBounds();
+    console.log(limit_carte);
     var NE_carte = limit_carte.getNorthEast();
     var SW_carte = limit_carte.getSouthWest();
     var width_lon = NE_carte.lng()-SW_carte.lng();

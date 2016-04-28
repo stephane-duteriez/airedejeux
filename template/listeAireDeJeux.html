@@ -1,3 +1,4 @@
+//liste des aires de jeux pour une commune
 {% extends "base.html" %}
 {% import "mapStyle.html" as mapStyle %}
 {% block head %}
@@ -34,20 +35,18 @@
 {% block script %}
 <script type="text/javascript">
     {{ mapStyle.script(15) }}
-    function initMarker() {
-        {% for aire_de_jeux in liste_aire_de_jeux %}
-            {% if aire_de_jeux.coordonnees.lat %}
-                {{ mapStyle.addMarker(aire_de_jeux.coordonnees, host, aire_de_jeux.url, aire_de_jeux.nom) }}
-            {% endif %}
-        {% endfor %}
-    }
+    {% for aire_de_jeux in liste_aire_de_jeux %}
+        {% if aire_de_jeux.coordonnees.lat %}
+            var myLatLng = {lat: {{ aire_de_jeux.coordonnees.lat }}, lng: {{ aire_de_jeux.coordonnees.lon }}};
+            list_aire_de_jeux[list_aire_de_jeux.length]=[myLatLng, "{{ host }}", "{{ aire_de_jeux.url }}", "{{ aire_de_jeux.nom }}"];
+        {% endif %}
+    {% endfor %}
+
     function initMap() {
         initialize({{ commune.coordonnees.lat }},{{ commune.coordonnees.lon }}, {{ commune.NWcoordonnees.lat }},{{ commune.NWcoordonnees.lon }}, {{ commune.SEcoordonnees.lat }},{{ commune.SEcoordonnees.lon }});
-        initMarker();
-        map.fitBounds(bounds);
-}
+    }
 </script>
 <script async defer
-         src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANWCzOy5sTaDwVJXZFeNJfopen73FrFdw&callback=initMap">
 </script>
 {% endblock %}
