@@ -37,25 +37,21 @@
 {% block script %}
 <script type="text/javascript">
     {{ mapStyle.script(10) }}
+    //creat the list to ba use for the markers
+    {% for commune in liste_communes %}
+        {% if commune.coordonnees.lat %}
+            var my_latlng = {lat: {{ commune.coordonnees.lat }}, lng: {{ commune.coordonnees.lon }}};
+            {% set text = commune.nom + ", aire-de-jeux: " + commune.nbr_aire_de_jeux|string %}
+            var my_url = "{{ departement.numero + "/" + commune.nom }}"
+            list_aire_de_jeux[list_aire_de_jeux.length]=[my_latlng, "{{ host }}", my_url, "{{ text }}"];
+        {% endif %}
+    {% endfor %}
+
     function initMap() {
         initialize({{ liste_communes[0].coordonnees.lat }}, {{ liste_communes[0].coordonnees.lon }}, {{ departement.NWcoordonnees.lat }}, {{ departement.NWcoordonnees.lon }}, {{ departement.SEcoordonnees.lat }}, {{ departement.SEcoordonnees.lon }} );
-        initMarker();
-        console.log(bounds);
-        map.fitBounds(bounds);
-        google.maps.event.addListenerOnce(map, "idle", function() {
-            map.setZoom(map.getZoom() + 1);
-            });
-    }
-    function initMarker() {
-        {% for commune in liste_communes %}
-            {% if commune.coordonnees.lat %}
-                {% set text = commune.nom + ", aire-de-jeux: " + commune.nbr_aire_de_jeux|string %}
-                {{ mapStyle.addMarker(commune.coordonnees, host, departement.numero + "/" + commune.nom, text) }}
-            {% endif %}
-        {% endfor %}
     }
 </script>
 <script async defer
-         src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANWCzOy5sTaDwVJXZFeNJfopen73FrFdw&callback=initMap">
 </script>
 {% endblock %}
