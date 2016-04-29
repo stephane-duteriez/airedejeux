@@ -97,7 +97,6 @@ li.menu:hover {
 .main_content {
     background-color: white;
     width:80%;
-    min-width:300px;
     margin-top: 1em;
     margin-left: auto;
     margin-right: auto;
@@ -197,7 +196,7 @@ div.activite {
     min-height:5em;
     }
 .map_home {
-    height:300px;
+    height: 400px;
     padding-bottom: 2em;
     }
 
@@ -228,7 +227,7 @@ div.activite {
     }
 
 .contenue {
-    flex : 1 1 350px;
+    flex : 1 1 300px;
     padding : 0px;
     margin : 0px;
     }

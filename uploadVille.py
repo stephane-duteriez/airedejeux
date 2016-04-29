@@ -65,6 +65,12 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <a href='/admin/ajout_fichier_csv'>Ajout a partir d'un fichier de type csv</a>
         </div>
+        <div>
+            <a href='/admin/ajout_limite_ville'>Ajout d'une limite autour des villes</a>
+        </div>
+        <div>
+            <a href='/admin/ajout_limite_departement'>Ajout d'une limite autour des départements</a>
+        </div>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -337,94 +343,119 @@ class AjouterFichierBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
         blob_info = upload_files[0]
         blob_key = blob_info.key()
         blob_reader = blobstore.BlobReader(blob_key)
-        jason_value = blob_reader.read()
+        jason_value = unicode(blob_reader.read(), 'latin-1')
         data = json.loads(jason_value)
-        liste_nom = []
-        for aire_de_jeux in data["docs"]:
-            type_object = aire_de_jeux["TYPE"]
-            nom_object = aire_de_jeux["NOM"]
-            if type_object == "Jeux" and nom_object not in liste_nom:
-                liste_nom.append(nom_object)
-                existe = True
-                while existe:
-                    indice = random_str()
-                    already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
-                    if already_existe.count() == 0:
-                        existe = False
-                coordonnees = ndb.GeoPt(float(aire_de_jeux["geometry"]["coordinates"][1]),
-                                        float(aire_de_jeux["geometry"]["coordinates"][0]))
-                new_detail = Detail(indice=indice,
-                                    valider=True,
-                                    coordonnees=coordonnees)
-                detail_key = new_detail.put()
-                new_aire_de_jeux = AireDeJeux(nom=nom_object,
-                                              ville=key_ville,
-                                              indice=indice,
-                                              detail=detail_key,
-                                              valider=True,
-                                              url=ville.departement + "/" + ville.nom + "/" + nom_object)
-                new_aire_de_jeux.put()
-                ville.nbr_aire_de_jeux += 1
-                departement.nbr_aire_de_jeux += 1
-        departement.put()
-        ville.put()
-        self.response.write(str(liste_nom))
-
-
-class AjouterFichierCSVHandler(Handler):
-    def render_main(self):
-        upload_url = blobstore.create_upload_url('/admin/upload_aire_de_jeux_csv')
-        self.render("ajout_fichier_aire_de_jeux.html", upload_url=upload_url)
-
-    def get(self):
-        self.render_main()
-
-
-class AjouterFichierCSVBlobHandler(blobstore_handlers.BlobstoreUploadHandler):
-    def post(self):
-        key_ville = ndb.Key(urlsafe=self.request.get('key_ville'))
-        ville = key_ville.get()
-        departement = Departement.query(Departement.numero == ville.departement).get()
-        upload_files = self.get_uploads('file')
-        blob_info = upload_files[0]
-        blob_key = blob_info.key()
-        blob_reader = blobstore.BlobReader(blob_key)
-        data = []
-        for line in blob_reader:
-            data.append(line.split(","))
+        liste_nom = {}
+        list_coordonnees = []
         for aire_de_jeux in data:
-            nom = aire_de_jeux[0].decode('iso-8859-3')
-            existe = True
-            while existe:
-                indice = random_str()
-                already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
-                if already_existe.count() == 0:
-                    existe = False
-            coordonnees = ndb.GeoPt(float(aire_de_jeux[2]),
-                                    float(aire_de_jeux[1]))
-            new_detail = Detail(indice=indice,
-                                valider=True,
-                                coordonnees=coordonnees)
-            detail_key = new_detail.put()
-            logging.info(nom)
-            new_aire_de_jeux = AireDeJeux(nom=nom,
-                                          ville=key_ville,
-                                          indice=indice,
-                                          detail=detail_key,
-                                          valider=True,
-                                          url=ville.departement + "/" + ville.nom + "/" + nom)
-            new_aire_de_jeux.put()
-            ville.nbr_aire_de_jeux += 1
-            departement.nbr_aire_de_jeux += 1
+            nom = aire_de_jeux[5][0][1][0]
+            if nom[:4] == 'Aire':
+                nom = nom[15:]
+                coordonnees = ndb.GeoPt(float(aire_de_jeux[1][0][0][0]),
+                                        float(aire_de_jeux[1][0][0][1]))
+                if coordonnees not in list_coordonnees:
+                    list_coordonnees.append(coordonnees)
+                    if nom in liste_nom.iterkeys():
+                        liste_nom[nom] += 1
+                    else:
+                        liste_nom[nom] = 0
+                    # test_unique = AireDeJeux.query(ndb.AND(AireDeJeux.nom == nom, AireDeJeux.ville == key_ville))
+                    count = ""
+                    if liste_nom[nom] > 0:
+                        count = " " + str(liste_nom[nom])
+                    existe = True
+                    while existe:
+                        indice = random_str()
+                        already_existe = AireDeJeux.query(AireDeJeux.indice == indice)
+                        if already_existe.count() == 0:
+                            existe = False
+                    new_detail = Detail(indice=indice,
+                                        valider=True,
+                                        coordonnees=coordonnees)
+                    detail_key = new_detail.put()
+                    new_aire_de_jeux = AireDeJeux(nom=nom + count,
+                                                  ville=key_ville,
+                                                  indice=indice,
+                                                  detail=detail_key,
+                                                  valider=True,
+                                                  url=ville.departement + "/" + ville.nom + "/" + nom)
+                    new_aire_de_jeux.put()
+                    ville.nbr_aire_de_jeux += 1
+                    departement.nbr_aire_de_jeux += 1
         departement.put()
         ville.put()
         self.redirect("/admin/")
+
+
+class AjouterBordureVille(webapp2.RequestHandler):
+    def get(self):
+        taskqueue.add(url='/admin/ajout_limite_ville')
+        self.redirect("/admin/")
+
+    def post(self):
+        max_data_access = 5000
+        curs = Cursor(urlsafe=self.request.get('cursor'))
+        query_ville = Commune.query()
+        if curs:
+            liste_ville, next_cursor, more = query_ville.fetch_page(max_data_access, start_cursor=curs)
+        else:
+            liste_ville, next_cursor, more = query_ville.fetch_page(max_data_access)
+        for ville in liste_ville:
+            query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == ville.key)
+            marge = 0.0015
+            ville.NWcoordonnees = ndb.GeoPt(ville.coordonnees.lat + marge, ville.coordonnees.lon - marge)
+            ville.SEcoordonnees = ndb.GeoPt(ville.coordonnees.lat - marge, ville.coordonnees.lon + marge)
+            for aire_de_jeux in query_aire_de_jeux:
+                detail = aire_de_jeux.detail.get()
+                if detail.coordonnees:
+                    if detail.coordonnees.lat > ville.NWcoordonnees.lat:
+                        ville.NWcoordonnees.lat = detail.coordonnees.lat + marge/5
+                    elif detail.coordonnees.lat < ville.SEcoordonnees.lat:
+                        ville.SEcoordonnees.lat = detail.coordonnees.lat - marge/5
+                    if detail.coordonnees.lon > ville.SEcoordonnees.lon:
+                        ville.SEcoordonnees.lon = detail.coordonnees.lon + marge/5
+                    elif detail.coordonnees.lon < ville.NWcoordonnees.lon:
+                        ville.NWcoordonnees.lon = detail.coordonnees.lon - marge/5
+            ville.put()
+        if more:
+            taskqueue.add(url='/admin/ajout_limite_ville', params={'cursor': next_cursor.urlsafe()}, countdown=86400)
+
+
+class AjouterBordureDepartement(webapp2.RequestHandler):
+    def get(self):
+        taskqueue.add(url='/admin/ajout_limite_departement')
+        self.redirect("/admin/")
+
+    def post(self):
+        max_data_access = 5000
+        query_departement = Departement.query()
+        liste_departement, next_cursor, more = query_departement.fetch_page(max_data_access)
+        for departement in liste_departement:
+            query_commune = Commune.query(Commune.departement == departement.numero)
+            marge = 0.002
+            test = False
+            for commune in query_commune:
+                if not test:
+                    departement.NWcoordonnees = ndb.GeoPt(commune.coordonnees.lat,
+                                                          commune.coordonnees.lon)
+                    departement.SEcoordonnees = ndb.GeoPt(commune.coordonnees.lat,
+                                                          commune.coordonnees.lon)
+                    test = True
+                elif commune.coordonnees:
+                    if commune.coordonnees.lat > departement.NWcoordonnees.lat:
+                        departement.NWcoordonnees.lat = commune.coordonnees.lat + marge/5
+                    elif commune.coordonnees.lat < departement.SEcoordonnees.lat:
+                        departement.SEcoordonnees.lat = commune.coordonnees.lat - marge/5
+                    if commune.coordonnees.lon > departement.SEcoordonnees.lon:
+                        departement.SEcoordonnees.lon = commune.coordonnees.lon + marge/5
+                    elif commune.coordonnees.lon < departement.NWcoordonnees.lon:
+                        departement.NWcoordonnees.lon = commune.coordonnees.lon - marge/5
+            departement.put()
 
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
     ('/admin/upload_aire_de_jeux', AjouterFichierBlobHandler),
-    ('/admin/upload_aire_de_jeux_csv', AjouterFichierCSVBlobHandler),
     ('/admin/process_csv', ProcessCsv),
     ('/admin/departement_csv', DepartementCsv),
     ('/admin/process_doublon', SuprimeDoubleVille),
@@ -435,5 +466,6 @@ app = webapp2.WSGIApplication([
     ('/admin/ajout_date_creation', AjoutDateHandler),
     ('/admin/a_valider', AValiderHandler),
     ('/admin/ajout_fichier', AjouterFichierHandler),
-    ('/admin/ajout_fichier_csv', AjouterFichierCSVHandler)
+    ('/admin/ajout_limite_ville', AjouterBordureVille),
+    ('/admin/ajout_limite_departement', AjouterBordureDepartement)
 ], debug=True)

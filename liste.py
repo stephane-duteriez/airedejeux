@@ -26,7 +26,11 @@ class ListeVilleHandler(webapp2.RequestHandler):
             data[ville.nom + ", " + ville.departement] = {
                                 "key": ville.key.urlsafe(),
                                 "lat": ville.coordonnees.lat,
-                                "lon": ville.coordonnees.lon}
+                                "lon": ville.coordonnees.lon,
+                                "NWlat": ville.NWcoordonnees.lat,
+                                "NWlon": ville.NWcoordonnees.lon,
+                                "SElat": ville.SEcoordonnees.lat,
+                                "SElon": ville.SEcoordonnees.lon}
         self.response.write(json.dumps(data))
 
 
@@ -44,24 +48,31 @@ class ListeImageHandler(webapp2.RequestHandler):
 class ListeAireDeJeuxHandler(webapp2.RequestHandler):
     def get(self):
         urlsafe_key_ville = self.request.get("keyVille")
-        key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
-        query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)
-        liste_aire_de_jeux = query_aire_de_jeux.fetch(500)
-        data = []
-        for aireDeJeux in liste_aire_de_jeux:
-            next_aire_de_jeux = {"nom": aireDeJeux.nom,
-                                 "indiceAireDeJeux": aireDeJeux.indice,
-                                 "url": aireDeJeux.url,
-                                 "coordonnees": ""}
-            detail = aireDeJeux.detail.get()
-            if detail.coordonnees:
-                next_aire_de_jeux["coordonnees"] = {
-                    "lat": detail.coordonnees.lat,
-                    "lng": detail.coordonnees.lon
-                }
-            data.append(next_aire_de_jeux)
-        data.sort(key=lambda x: classement(x, "nom"))
-        self.response.write(json.dumps(data))
+        NW, SE = {'lat':0, 'lng':0}, {'lng':0, 'lat':0}
+        NW['lat'] = self.request.get("NWlat")
+        NW['lng'] = self.request.get("NWlng")
+        SE['lat'] = self.request.get("SElat")
+        SE['lng'] = self.request.get("SElng")
+        if urlsafe_key_ville:
+            key_ville = ndb.Key(urlsafe=urlsafe_key_ville)
+            query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville == key_ville)
+            liste_aire_de_jeux = query_aire_de_jeux.fetch(500)
+            data = []
+            for aireDeJeux in liste_aire_de_jeux:
+                next_aire_de_jeux = {"nom": aireDeJeux.nom,
+                                     "indiceAireDeJeux": aireDeJeux.indice,
+                                     "url": aireDeJeux.url,
+                                     "coordonnees": ""}
+                detail = aireDeJeux.detail.get()
+                if detail.coordonnees:
+                    next_aire_de_jeux["coordonnees"] = {
+                        "lat": detail.coordonnees.lat,
+                        "lng": detail.coordonnees.lon
+                    }
+                data.append(next_aire_de_jeux)
+            data.sort(key=lambda x: classement(x, "nom"))
+            self.response.write(json.dumps(data))
+
 
 
 class ListeCommentaireHandler(webapp2.RequestHandler):

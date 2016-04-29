@@ -45,4 +45,10 @@ indexes:
   - name: departement
   - name: nom
   - name: CP
+
+- kind: Commune
+  properties:
+  - name: departement
+  - name: nom
+  - name: CP
   - name: nom_lower

@@ -40,19 +40,20 @@
 {% block script %}
 <script type="text/javascript">
     var map_ready = false;
-    {{ mapStyle.script("None", 15) }}
+    {{ mapStyle.script(15) }}
     function hint(nom_ville) {
         var xmlhttp = new XMLHttpRequest();
         var data;
         while (!map_ready) {
         }
         document.getElementById("map_home").style.display= "block"
-        map = initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon);
+        initialize(liste_ville[nom_ville].lat, liste_ville[nom_ville].lon,liste_ville[nom_ville].NWlat, liste_ville[nom_ville].NWlon, liste_ville[nom_ville].SElat,liste_ville[nom_ville].SElon);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var json = xmlhttp.responseText;
                 data = JSON.parse(json);
                 var out = "";
+                list_aire_de_jeux = [];
                 if (data.length > 0){
                     var i;
                     template = "<a href=\"\aireDeJeux/%urlAireDeJeux%\" class=\"aire-de-jeux\">" +
@@ -65,15 +66,15 @@
                         newAireDeJeux = newAireDeJeux.replace("%indice%", (i+1).toString());
                         out += newAireDeJeux;
                         if (data[i].coordonnees.lat) {
-                            addMarker(data[i].coordonnees, "{{ host }}", data[i].url, data[i].nom);
+                            list_aire_de_jeux[list_aire_de_jeux.length] = [data[i].coordonnees, "{{ host }}", data[i].url, data[i].nom];
                         }
-                        map.fitBounds(bounds);
                     }
+                    construction_a_pointer()
                 } else {
                     out = "<div class=\"message\">Désolé mais il n'y a pas encore d'aire de jeux" +
                      "enregistré pour cette ville. Si vous en connaissez, vous pouvez les ajouter" +
                      "en cliquant le lien suivant</div>" +
-                     "<div class=\"ajouter\" onclick=\"location.href='/créerAireDeJeux?keyVille=" + liste_ville[nom_ville].key  +
+                     "<div class=\"ajouter\" onclick=\"location.href='/créerAireDeJeux?keyVille=" + liste_ville[nom_ville].key +
                      "'\" style=\"cursor: pointer\">Ajouter</div>";
 
                 }
@@ -93,6 +94,6 @@
 
 </script>
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?callback=mapReady">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANWCzOy5sTaDwVJXZFeNJfopen73FrFdw&callback=mapReady">
 </script>
 {% endblock %}
