@@ -116,7 +116,7 @@ dresse" class="bigger horizontal">
         {{ mapStyle.script(15) }}
         //there is no coordinat recorded for this place so we center the map on the city center
         function initMap() {
-            map = initialize({{ aireDeJeux.coordonnees_ville.lat }},{{ aireDeJeux.coordonnees_ville.lon }}, {{ aireDeJeux.coordonnees_ville.lat + 0.002}},{{ aireDeJeux.coordonnees_ville.lon -0.002}}, {{ aireDeJeux.coordonnees_villelat -0.002 }},{{ aireDeJeux.coordonnees_ville.lon +0.002}});
+            map = initialize({{ aireDeJeux.coordonnees_ville.lat }},{{ aireDeJeux.coordonnees_ville.lon }}, {{ aireDeJeux.coordonnees_ville.lat + 0.002}},{{ aireDeJeux.coordonnees_ville.lon -0.002}}, {{ aireDeJeux.coordonnees_ville.lat -0.002 }},{{ aireDeJeux.coordonnees_ville.lon +0.002}});
         }
     {% endif %}
 
