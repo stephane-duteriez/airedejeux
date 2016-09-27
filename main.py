@@ -1,4 +1,7 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 # TODO avoir l'option de s'enregistrer avec un compt gmail
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
@@ -7,6 +10,7 @@
 # TODO permettre de localiser le marker a partir de la position du téléphone
 # TODO faire une page pour valider ou supprimer facilement les derniere
 # mise a jour de la base e données
+
 import webapp2
 import json
 import time
@@ -62,7 +66,9 @@ class AireDeJeuxHandler(Handler):
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
         # renvoi un message d'erreur si la page n'existe pas
         if not db_aire_de_jeux:
-            self.write("Désolé mais cette page n'éxiste pas.")
+            db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == urldirty).get()
+            if not db_aire_de_jeux:
+                self.write("Désolé mais cette page n'éxiste pas.")
         # recherche d'éventuels commentaires attachés à cette aire de jeux
         query_commentaire = Commentaire.query(
             Commentaire.aireDeJeux == db_aire_de_jeux.key)
@@ -134,7 +140,7 @@ class AjouterHandler(webapp2.RequestHandler):
         nouvelle_aire_de_jeux = AireDeJeux(nom=nom_aire_de_jeux,
                                            ville=ville.key,
                                            indice=indice,
-                                           url=url)
+                                           url=urlParse(url))
         # TODO vérifier qu'il n'éxiste pas déjà une aire de jeux avec le meme
         # nom
         nouveau_detail = Detail(indice=indice)

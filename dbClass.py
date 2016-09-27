@@ -1,4 +1,7 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import jinja2
 import os
 import logging
@@ -45,6 +48,7 @@ class AireDeJeux(ndb.Model):
     ville = ndb.KeyProperty(required=True)
     indice = ndb.StringProperty(required=True)
     detail = ndb.KeyProperty()
+    urldirty = ndb.StringProperty()
     url = ndb.StringProperty()
     date_creation = ndb.DateTimeProperty(auto_now_add=True)
     valider = ndb.BooleanProperty(default=False)
@@ -159,3 +163,12 @@ class Photo(ndb.Model):
 
 class Variable(ndb.Model):
     a_valider = ndb.BooleanProperty()
+
+
+# fonction to trim bad caracteres from url.
+def urlParse(myStr):
+    caratereMap = {"é":"e", "ô": "o", "ê":"e", " ": "", "è":"e", "î": "i", "â": "a"}
+    decodeStr = unicode(myStr)
+    for a , b in caratereMap.iteritems():
+        decodeStr = decodeStr.replace(a,b)
+    return decodeStr

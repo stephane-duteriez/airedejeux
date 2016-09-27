@@ -1,4 +1,7 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import webapp2
 import json
 import time
@@ -13,6 +16,7 @@ def classement(enregistrement, attribut):
             for item1, item2 in reference:
                 resultat = resultat.replace(item1, item2)
             return resultat
+
 
 
 class ListeVilleHandler(webapp2.RequestHandler):
