@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 # TODO avoir l'option de s'enregistrer avec un compt gmail
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
@@ -48,7 +47,7 @@ class Handler(webapp2.RequestHandler):
         # test le nom de domaine et redirige vers oujouerdehors dans le cas
         # contraire
         if not self.request.host.endswith('-dot-aire-de-jeux.appspot.com') and not self.request.host.endswith('8080'):
-            return self.redirect('http://www.oujouerdehors.org', True)
+            return self.redirect(str('https://www.oujouerdehors.org'), True)
 
 
 class AireDeJeuxHandler(Handler):
@@ -60,7 +59,7 @@ class AireDeJeuxHandler(Handler):
                     listImage=liste_images)
 
     def get(self, dep=None, ville=None, aireDeJeux=None):
-        self.test_appspot()  # test l'url
+        #self.test_appspot()  # test l'url
         url = dep + "/" + ville + "/" + aireDeJeux
         # recherche une aire de jeux correspondant à l'url
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
@@ -93,7 +92,7 @@ class CreerAireDeJeuxHandler(Handler):
                     ville=data_ville, aireDeJeux="", nouveau="true")
 
     def get(self):
-        self.test_appspot()  # test l'url
+        #self.test_appspot()  # test l'url
         # récupère la clé de la ville si elle est déjà présente
         urlsafe_key_ville = self.request.get("keyVille")
         existe = True  # crée un indice unique pour la nouvelle aire de jeux
@@ -195,7 +194,7 @@ class ChercherHandler(Handler):
         self.render("chercher.html")
 
     def get(self):
-        self.test_appspot()
+        #self.test_appspot()
         self.render_main()
 
 
@@ -209,7 +208,7 @@ class ModifierHandler(Handler):
                     nouveau="false")
 
     def get(self, indice):
-        self.test_appspot()
+        #self.test_appspot()
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
         ville = db_aire_de_jeux.ville.get()
         query_photos = Photo.query(
@@ -358,7 +357,7 @@ class ListeDepartementsHandler(Handler):
             "listeDepartement.html", liste_departements=liste_departements)
 
     def get(self):
-        self.test_appspot()
+        #self.test_appspot()
         query_departement = Departement.query().order(
             Departement.numero).fetch(200)
         self.render_main(query_departement)
@@ -371,7 +370,7 @@ class DepartementHandler(Handler):
                     liste_communes=liste_communes)
 
     def get(self, dep=None):
-        self.test_appspot()
+        #self.test_appspot()
 
         def byName(Commune):
             return Commune.nom
@@ -391,7 +390,7 @@ class CommuneHandler(Handler):
                     liste_aire_de_jeux=liste_aire_de_jeux)
 
     def get(self, dep=None, ville=None):
-        self.test_appspot()
+        #self.test_appspot()
 
         def classement(enregistrement):
             # améliore l'ordre alphabétique pour mieux prendre en compte les
