@@ -65,7 +65,7 @@ class AireDeJeuxHandler(Handler):
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
         # renvoi un message d'erreur si la page n'existe pas
         if not db_aire_de_jeux:
-            db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == urldirty).get()
+            db_aire_de_jeux = AireDeJeux.query(AireDeJeux.urldirty == url).get()
             if not db_aire_de_jeux:
                 self.write("Désolé mais cette page n'éxiste pas.")
         # recherche d'éventuels commentaires attachés à cette aire de jeux
