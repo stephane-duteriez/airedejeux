@@ -166,7 +166,7 @@ class Variable(ndb.Model):
 
 # fonction to trim bad caracteres from url.
 def urlParse(myStr):
-    caratereMap = {"é":"e", "ô": "o", "ê":"e", " ": "", "è":"e", "î": "i", "â": "a"}
+    caratereMap = {u"é":"e", u"ô": "o", u"ê":"e", " ": "", u"è":"e", u"î": "i", u"â": "a", u"É": "E", u"È":"E"}
     decodeStr = unicode(myStr)
     for a , b in caratereMap.iteritems():
         decodeStr = decodeStr.replace(a,b)

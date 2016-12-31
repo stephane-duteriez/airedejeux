@@ -20,6 +20,7 @@ import cloudstorage as gcs
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.api.images import get_serving_url
+from google.appengine.api import users
 
 from dbClass import *
 
@@ -68,6 +69,7 @@ class AireDeJeuxHandler(Handler):
             db_aire_de_jeux = AireDeJeux.query(AireDeJeux.urldirty == url).get()
             if not db_aire_de_jeux:
                 self.write("Désolé mais cette page n'éxiste pas.")
+                return
         # recherche d'éventuels commentaires attachés à cette aire de jeux
         query_commentaire = Commentaire.query(
             Commentaire.aireDeJeux == db_aire_de_jeux.key)
@@ -185,7 +187,7 @@ class AjouterHandler(webapp2.RequestHandler):
         # donne du temps à la base de donnée de se mettre à jour.
         time.sleep(0.1)
         absolute_url = "/aireDeJeux/" + url
-        self.redirect(urllib.quote(absolute_url.encode("utf-8")))
+        self.redirect(absolute_url)
 
 
 class ChercherHandler(Handler):
@@ -279,7 +281,7 @@ class PhotoUploadFormHandler(Handler):
     def get(self):
         # récupère l'indice de l'aire de jeux pour lier celle-ci avec la photo
         indice = self.request.get('indice')
-        upload_url = blobstore.create_upload_url('/upload_photo')
+        upload_url = blobstore.create_upload_url('/auth/upload_photo')
         # To upload files to the blobstore, the request method must be "POST"
         # and enctype must be set to "multipart/form-data".
         self.render_main(upload_url, indice)
@@ -297,7 +299,7 @@ class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             photo.put()
             valider(True)
             time.sleep(0.1)
-            self.redirect('/add_photo?indice=' + indice)
+            self.redirect('/auth/add_photo?indice=' + indice)
         except:
             self.error(500)
 
@@ -319,7 +321,7 @@ class AddCommentHandler(Handler):
         )
         new_comment.put()
         valider(True)
-        self.redirect('/add_comment?key=' + key_aire_de_jeux)
+        self.redirect('/auth/add_comment?key=' + key_aire_de_jeux)
 
 
 class ViewPhotoHandler(blobstore_handlers.BlobstoreDownloadHandler):
@@ -437,17 +439,17 @@ class InfoHandler(Handler):
 
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
-    ('/créerAireDeJeux', CreerAireDeJeuxHandler),
-    ('/ajouterAireDeJeux', AjouterHandler),
+    ('/auth/créerAireDeJeux', CreerAireDeJeuxHandler),
+    ('/auth/ajouterAireDeJeux', AjouterHandler),
     ('/aireDeJeux', ListeDepartementsHandler),
     webapp2.Route('/aireDeJeux/<dep>', DepartementHandler),
     webapp2.Route('/aireDeJeux/<dep>/<ville>', CommuneHandler),
     webapp2.Route('/aireDeJeux/<dep>/<ville>/<aireDeJeux>', AireDeJeuxHandler),
-    ('/modifier/([^/]+)?', ModifierHandler),
-    ('/add_photo', PhotoUploadFormHandler),
-    ('/add_comment', AddCommentHandler),
+    ('/auth/modifier/([^/]+)?', ModifierHandler),
+    ('/auth/add_photo', PhotoUploadFormHandler),
+    ('/auth/add_comment', AddCommentHandler),
     ('/view_photo/([^/]+)?', ViewPhotoHandler),
-    ('/upload_photo', PhotoUploadHandler),
+    ('/auth/upload_photo', PhotoUploadHandler),
     ('/google21d16423d723f0d0.html', GoogleVerificationHandler),
     ('/verifierUnique', VerifierUniqueHandler),
     ('/sitemap.xml', SiteMapHandler),
