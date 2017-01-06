@@ -1,4 +1,3 @@
-//liste des aires de jeux pour une commune
 {% extends "base.html" %}
 {% import "mapStyle.html" as mapStyle %}
 {% block head %}
@@ -8,7 +7,7 @@
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
-        <a href='{{host}}/créerAireDeJeux?keyVille={{ commune.urlsafeKey }}'>Ajouter</a>
+        <a href='{{host}}/auth/créerAireDeJeux?keyVille={{ commune.urlsafeKey }}'>Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
@@ -23,7 +22,7 @@
 <div class="liste_communes">
     {% for aire_de_jeux in liste_aire_de_jeux %}
         <div class="commune">
-            <a href="{{host}}/aireDeJeux/{{ commune.departement }}/{{ commune.nom }}/{{ aire_de_jeux.nom }}">
+            <a href="{{host}}/aireDeJeux/{{ aire_de_jeux.url }}">
                 {{ aire_de_jeux.nom }}</a>
         </div>
     {% endfor %}

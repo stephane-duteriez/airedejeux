@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <iframe src="/add_photo?indice={{ new_indice }}" onLoad="updatePhoto()" id="iframAddPhoto"></iframe>
+    <iframe src="/auth/add_photo?indice={{ new_indice }}" onLoad="updatePhoto()" id="iframAddPhoto"></iframe>
     <script>
     var index_photo = 0;
     var listUrlImage = [];
@@ -89,7 +89,7 @@
     <p class="ville_title">Commune :</p>
     <input list="hints" name="commune" oninput="showHint(this.value)"
                 placeholder="Pari..."
-                size="10"
+                size="20"
                 id="ville_input" value="">
     <datalist id="hints">
     </datalist>

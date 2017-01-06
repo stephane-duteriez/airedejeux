@@ -1,0 +1,9 @@
+sdk :
+cd F:\Data\Parents\Stephane\Programming
+- lancer le sdk :
+dev_appserver.py --port=8080 aire-de-jeux
+- lancer le sdk et effacer la base de donnée
+dev_appserver.py --clear_datastore=yes aire-de-jeux
+
+téléchargement ves serveur:
+- appcfg.py update aire-de-jeux

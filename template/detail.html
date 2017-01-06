@@ -8,10 +8,10 @@
 {% endblock %}
 {% block menu %}
     <li class="menu" style="cursor: pointer">
-        <a href="{{host}}/modifier/{{ aireDeJeux.indice|e }}">Modifier</a>
+        <a href="{{host}}/auth/modifier/{{ aireDeJeux.indice|e }}">Modifier</a>
     </li>
     <li class="menu" style="cursor: pointer">
-        <a href='{{host}}/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'>Ajouter</a>
+        <a href='{{host}}/auth/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'>Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
@@ -75,7 +75,7 @@ dresse" class="bigger horizontal">
                     <div class="center"> </div><div class="plus" onclick="new_commentaire()"> + </div>
                 </div>
                 <div id="new_comment" style="display: none">
-                    <iframe src="/add_comment?key={{ aireDeJeux.key }}" onload="update_comment()"
+                    <iframe src="/auth/add_comment?key={{ aireDeJeux.key }}" onload="update_comment()"
                     id="iframAddComment"></iframe>
                 </div>
                 <div id="liste_commentaires">

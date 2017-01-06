@@ -1,4 +1,6 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 # TODO avoir l'option de s'enregistrer avec un compt gmail
 # TODO carte fix, modifiable en cliquant dessus et s'ouvre en grand.
 # TODO recherche de place de jeux à proximité en dehors de la ville
@@ -7,6 +9,7 @@
 # TODO permettre de localiser le marker a partir de la position du téléphone
 # TODO faire une page pour valider ou supprimer facilement les derniere
 # mise a jour de la base e données
+
 import webapp2
 import json
 import time
@@ -17,6 +20,7 @@ import cloudstorage as gcs
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.api.images import get_serving_url
+from google.appengine.api import users
 
 from dbClass import *
 
@@ -44,7 +48,7 @@ class Handler(webapp2.RequestHandler):
         # test le nom de domaine et redirige vers oujouerdehors dans le cas
         # contraire
         if not self.request.host.endswith('-dot-aire-de-jeux.appspot.com') and not self.request.host.endswith('8080'):
-            return self.redirect('http://www.oujouerdehors.org', True)
+            return self.redirect(str('https://www.oujouerdehors.org'), True)
 
 
 class AireDeJeuxHandler(Handler):
@@ -56,13 +60,16 @@ class AireDeJeuxHandler(Handler):
                     listImage=liste_images)
 
     def get(self, dep=None, ville=None, aireDeJeux=None):
-        self.test_appspot()  # test l'url
+        #self.test_appspot()  # test l'url
         url = dep + "/" + ville + "/" + aireDeJeux
         # recherche une aire de jeux correspondant à l'url
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.url == url).get()
         # renvoi un message d'erreur si la page n'existe pas
         if not db_aire_de_jeux:
-            self.write("Désolé mais cette page n'éxiste pas.")
+            db_aire_de_jeux = AireDeJeux.query(AireDeJeux.urldirty == url).get()
+            if not db_aire_de_jeux:
+                self.write("Désolé mais cette page n'éxiste pas.")
+                return
         # recherche d'éventuels commentaires attachés à cette aire de jeux
         query_commentaire = Commentaire.query(
             Commentaire.aireDeJeux == db_aire_de_jeux.key)
@@ -87,7 +94,7 @@ class CreerAireDeJeuxHandler(Handler):
                     ville=data_ville, aireDeJeux="", nouveau="true")
 
     def get(self):
-        self.test_appspot()  # test l'url
+        #self.test_appspot()  # test l'url
         # récupère la clé de la ville si elle est déjà présente
         urlsafe_key_ville = self.request.get("keyVille")
         existe = True  # crée un indice unique pour la nouvelle aire de jeux
@@ -134,7 +141,7 @@ class AjouterHandler(webapp2.RequestHandler):
         nouvelle_aire_de_jeux = AireDeJeux(nom=nom_aire_de_jeux,
                                            ville=ville.key,
                                            indice=indice,
-                                           url=url)
+                                           url=urlParse(url))
         # TODO vérifier qu'il n'éxiste pas déjà une aire de jeux avec le meme
         # nom
         nouveau_detail = Detail(indice=indice)
@@ -180,7 +187,7 @@ class AjouterHandler(webapp2.RequestHandler):
         # donne du temps à la base de donnée de se mettre à jour.
         time.sleep(0.1)
         absolute_url = "/aireDeJeux/" + url
-        self.redirect(urllib.quote(absolute_url.encode("utf-8")))
+        self.redirect(absolute_url)
 
 
 class ChercherHandler(Handler):
@@ -189,7 +196,7 @@ class ChercherHandler(Handler):
         self.render("chercher.html")
 
     def get(self):
-        self.test_appspot()
+        #self.test_appspot()
         self.render_main()
 
 
@@ -203,7 +210,7 @@ class ModifierHandler(Handler):
                     nouveau="false")
 
     def get(self, indice):
-        self.test_appspot()
+        #self.test_appspot()
         db_aire_de_jeux = AireDeJeux.query(AireDeJeux.indice == indice).get()
         ville = db_aire_de_jeux.ville.get()
         query_photos = Photo.query(
@@ -274,7 +281,7 @@ class PhotoUploadFormHandler(Handler):
     def get(self):
         # récupère l'indice de l'aire de jeux pour lier celle-ci avec la photo
         indice = self.request.get('indice')
-        upload_url = blobstore.create_upload_url('/upload_photo')
+        upload_url = blobstore.create_upload_url('/auth/upload_photo')
         # To upload files to the blobstore, the request method must be "POST"
         # and enctype must be set to "multipart/form-data".
         self.render_main(upload_url, indice)
@@ -292,7 +299,7 @@ class PhotoUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             photo.put()
             valider(True)
             time.sleep(0.1)
-            self.redirect('/add_photo?indice=' + indice)
+            self.redirect('/auth/add_photo?indice=' + indice)
         except:
             self.error(500)
 
@@ -314,7 +321,7 @@ class AddCommentHandler(Handler):
         )
         new_comment.put()
         valider(True)
-        self.redirect('/add_comment?key=' + key_aire_de_jeux)
+        self.redirect('/auth/add_comment?key=' + key_aire_de_jeux)
 
 
 class ViewPhotoHandler(blobstore_handlers.BlobstoreDownloadHandler):
@@ -352,7 +359,7 @@ class ListeDepartementsHandler(Handler):
             "listeDepartement.html", liste_departements=liste_departements)
 
     def get(self):
-        self.test_appspot()
+        #self.test_appspot()
         query_departement = Departement.query().order(
             Departement.numero).fetch(200)
         self.render_main(query_departement)
@@ -365,7 +372,7 @@ class DepartementHandler(Handler):
                     liste_communes=liste_communes)
 
     def get(self, dep=None):
-        self.test_appspot()
+        #self.test_appspot()
 
         def byName(Commune):
             return Commune.nom
@@ -385,7 +392,7 @@ class CommuneHandler(Handler):
                     liste_aire_de_jeux=liste_aire_de_jeux)
 
     def get(self, dep=None, ville=None):
-        self.test_appspot()
+        #self.test_appspot()
 
         def classement(enregistrement):
             # améliore l'ordre alphabétique pour mieux prendre en compte les
@@ -432,17 +439,17 @@ class InfoHandler(Handler):
 
 app = webapp2.WSGIApplication([
     ('/', ChercherHandler),
-    ('/créerAireDeJeux', CreerAireDeJeuxHandler),
-    ('/ajouterAireDeJeux', AjouterHandler),
+    ('/auth/créerAireDeJeux', CreerAireDeJeuxHandler),
+    ('/auth/ajouterAireDeJeux', AjouterHandler),
     ('/aireDeJeux', ListeDepartementsHandler),
     webapp2.Route('/aireDeJeux/<dep>', DepartementHandler),
     webapp2.Route('/aireDeJeux/<dep>/<ville>', CommuneHandler),
     webapp2.Route('/aireDeJeux/<dep>/<ville>/<aireDeJeux>', AireDeJeuxHandler),
-    ('/modifier/([^/]+)?', ModifierHandler),
-    ('/add_photo', PhotoUploadFormHandler),
-    ('/add_comment', AddCommentHandler),
+    ('/auth/modifier/([^/]+)?', ModifierHandler),
+    ('/auth/add_photo', PhotoUploadFormHandler),
+    ('/auth/add_comment', AddCommentHandler),
     ('/view_photo/([^/]+)?', ViewPhotoHandler),
-    ('/upload_photo', PhotoUploadHandler),
+    ('/auth/upload_photo', PhotoUploadHandler),
     ('/google21d16423d723f0d0.html', GoogleVerificationHandler),
     ('/verifierUnique', VerifierUniqueHandler),
     ('/sitemap.xml', SiteMapHandler),

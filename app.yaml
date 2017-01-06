@@ -1,5 +1,3 @@
-application: aire-de-jeux
-version: 1
 runtime: python27
 api_version: 1
 threadsafe: yes
@@ -39,6 +37,10 @@ handlers:
 
 - url: /liste/.*
   script: liste.app
+
+- url: /auth/.*
+  script: main.app
+  login: required
 
 - url: .*
   script: main.app

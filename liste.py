@@ -1,4 +1,6 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 import webapp2
 import json
 import time
@@ -15,12 +17,13 @@ def classement(enregistrement, attribut):
             return resultat
 
 
+
 class ListeVilleHandler(webapp2.RequestHandler):
     def get(self):
         q = (self.request.GET['q']).lower()
         villes = Commune.query(ndb.AND(Commune.nom_lower >= q, Commune.nom_lower <= q + "z"))
         self.response.headers['Content-Type'] = 'text/json'
-        results = villes.fetch(20)
+        results = villes.fetch(80)
         data = {}
         for ville in results:
             data[ville.nom + ", " + ville.departement] = {

@@ -17,9 +17,9 @@
                     "toile d'araignée"] %}
     <form id="content"
             {% if nouveau=="true" %}
-             action="/ajouterAireDeJeux"
+             action="/auth/ajouterAireDeJeux"
             {% else %}
-            action="/modifier/{{ aireDeJeux.indice|e if aireDeJeux != '' }}"
+            action="/auth/modifier/{{ aireDeJeux.indice|e if aireDeJeux != '' }}"
             {% endif %}
             enctype="multipart/form-data" method="post">
         <div class="wide">

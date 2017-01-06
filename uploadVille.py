@@ -71,6 +71,12 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <a href='/admin/ajout_limite_departement'>Ajout d'une limite autour des départements</a>
         </div>
+        <div>
+            <a href='/admin/cleanUrl'>Simplifier les url des aires des jeux</a>
+        </div>
+        <div>
+            <a href='/admin/addmissingnumberurl'>Ajouter les nombres manquants pour la ville de Caen</a>
+        </div>
         </form>""" % upload_url
 
         self.response.write(html_string)
@@ -452,6 +458,30 @@ class AjouterBordureDepartement(webapp2.RequestHandler):
                         departement.NWcoordonnees.lon = commune.coordonnees.lon - marge/5
             departement.put()
 
+class cleanUrlHandler(webapp2.RequestHandler):
+    def get(self):
+        curent_date = datetime.datetime.now()
+        query_aire_de_jeux = AireDeJeux.query()
+        for aire_de_jeux in query_aire_de_jeux:
+            change = False
+            if not aire_de_jeux.urldirty:
+                aire_de_jeux.urldirty = aire_de_jeux.url
+                aire_de_jeux.url = urlParse(aire_de_jeux.url)
+                change = True                
+            if change:
+                aire_de_jeux.put()
+
+class addmissingnumberurl(webapp2.RequestHandler):
+    def get(self):
+        query_aire_de_jeux = AireDeJeux.query(AireDeJeux.ville==ndb.Key("Commune",4534100874493952));
+        for aire_de_jeux in query_aire_de_jeux:
+            array_url = aire_de_jeux.url.split("/")
+            if array_url[-1] != urlParse(aire_de_jeux.nom):
+                array_url[-1]  = urlParse(aire_de_jeux.nom)
+                aire_de_jeux.url = "/".join(array_url)
+                aire_de_jeux.put()
+        self.redirect("/admin/")
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
@@ -467,5 +497,7 @@ app = webapp2.WSGIApplication([
     ('/admin/a_valider', AValiderHandler),
     ('/admin/ajout_fichier', AjouterFichierHandler),
     ('/admin/ajout_limite_ville', AjouterBordureVille),
-    ('/admin/ajout_limite_departement', AjouterBordureDepartement)
+    ('/admin/ajout_limite_departement', AjouterBordureDepartement),
+    ('/admin/addmissingnumberurl', addmissingnumberurl),
+    ('/admin/cleanUrl', cleanUrlHandler)
 ], debug=True)
