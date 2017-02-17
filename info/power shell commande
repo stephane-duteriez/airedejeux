@@ -2,8 +2,11 @@ sdk :
 cd F:\Data\Parents\Stephane\Programming
 - lancer le sdk :
 dev_appserver.py --port=8080 aire-de-jeux
-- lancer le sdk et effacer la base de donnée
+- lancer le sdk et effacer la base de donnï¿½e
 dev_appserver.py --clear_datastore=yes aire-de-jeux
 
-téléchargement ves serveur:
-- appcfg.py update aire-de-jeux
+tÃ©lÃ©chargement vers serveur (default app.yaml):
+- gcloud app deploy
+
+dÃ©ployment des index:
+- gcloud app deploy index.yaml

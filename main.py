@@ -186,7 +186,7 @@ class AjouterHandler(webapp2.RequestHandler):
         departement.put()
         # donne du temps à la base de donnée de se mettre à jour.
         time.sleep(0.1)
-        absolute_url = "/aireDeJeux/" + url
+        absolute_url = "/aireDeJeux/" + urlParse(url)
         self.redirect(absolute_url)
 
 
