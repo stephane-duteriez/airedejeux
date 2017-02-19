@@ -86,13 +86,19 @@
     </script>
 {%- endmacro  %}
 {% macro select_ville() -%}
-    <p class="ville_title">Commune :</p>
-    <input list="hints" name="commune" oninput="showHint(this.value)"
-                placeholder="Pari..."
-                size="20"
-                id="ville_input" value="">
-    <datalist id="hints">
-    </datalist>
+<div class="form-group row">
+    <label class="col-2 col-form-label">Commune :</label>
+        <div class="col-10">
+        <input list="hints" name="commune" oninput="showHint(this.value)"
+                    placeholder="Pari..."
+                    id="ville_input" 
+                    value=""
+                    type="text"
+                    class="form-control">
+        <datalist id="hints">
+        </datalist>
+    </div>
+</div>
     <script>
         var liste_ville = {};
         //function call when a key is press in the city input

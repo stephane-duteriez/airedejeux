@@ -1,139 +1,34 @@
-.html {
+.body, .container {
     background-color: #e3f2fd;
-    width: 100%;
     }
-p, a {
-    margin: 0.2em 0em 0.2em 0.2em;
-    }
-
-.body{
-    width : 100%;
-    margin: 0px;
-    min-height: 100%;
-    font-family: 'Ubuntu', sans-serif;
-    }
-textarea
-{
-   font-family:'Ubuntu', sans-serif;
+.btn-primary:hover {
+    background-color: #1565c0;
 }
-.highlight {
-    background-color: #2196f3;
-    color: white;
-}
-a {
-    color: inherit;
-    text-decoration: none;
-    }
-h1 {
-    font-size: inherit;
-    margin: 0em;
-    }
-a:hover {
-    color: #1565c0;
-    }
-.bigger {
-    font-size: 1.5em;
-    padding: 6px;
-    }
-
-#main {
-    width:100%;
-    margin-left: auto;
-    margin-right: auto;
-    }
-
-#header {
-    width : 100%;
-    max-height: 15%;
-    text-align: center;
-    font-size: 3em;
-    box-shadow : 0em 0.1em 0.1em #888888;
-    background-color: #2196f3;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    color: #ffffff;
-}
-
-.title {
-    margin : 1em 1em 0.2em 0.2em;
-    }
-
-div.menu{
-    font-size:0.5em;
-    margin: 0em 0em 0.2em 0.2em;
-}
-
-ul.menu {
-    display: flex;
-    list-style-type: none;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin : 0px 0px 0em 0px ;
-    padding : 0px;
-}
-li.menu, p.menu {
-    float:left;
-    display: inline;
-    text-align: center;
-    color: #ffffff;
-    margin : 0px 2em 0px 0px;
-    }
-li.menu:hover {
-    color: #1565c0;
-    }
-.etendu {
-    width: 80%;
-    }
-#cherche_ville {
-    display:flex;
-    font-size:2em;
-    padding: 0.2em 0.2em 0.2em 0.2em;
-    flex-wrap: wrap;
-}
-.select_ville {
-    display:flex;
-    }
-.main_content {
+form, .main-content {
     background-color: white;
-    width:80%;
-    margin-top: 1em;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 1em;
-    box-shadow: 0em 0.2em 0.2em #888888
-    }
-
-.ville_title {
-    margin-right: 1em;
-    }
-
-#ville_input {
-    padding-right: 1em;
-    font-size: 0.8em;
-    max-width: 50em;
-    margin: 0.3em 0em 0em 1em;
-    flex: 1 1;
-    }
-
-.title_detail {
-    font-size: 2em;
-    color: white;
-    padding: 0.2em;
-    }
-
-#name {
-    padding-left:5px;
-    width:inherit;
+    padding: 1em 1em 1em 1em;
+    box-shadow: 0em 0.2em 0.2em #888888;
 }
 
-#content {
-    display:flex;
-    flex-flow:row wrap;
-    justify-content:center;
-    flex-direction:row;
-    }
+a:active, a:focus, a:hover{
+    color : #1535c0;
+}
 
+a {
+    color : #1565c0;
+}
+
+.bg-blue, .btn-primary{
+    background-color: #2196f3;
+    color: white;
+}
+
+.container{
+    margin-top : 1em;
+}
+.form-control:focus, .custom-select:focus {
+    border-bottom-color: #2196f3;
+}
 #stars {
     display:flex;
     height:22px;
@@ -143,57 +38,12 @@ li.menu:hover {
     }
 
 .stars {
-    padding:2px
-    }
-
-#box-activitees {
-    flex:1 1 100%;
-    }
-
-#list-activitees {
-    display:flex;
-    flex-flow:row wrap;
-    justify-content:flex-start;
-    flex-grow:1;
-    }
-
-.activitee {
-    width:90px;
-    flex-grow:1;
-    margin:1px 5px;
-    }
-
-
-#description{
-    flex:1 1 300px;
-    }
-
-#commentaires{
-    flex:1 1 300px;
-    }
-
-.commentaire,.description,#list-activitees,#description-accessibilte{
-    padding-left: 10px;
-    min-height: 50px;
-    }
-.input_activites {
-    display: flex;
-    flex-flow:row wrap;
-    flex-direction:row;
-    }
-div.activite {
-    flex: 1 1;
-    min-width: 8em;
+    padding:0px;
+    margin:2px;
     }
 .box {
     box-shadow: 0.3em 0.5em 0.5em 0.2em #888888;
     margin: 1em;
-    }
-.input_box {
-    box-shadow: 0.3em 0.5em 0.5em 0.2em #888888;
-    margin: 1em;
-    width: 90%;
-    min-height:5em;
     }
 .map_home {
     height: 400px;
@@ -218,51 +68,8 @@ div.activite {
 #meLocaliser {
     float: left;
 }
-.contenant {
-    display : flex;
-    width : 100%;
-    flex-flow : row wrap;
-    padding: 0em;
-    margin: 0px;
-    }
-
 .contenue {
     flex : 1 1 300px;
-    padding : 0px;
-    margin : 0px;
-    }
-
-.aire-de-jeux, .blanc-aire-de-jeux {
-    padding: 5px;
-    margin : 5px;
-    flex: 1 1 100px;
-    }
-
-.blanc-aire-de-jeux{
-    border-style: solid;
-    border-color: white;
-    }
-
-.aire-de-jeux {
-    border-style: solid;
-    height : content;
-    max-height: 7em;
-    }
-
-.aire-de-jeux:hover {
-    background-color: #64b5f6;
-    }
-
-#list-aire-de-jeux {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.center {
-    margin-left: auto;
-    margin-right: auto;
     }
 
 .horizontal {
@@ -273,6 +80,7 @@ div.activite {
     }
 .slide {
     width:100%;
+    box-sizing: content-box;
     }
 .ratio23outside {
     position:relative;
@@ -306,13 +114,13 @@ div.activite {
     }
 .right {
     position:absolute;
-    right: 2px;
+    right: 5px;
     padding-top:30%;
     z-index:3;
     }
 .left {
     position:absolute;
-    left: 0;
+    left: 5px;
     padding-top:30%;
     z-index:3;
     }
@@ -324,51 +132,6 @@ div.activite {
 #iframAddComment {
     border: none;
     width: 100%;
-    }
-.center {
-    flex: 1 1;
-    }
-.plus {
-    padding: 0px 6px;
-    margin-right: 0.5em;
-    background-color: #90caf9;
-    font-weight: bold;
-    box-shadow: 0.2em 0.2em 0.1em #1565c0;
-    color: white;
-    }
-.plus:hover {
-    color: #1565c0;
-    }
-input {
-    margin: 0.2em 0em 0.2em 1em;
-    }
-.submit_bt {
-    background-color: #1565c0;
-    box-shadow: 0.2em 0.2em 0.1em #888888;
-    color: white;
-    border: none;
-    float: left;
-    }
-.submit_bt:hover {
-    color: #64b5f6;
-    }
-.wide {
-    width: 100%;
-    }
-.liste_departement, .liste_communes{
-    display:flex;
-    flex-flow:row wrap;
-    flex-direction:row;
-    }
-.departement, .commune{
-    flex : 1 1;
-    font-size: 1.5em;
-    padding: 0.2em;
-    min-width: 13em;
-    }
-.vide {
-    color: grey;
-    padding-top: 0em;
     }
 #floating-panel {
     position: absolute;
@@ -382,26 +145,9 @@ input {
     line-height: 30px;
     padding: 0.2em;
 }
-#geocode {
-    background-color: #64b5f6;
-    color: white;
-    border: None;
-    box-shadow: 0.2em 0.2em 0.1em #888888;
-    margin: 0.4em;
-    }
-#geocode:hover {
-    color: #1565c0;
-}
 #address {
     margin: 0.2em;
     padding: 0.2em;
-    }
-.ajouter {
-    padding: 0.2em;
-    margin: 0.2em;
-    box-shadow: 0.2em 0.2em 0.1em #888888;
-    background-color: #1565c0;
-    color: white;
     }
 .conteneur-map {
     height: 400px;
@@ -409,24 +155,9 @@ input {
     }
 
 @media only screen and (max-width: 768px) {
-    .title {
-        margin : 0.2em 1em 0.2em 0.2em;
-    }
-    #header{
-        font-size: 1.5em;
-        }
-    div.menu{
-        font-size: 0.8em;
-        }
-    .main_content {
-        width: 100%;
-        }
     .box {
         margin:1em 0em 1em 0em;
         width: 100%;
-        }
-    .bigger {
-        font-size: 1em;
         }
     .title_detail {
         font-size: 1.5em;
@@ -437,7 +168,7 @@ input {
         }
     #stars {
         padding:0em 0em 0.2em 0em
-        }
+        } 
     .ratio23outside{
         margin-bottom: 2.3em;}
     }

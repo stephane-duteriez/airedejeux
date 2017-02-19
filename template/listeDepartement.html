@@ -4,28 +4,31 @@
     <meta name="description" content="Liste le nombre d'aire-de-jeux enregistrées par département">
 {% endblock %}
 {% block menu %}
-    <li class="menu" style="cursor: pointer">
-        <a href='{{host}}/auth/créerAireDeJeux'>Ajouter</a>
+    <li class="nav-item" style="cursor: pointer">
+        <a href='{{host}}/auth/créerAireDeJeux' class="nav-link">Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
 {% set vide = "vide" %}
-<h1 id="title" class="highlight title_detail">
-    <div id="ville">Liste Aire-De-Jeux Par Département</div>
-</h1>
-<div class="liste_departement">
-    {% for departement in liste_departements %}
-        <div class="departement {{ vide if departement.nbr_aire_de_jeux == 0 }}">
-            {% if departement.nbr_aire_de_jeux > 0 %}
-            <a href="{{host}}/aireDeJeux/{{ departement.numero }}">
-                {{ departement.numero }} {{ departement.lettre }}: {{ departement.nbr_aire_de_jeux }}</a>
-            {% else %}
-            <p> {{ departement.numero }} {{ departement.lettre }}: {{ departement.nbr_aire_de_jeux }}</p>
-            {% endif %}
+<div class="card">
+    <div class="card-block">
+        <h1 id="title" class="class-title">
+            Liste Aire-De-Jeux Par Département
+        </h1>
+        <div class="card-deck">
+            {% for departement in liste_departements %}
+                <div class="card {{ vide if departement.nbr_aire_de_jeux == 0 }}">
+                    <div class="card-block">
+                        {% if departement.nbr_aire_de_jeux > 0 %}
+                        <a href="{{host}}/aireDeJeux/{{ departement.numero }}" style="display: block">
+                            {{ departement.numero }} {{ departement.lettre }}: {{ departement.nbr_aire_de_jeux }}</a>
+                        {% else %}
+                        <p> {{ departement.numero }} {{ departement.lettre }}: {{ departement.nbr_aire_de_jeux }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-    {% for i in range(10) %}
-        <div class="departement"></div>
-    {% endfor %}
+    </div>
 </div>
 {% endblock %}

@@ -2,7 +2,9 @@
 <html lang="fr" class="html">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/static/material/css/material.css" rel="stylesheet" type="text/css">
     <link href="/static/style.css" rel="stylesheet" type="text/css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" href="/favicon.png" type="image/png" sizes="16x16">
@@ -11,25 +13,31 @@
 </head>
 
 <body class="body">
-    <div id="main">
-        <div id="header">
-            <div class="title" ><a href="{{host}}/">Aire De Jeux</a></div>
-            <div class="menu">
-                <ul class="menu">
-                    {% block menu %}
-                    {% endblock %}
-                        <li class="menu" style="cursor: pointer">
-                            <a href='{{host}}/info'>Contact-Info</a>
-                        </li>
-                </ul>
-            </div>
+    <nav id="header" class="navbar navbar-toggleable-md navbar-inverse bg-blue">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a href="{{host}}/" class="navbar-brand">Aire De Jeux</a>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                {% block menu %}
+                {% endblock %}
+                    <li class="nav-item" style="cursor: pointer">
+                        <a href='{{host}}/info' class="nav-link">Contact-Info</a>
+                    </li>
+            </ul>
         </div>
-        <div class="main_content">
-        {% block content %}
-        {% endblock %}
-        </div>
+    </nav>
+    <div class="container">
+    {% block content %}
+    {% endblock %}
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<script src="/static/material/js/material.min.js"></script>
 {% block script %}
 {% endblock %}
 </html>

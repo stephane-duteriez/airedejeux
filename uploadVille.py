@@ -77,7 +77,14 @@ class MainHandler(webapp2.RequestHandler):
         <div>
             <a href='/admin/addmissingnumberurl'>Ajouter les nombres manquants pour la ville de Caen</a>
         </div>
-        </form>""" % upload_url
+        <div>
+            <a href='/admin/ajouterCarvin'>Ajouter carvin</a>
+        </div>
+        </form>
+        
+        
+        
+        """ % upload_url
 
         self.response.write(html_string)
 
@@ -482,6 +489,14 @@ class addmissingnumberurl(webapp2.RequestHandler):
                 aire_de_jeux.put()
         self.redirect("/admin/")
 
+class ajouterCarvinHandler(webapp2.RequestHandler):
+    def get(self):
+        ville_carvin = Commune(nom="Courrière", departement="62", CP="62220", coordonnees = ndb.GeoPt(50.4924, 2.9582), SEcoordonnees = ndb.GeoPt(50.4924, 2.9582), NWcoordonnees = ndb.GeoPt(50.4924, 2.9582))
+        #ville_carvin.put()
+        new_departement = Departement(lettre="Pas de Calais", numero="62", nbr_aire_de_jeux=0, SEcoordonnees = ndb.GeoPt(50.4924, 2.9582), NWcoordonnees = ndb.GeoPt(50.4924, 2.9582) )
+        new_departement.put()
+        self.redirect("/admin/")
+
 app = webapp2.WSGIApplication([
     ('/admin/', MainHandler),
     ('/admin/upload', UploadHandler),
@@ -499,5 +514,6 @@ app = webapp2.WSGIApplication([
     ('/admin/ajout_limite_ville', AjouterBordureVille),
     ('/admin/ajout_limite_departement', AjouterBordureDepartement),
     ('/admin/addmissingnumberurl', addmissingnumberurl),
-    ('/admin/cleanUrl', cleanUrlHandler)
+    ('/admin/cleanUrl', cleanUrlHandler),
+    ('/admin/ajouterCarvin', ajouterCarvinHandler)
 ], debug=True)

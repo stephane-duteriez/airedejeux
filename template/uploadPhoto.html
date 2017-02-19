@@ -2,14 +2,25 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/static/material/css/material.css" rel="stylesheet" type="text/css">
+    <link href="/static/style.css" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="16x16">
+    {% block head %}
+    {% endblock %}
 </head>
 <body>
 <form id="uploadPhoto" action="{{ upload_url}}" method="post" enctype="multipart/form-data">
-    Photo: <input type="file" name="file" onchange="mySubmit()"><br>
+    <label class="btn"><input type="file" name="file" onchange="mySubmit()" style="display: none;">Ajouter des Photos</label>
     <input type="text" name="indice" value="{{ indice }}" hidden>
 </form>
 </body>
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<script src="/static/material/js/material.min.js"></script>
 <script>
 function mySubmit() {
     document.getElementById("uploadPhoto").submit();

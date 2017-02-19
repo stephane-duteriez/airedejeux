@@ -7,96 +7,99 @@
     et des photos de l'aire de jeux {{ aireDeJeux.nom|e }} à {{ aireDeJeux.ville }}">
 {% endblock %}
 {% block menu %}
-    <li class="menu" style="cursor: pointer">
-        <a href="{{host}}/auth/modifier/{{ aireDeJeux.indice|e }}">Modifier</a>
+    <li class="nav-item" style="cursor: pointer">
+        <a href="{{host}}/auth/modifier/{{ aireDeJeux.indice|e }}" class="nav-link">Modifier</a>
     </li>
-    <li class="menu" style="cursor: pointer">
-        <a href='{{host}}/auth/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}'>Ajouter</a>
+    <li class="nav-item" style="cursor: pointer">
+        <a href='{{host}}/auth/créerAireDeJeux?keyVille={{ aireDeJeux.key_ville }}' class="nav-link">Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
-<h1 id="title" class="highlight title_detail">
-    <div id="ville">
-        <a href="{{host}}/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}">{{ aireDeJeux.ville|e }}</a>
+<div class="row">
+    <div class="col-xl-10 col-xl-offset-1 main-content">
+    <div id="title">
+        <h4 id="ville">
+            <a href="{{host}}/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}">{{ aireDeJeux.ville|e }}</a>
+        </h4>
     </div>
-    <div id="name">{{ aireDeJeux.nom|e }}</div>
-</h1>
-<div id="content">
-    <div id="stars">
-        {% for i in range(5) %}
-        <svg width="22" height="22" class="stars">
-            {% if aireDeJeux.score and aireDeJeux.score > i %}
-                <circle cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill="yellow" />{{i}}
-            {% else %}
-                <circle cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill=#bbdefb />{{i}}
-            {% endif %}
-        </svg>
-        {% endfor %}
-    </div>
-    <div class="contenant">
-        <div class="contenue">
-            <div id="horraire" class="bigger horizontal">
-                <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}</div>
-            </div>
-            <div id="age" class="bigger horizontal">
-                <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}</div>
-            </div>
-            <div id="a}
-dresse" class="bigger horizontal">
-                <div class="inside">Adresse:</div><div class="inside">{{ aireDeJeux.adresse|e if aireDeJeux.adresse|e != 'None' }}</div>
-            </div>
-            <div id="box-activitees" class="box">
-                <div id="title-activitee" class="bigger highlight">Activités:</div>
-                <div id="list-activitees">
-                    {% for activite in aireDeJeux.activites %}
-                        <div class="activitee">{{ activite|e }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div id="description" class="box">
-                <div class="bigger highlight">Description:</div>
-                <p class="description">
-                    {{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}
-                </p>
-            </div>
-            <div id="website" class="horizontal">
-                <p class="inside">Website:<a class="inside" href="{{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}">
-                    {{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}</a></p>
-            </div>
-            <div id="box-acces" class="box">
-                <div id="title-accessibilite" class="bigger highlight">Accessibilité</div>
-                <div id="description-accessibilte">
-                    {{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}
-                </div>
-            </div>
-            <div id="commentaires" class="box">
-                <div class="bigger highlight horizontal">
-                    <div>Commentaire(s): </div>
-                    <div class="center"> </div><div class="plus" onclick="new_commentaire()"> + </div>
-                </div>
-                <div id="new_comment" style="display: none">
-                    <iframe src="/auth/add_comment?key={{ aireDeJeux.key }}" onload="update_comment()"
-                    id="iframAddComment"></iframe>
-                </div>
-                <div id="liste_commentaires">
-                {% if listCommentaires %}
-                    {% for commentaire in listCommentaires %}
-                    <p class="commentaire">
-                        {{ commentaire.commentaire|e }}
-                    </p>
-                    {% endfor %}
+        <h4 id="name">{{ aireDeJeux.nom|e }}</h4>
+        <div id="stars">
+            {% for i in range(5) %}
+            <svg width="22" height="22" class="stars">
+                {% if aireDeJeux.score and aireDeJeux.score > i %}
+                    <circle cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill="yellow" />{{i}}
+                {% else %}
+                    <circle cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill=#bbdefb />{{i}}
                 {% endif %}
-                </div>
-            </div>
+            </svg>
+            {% endfor %}
         </div>
-        <div class="contenue">
-            <div class="ratio23outside box">
-                <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
-                <div class="ratio23inside">
-                    <div id="map"></div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div id="horraire" class="horizontal card-block">
+                        <div class="inside">Horaire:</div><div class="inside">{{ aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}</div>
+                    </div>
+                    <div id="age" class="horizontal card-block">
+                        <div class="inside">Age:</div><div class="inside">{{ aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}</div>
+                    </div>
+                    <div id="adresse" class=" horizontal card-block">
+                        <div class="inside">Adresse:</div><div class="inside">{{ aireDeJeux.adresse|e if aireDeJeux.adresse|e != 'None' }}</div>
+                    </div>
+                    <div class="card-block">
+                        <div id="title-activitee" class="card-title ">Activités:</div>
+                        <div id="card-text">
+                            {% for activite in aireDeJeux.activites %}
+                                <div class="activitee">{{ activite|e }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-block">   
+                        <div class="card-title">Description:</div>
+                        <p class="card-text">
+                            {{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}
+                        </p>
+                    </div>
+                    <div id="website" class="horizontal card-block">
+                        <p class="inside">Website:<a class="inside" href="{{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}">
+                            {{ aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}</a></p>
+                    </div>
+                    <div class="card-block">
+                        <div id="title-accessibilite" class="card-title">Accessibilité</div>
+                        <div id="card-text">
+                            {{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}
+                        </div>
+                    </div>
+                    <div id="commentaires" class="card-block">
+                        <div class="card-title">
+                            <div>Commentaire(s): <i class="material-icons" onclick="new_commentaire()">add_box</i></div>
+                        </div>
+                        <div id="new_comment" style="display: none">
+                            <iframe src="/auth/add_comment?key={{ aireDeJeux.key }}" onload="update_comment()"
+                            id="iframAddComment"></iframe>
+                        </div>
+                        <div id="liste_commentaires">
+                        {% if listCommentaires %}
+                            {% for commentaire in listCommentaires %}
+                            <p class="commentaire">
+                                {{ commentaire.commentaire|e }}
+                            </p>
+                            {% endfor %}
+                        {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
-            {{ macros.photos(listImage, aireDeJeux.indice) }}
+                <div class="col-md-6 contenu">
+                    <div class="ratio23outside box">
+                        <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
+                        <div class="ratio23inside">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                    {{ macros.photos(listImage, aireDeJeux.indice) }}
+                </div>
+            </div>
         </div>
     </div>
 </div>

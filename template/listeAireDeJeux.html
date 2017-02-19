@@ -6,28 +6,31 @@
     {{ commune.nom }}">
 {% endblock %}
 {% block menu %}
-    <li class="menu" style="cursor: pointer">
-        <a href='{{host}}/auth/créerAireDeJeux?keyVille={{ commune.urlsafeKey }}'>Ajouter</a>
+    <li class="nav-item">
+        <a href='{{host}}/auth/créerAireDeJeux?keyVille={{ commune.urlsafeKey }}' class="nav-link">Ajouter</a>
     </li>
 {% endblock %}
 {% block content %}
-<h1 id="title" class="highlight title_detail">
-    <div id="ville"><a href="{{host}}/aireDeJeux/{{ commune.departement }}">{{ departement }}</a></div>
-    <div>{{ commune.nom }}</div>
-</h1>
-<div class="conteneur-map">
-    <div id="map"></div>
-</div>
-<div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
-<div class="liste_communes">
-    {% for aire_de_jeux in liste_aire_de_jeux %}
-        <div class="commune">
-            <a href="{{host}}/aireDeJeux/{{ aire_de_jeux.url }}">
-                {{ aire_de_jeux.nom }}</a>
+<div class="card">
+    <div class="card-block">
+        <h1 id="title" class="card-title">
+            <div id="ville"><a href="{{host}}/aireDeJeux/{{ commune.departement }}">{{ departement }}</a></div>
+            <div>{{ commune.nom }}</div>
+        </h1>
+        <div class="conteneur-map">
+            <div id="map"></div>
         </div>
-    {% endfor %}
-    {% for i in range(4) %}
-        <div class="commune"></div>
+        <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
+    </div>
+</div>
+<div class="card-deck mt-4">
+    {% for aire_de_jeux in liste_aire_de_jeux %}
+        <div class="card">
+            <div class="card-block">
+                <a href="{{host}}/aireDeJeux/{{ aire_de_jeux.url }}" style="display: block">
+                {{ aire_de_jeux.nom }}</a>
+            </div>
+        </div>
     {% endfor %}
 </div>
 {% endblock %}

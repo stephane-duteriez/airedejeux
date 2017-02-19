@@ -7,30 +7,34 @@
        {{ departement.lettre }}, {{ departement }} ">
 {% endblock %}
 {% block menu %}
-    <li class="menu" style="cursor: pointer">
-        <a href='{{host}}/auth/créerAireDeJeux'>Ajouter</a>
+    <li class="nav-item" style="cursor: pointer">
+        <a href='{{host}}/auth/créerAireDeJeux' class="nav-link">Ajouter</a>
     </li>
-    <li class="menu" style="cursor: pointer">
-        <a href='{{host}}/aireDeJeux'>Liste Aire de jeux</a>
+    <li class="nav-item" style="cursor: pointer">
+        <a href='{{host}}/aireDeJeux' class="nav-link">Liste Aire de jeux</a>
     </li>
 {% endblock %}
 {% block content %}
-<h1 id="title" class="highlight title_detail">
-    <div id="ville">{{ departement.lettre }}</div>
-</h1>
-<div class="conteneur-map">
-    <div id="map"></div>
-</div>
-<div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
-<div class="liste_communes">
-    {% for commune in liste_communes %}
-        <div class="commune" >
-            <a href="{{host}}/aireDeJeux/{{ departement.numero }}/{{commune.nom}}">
-                {{commune.nom}}: {{commune.nbr_aire_de_jeux}}</a>
+<div class="card">
+    <div class="card-block">
+        <h1 id="title" class="card-title">
+            <div id="ville">{{ departement.lettre }}</div>
+        </h1>
+        <div class="conteneur-map">
+            <div id="map"></div>
         </div>
-    {% endfor %}
-    {% for i in range(5) %}
-        <div class="commune"></div>
+        <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">débloquer</div>
+    </div>
+</div>
+
+<div class="card-deck mt-4">
+    {% for commune in liste_communes %}
+        <div class="card" >
+            <div class="card-block">
+                <a href="{{host}}/aireDeJeux/{{ departement.numero }}/{{commune.nom}}" style="display: block">
+                {{commune.nom}}: {{commune.nbr_aire_de_jeux}}</a>
+            </div>
+        </div>
     {% endfor %}
 </div>
 {% endblock %}

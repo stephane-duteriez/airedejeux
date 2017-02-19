@@ -15,96 +15,148 @@
                     "jeux sur ressort",
                     "structure pour grimper",
                     "toile d'araignée"] %}
-    <form id="content"
-            {% if nouveau=="true" %}
-             action="/auth/ajouterAireDeJeux"
-            {% else %}
-            action="/auth/modifier/{{ aireDeJeux.indice|e if aireDeJeux != '' }}"
-            {% endif %}
-            enctype="multipart/form-data" method="post">
-        <div class="wide">
-            <input type="submit" value="Submit" class="submit_bt">
-        </div>
-        <div class="contenant">
-            <div class="contenue">
-                <div hidden><input type="hidden" name="indice" value="{{ new_indice }}"></div>
-                <div class="select_ville">
-                    {{ macros.select_ville() }}
-                </div>
-                <p>Nom de l'aire de jeux :</p>
-                <div><input type="text" name="nom_aire_de_jeux" id="nom" onchange="check_unique()"
-                            value="{{aireDeJeux.nom|e if aireDeJeux != '' }}" required class="etendu"
-                            ><span id="alert"></span></div>
-                <div>
-                    <input type="hidden" name="key_ville" id="key_ville" value=""
-                            onchange="check_unique()"
-                            required>
-                </div>
-                <div hidden>
-                    latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat if aireDeJeux != '' }}"><br>
-                    longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon if aireDeJeux != '' }}">
-                </div>
-                <p>Score :</p>
-                <div id="stars" onmouseleave="reset()">
-                {% for i in range(5) %}
-                    <svg width="22" height="22" class="stars" onclick="changeScore({{ i }}, 'new')"
-                         onmouseover="changeScore({{i}}, 'show')">
-                        {% if aireDeJeux.score and aireDeJeux.score > i %}
-                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill="yellow" />{{i}}
-                        {% else %}
-                            <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill=#bbdefb />{{i}}
-                        {% endif %}
-                    </svg>
-                {% endfor %}
-                </div>
-                <div><input type="number" name="score" id="score"
-                            value={{ aireDeJeux.score if aireDeJeux else 0}} hidden></div>
-                <p>Horaire:</p>
-                <div><input type="text" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}"></div>
-                <p>Tranche d'age:</p>
-                <div><input type="text" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}"></div>
-                <p>Adresse:</p>
-                <div><input type="text" name="adresse" class="etendu" value="{{aireDeJeux.adresse|e if aireDeJeux.adresse|e != 'None' }}"></div>
-                <p>Activités<br></p>
-                <div class="input_box input_activites">
-                    {% for activite in activites %}
-                        <div class="activite"><input type="checkbox" name="activites" value="{{ activite }}"
-                               {% if activite in aireDeJeux.activites %} checked {% endif %}> {{ activite }} </input></div>
-                    {% endfor %}
-                </div>
-                <p>Website</p>
-                <div><input type="text" name="website" class="etendu" value="{{aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}"></div>
-                <p>Description :</p>
-                <div><textarea name="description" class="input_box">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea></div>
-                <p>Accessibilité :</p>
-                <div><textarea name="acces" id="acces" class="input_box">{{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}</textarea></div>
-                <p>Commentaire :</p>
-                <div><textarea name="commentaire" class="input_box"></textarea></div>
-            </div>
-            <div class="contenue">
-                <div class="ratio23outside box">
-                    <div class="ratio23inside">
-                        <div id="floating-panel">
-                          <input id="address" type="textbox" placeholder="Rue de la Paix">
-                          <input id="geocode" type="button" value="Localiser">
-                        </div>
-                        <div id="map"></div>
-                    </div>
-                    <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">Débloquer</div>
-                    <div id="meLocaliser" onclick="me_localiser();" style="visibility: hidden">Me localiser</div>
-                    <p id="erreurLocalisation"></p>
-                </div>
-                {% if aireDeJeux == "" %}
-                    {{ macros.photos(listImage, new_indice) }}
+<div class="row">
+    <div class="col-xl-10 col-xl-offset-1">
+        <form id="content"
+                {% if nouveau=="true" %}
+                action="/auth/ajouterAireDeJeux"
                 {% else %}
-                    {{ macros.photos(listImage, aireDeJeux.indice) }}
+                action="/auth/modifier/{{ aireDeJeux.indice|e if aireDeJeux != '' }}"
                 {% endif %}
+                enctype="multipart/form-data" method="post">
+            
+                <input type="submit" value="Submit" class="btn btn-primary">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div hidden><input type="hidden" name="indice" value="{{ new_indice }}"></div>
+                    <div class="select_ville">
+                        {{ macros.select_ville() }}
+                    </div>
+                    
+                    <div class="form-group row">
+                        <label for="nom_aire_de_jeux" class="col-2 col-form-label">Nom :</label>
+                        <div class="col-10">
+                            <input type="text" name="nom_aire_de_jeux" id="nom" onchange="check_unique()"
+                                value="{{aireDeJeux.nom|e if aireDeJeux != '' }}" required class="form-control"
+                                ><span id="alert"></span>
+                        </div>
+                        <div>
+                            <input type="hidden" name="key_ville" id="key_ville" value=""
+                                    onchange="check_unique()"
+                                    required>
+                        </div>
+                        <div hidden>
+                            latitude: <input type="text" name="lat" id="lat" readonly value="{{ aireDeJeux.coordonnees.lat if aireDeJeux != '' }}"><br>
+                            longitude: <input type="text" name="lng" id="lng" readonly value="{{ aireDeJeux.coordonnees.lon if aireDeJeux != '' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Score :</label>
+                        <div id="stars" onmouseleave="reset()" class="col-10">
+                        {% for i in range(5) %}
+                            <svg width="22" height="22" class="stars" onclick="changeScore({{ i }}, 'new')"
+                                onmouseover="changeScore({{i}}, 'show')">
+                                {% if aireDeJeux.score and aireDeJeux.score > i %}
+                                    <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill="yellow" />{{i}}
+                                {% else %}
+                                    <circle id="star_{{ i }}" cx="11" cy="11" r="10" stroke=#64b5f6 stroke-width="1" fill=#bbdefb />{{i}}
+                                {% endif %}
+                            </svg>
+                        {% endfor %}
+                        </div>
+                        <div><input type="number" name="score" id="score"
+                                    value={{ aireDeJeux.score if aireDeJeux else 0}} hidden></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Horaire :</label>
+                        <div class="col-10">
+                            <input type="text" class="form-control" name="horaire" value="{{aireDeJeux.horaires|e if aireDeJeux.horaires|e != 'None' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Tranche d'age :</label>
+                        <div class="col-10">
+                            <input type="text" class="form-control" name="age" value="{{aireDeJeux.age|e if aireDeJeux.age|e != 'None' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Adresse :</label>
+                        <div class="col-10">
+                            <input type="text" class="form-control" name="adresse" class="etendu" value="{{aireDeJeux.adresse|e if aireDeJeux.adresse|e != 'None' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-form-label">Activités :<br></label>
+                        <div class="input_box input_activites row">
+                        {% for activite in activites %}
+                            <div class="form-check col-md-6 col-lg-4 col-xl-3">
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="activites" value="{{ activite }}"
+                                    {% if activite in aireDeJeux.activites %} checked {% endif %}> 
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description">{{ activite }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Website :</label>
+                        <div class="col-10">
+                            <input type="text" class="form-control" name="website" class="etendu" value="{{aireDeJeux.website|e if aireDeJeux.website|e != 'None' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-form-label">Description :</label>
+                        <textarea name="description" class="form-control" rows="4">{{ aireDeJeux.description|e if aireDeJeux.description|e != "None" }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-form-label">Accessibilité :</label>
+                        <textarea name="acces" id="acces" class="form-control" rows="4">{{ aireDeJeux.accessibilite|e if aireDeJeux.accessibilite|e != "None" }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-form-label">Commentaire :</label>
+                        <textarea name="commentaire" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6 contenu">
+                    <div class="ratio23outside box">
+                        <div class="ratio23inside">
+                            <div id="floating-panel" class="form-inline">
+                                <div class="form-group">
+                            <input id="address" type="textbox" placeholder="Rue de la Paix" class="form-control">
+                            <input id="geocode" type="button" value="Localiser" class="btn btn-primary">
+                             </div>
+                            </div>
+                            <div id="map"></div>
+                        </div>
+                        <div id="debloquerMap" onclick="active_map();" style="visibility: hidden">Débloquer</div>
+                        <div id="meLocaliser" onclick="me_localiser();" style="visibility: hidden">Me localiser</div>
+                        <p id="erreurLocalisation"></p>
+                    </div>
+                    {% if aireDeJeux == "" %}
+                        {{ macros.photos(listImage, new_indice) }}
+                    {% else %}
+                        {{ macros.photos(listImage, aireDeJeux.indice) }}
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        <div class="wide">
-            <input type="submit" value="Submit" class="submit_bt">
-        </div>
-    </form>
+            <div class="wide">
+                <input type="submit" value="Submit" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+</div>
     <script>
     {% if ville != "" %}
         var n_ville = "{{ ville.nom }}" + ", " + "{{ ville.departement }}";
@@ -325,6 +377,6 @@
     }
     </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANWCzOy5sTaDwVJXZFeNJfopen73FrFdw&callback=initMap">
     </script>
 {% endblock %}
