@@ -18,6 +18,14 @@ a {
     color : #1565c0;
 }
 
+a.inverse {
+    color: white
+}
+
+#title {
+    margin: -1em;
+}
+
 .bg-blue, .btn-primary{
     background-color: #2196f3;
     color: white;
@@ -140,7 +148,6 @@ a {
     z-index: 5;
     background-color: #fff;
     padding: 5px;
-    border: 1px solid #999;
     text-align: center;
     line-height: 30px;
     padding: 0.2em;

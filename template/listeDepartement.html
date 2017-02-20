@@ -12,9 +12,9 @@
 {% set vide = "vide" %}
 <div class="card">
     <div class="card-block">
-        <h1 id="title" class="class-title">
+        <h3 class="class-title">
             Liste Aire-De-Jeux Par Département
-        </h1>
+        </h3>
         <div class="card-deck">
             {% for departement in liste_departements %}
                 <div class="card {{ vide if departement.nbr_aire_de_jeux == 0 }}">

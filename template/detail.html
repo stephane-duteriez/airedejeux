@@ -17,12 +17,12 @@
 {% block content %}
 <div class="row">
     <div class="col-xl-10 col-xl-offset-1 main-content">
-    <div id="title">
+    <div id="title" class="d-flex justify-content-between nav bg-blue">
         <h4 id="ville">
-            <a href="{{host}}/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}">{{ aireDeJeux.ville|e }}</a>
+            <a href="{{host}}/aireDeJeux/{{ aireDeJeux.departement }}/{{ aireDeJeux.ville }}" class="nav-link inverse">{{ aireDeJeux.ville|e }}</a>
         </h4>
+        <h4 id="name" class="nav-link">{{ aireDeJeux.nom|e }}</h4>
     </div>
-        <h4 id="name">{{ aireDeJeux.nom|e }}</h4>
         <div id="stars">
             {% for i in range(5) %}
             <svg width="22" height="22" class="stars">

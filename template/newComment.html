@@ -23,7 +23,7 @@
     }
 </style>
 <body>
-    <form action="/add_comment" method="post" enctype="multipart/form-data">
+    <form action="/auth/add_comment" method="post" enctype="multipart/form-data">
         <textarea name="commentaire" width="100%" id="commentaire"></textarea><br>
         <input type="text" name="key" value="{{ key }}" hidden>
         <input type="submit" value="Submit" id="submit">
